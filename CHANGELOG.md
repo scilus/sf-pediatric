@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `Added`
 
+- Added infrastructure to support the new multiqc report using `nf-neuro` [MultiQC_neuroimaging](https://github.com/nf-neuro/MultiQC_neuroimaging.git) plugin.
 - Date and time to multiqc report to avoid overwriting when the pipeline is run twice for the same `outdir` ([[#88](https://github.com/scilus/nf-pediatric/issues/88)])
 - Bundle metrics are now exported in clean `.tsv` files for easier handling.
 - Dynamic boilerplate methods section in MultiQC report ([[#87](https://github.com/scilus/nf-pediatric/issues/87)])

@@ -82,7 +82,7 @@
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T1w.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T1w.nii.gz",
                 "sub-test1/ses-baseline/figures",
-                "sub-test1/ses-baseline/figures/sub-test1_labels_mqc.png",
+                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_labels_mqc.png",
                 "sub-test1/ses-baseline/multiqc",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
@@ -103,7 +103,7 @@
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_stat-rh_volume.tsv",
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_stat-subcortical.tsv",
                 "sub-test1/ses-time1/figures",
-                "sub-test1/ses-time1/figures/sub-test1_labels_mqc.png",
+                "sub-test1/ses-time1/figures/sub-test1_ses-time1_labels_mqc.png",
                 "sub-test1/ses-time1/multiqc",
                 "sub-test1/ses-time1/multiqc/sub-test1_multiqc_data",
                 "sub-test1/ses-time1/multiqc/sub-test1_multiqc_plots",
@@ -135,19 +135,19 @@
             [
                 "",
                 "sub-test1_ses-time1",
-                "sub-test1_ses-time1/sub-test1",
-                "sub-test1_ses-time1/sub-test1/label",
-                "sub-test1_ses-time1/sub-test1/label/lh.BN_Child.annot",
-                "sub-test1_ses-time1/sub-test1/label/rh.BN_Child.annot",
-                "sub-test1_ses-time1/sub-test1/mri",
-                "sub-test1_ses-time1/sub-test1/mri/transforms",
-                "sub-test1_ses-time1/sub-test1/scripts",
-                "sub-test1_ses-time1/sub-test1/stats",
-                "sub-test1_ses-time1/sub-test1/stats/lh.BN_Child.stats",
-                "sub-test1_ses-time1/sub-test1/stats/rh.BN_Child.stats",
-                "sub-test1_ses-time1/sub-test1/surf",
-                "sub-test1_ses-time1/sub-test1/tmp",
-                "sub-test1_ses-time1/sub-test1/touch",
+                "sub-test1_ses-time1/sub-test1_ses-time1",
+                "sub-test1_ses-time1/sub-test1_ses-time1/label",
+                "sub-test1_ses-time1/sub-test1_ses-time1/label/lh.BN_Child.annot",
+                "sub-test1_ses-time1/sub-test1_ses-time1/label/rh.BN_Child.annot",
+                "sub-test1_ses-time1/sub-test1_ses-time1/mri",
+                "sub-test1_ses-time1/sub-test1_ses-time1/mri/transforms",
+                "sub-test1_ses-time1/sub-test1_ses-time1/scripts",
+                "sub-test1_ses-time1/sub-test1_ses-time1/stats",
+                "sub-test1_ses-time1/sub-test1_ses-time1/stats/lh.BN_Child.stats",
+                "sub-test1_ses-time1/sub-test1_ses-time1/stats/rh.BN_Child.stats",
+                "sub-test1_ses-time1/sub-test1_ses-time1/surf",
+                "sub-test1_ses-time1/sub-test1_ses-time1/tmp",
+                "sub-test1_ses-time1/sub-test1_ses-time1/touch",
                 "sub-test3",
                 "sub-test3/sub-test3",
                 "sub-test3/sub-test3/label",
@@ -169,9 +169,9 @@
             ]
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.2"
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2025-08-06T13:04:38.73523"
+        "timestamp": "2025-12-02T11:10:04.760857"
     }
 }

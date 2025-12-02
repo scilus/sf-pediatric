@@ -4,7 +4,7 @@ Changes in component 'nf-neuro/bundle/fixelafd'
 Changes in 'bundle/fixelafd/main.nf':
 --- modules/nf-neuro/bundle/fixelafd/main.nf
 +++ modules/nf-neuro/bundle/fixelafd/main.nf
-@@ -2,14 +2,14 @@
+@@ -2,7 +2,7 @@
      tag "$meta.id"
      label 'process_single'
  
@@ -13,41 +13,26 @@ Changes in 'bundle/fixelafd/main.nf':
  
      input:
          tuple val(meta), path(bundles), path(fodf)
- 
-     output:
--        tuple val(meta), path("*_afd_metric.nii.gz"), emit: fixel_afd
--        path "versions.yml"                         , emit: versions
-+        tuple val(meta), path("*_afd_fixel_metric.nii.gz")  , emit: fixel_afd
-+        path "versions.yml"                                 , emit: versions
- 
-     when:
-     task.ext.when == null || task.ext.when
-@@ -20,8 +20,11 @@
-     """
-     for bundle in $bundles;
+@@ -22,7 +22,7 @@
          do\
--        bname=\$(basename \${bundle} .trk)
--        scil_bundle_mean_fixel_afd \$bundle $fodf ${prefix}__\${bname}_afd_metric.nii.gz
-+        ext=\${bundle#*.}
-+        pos=\$((\$(echo \$bundle | grep -b -o __ | cut -d: -f1)+2))
-+        bname=\${bundle:\$pos}
-+        bname=\$(basename \$bname .\${ext})
-+        scil_bundle_mean_fixel_afd \$bundle $fodf ${prefix}__\${bname}_afd_fixel_metric.nii.gz
+         bname=\$(basename \${bundle} .trk)
+         bname=\${bname/${prefix}__/}
+-        bname=\${bname/__cleaned/}
++        bname=\${bname/_cleaned*/}
+         scil_bundle_mean_fixel_afd \$bundle $fodf ${prefix}__\${bname}_afd_metric.nii.gz
      done
  
-     cat <<-END_VERSIONS > versions.yml
-@@ -36,7 +39,14 @@
+@@ -38,7 +38,13 @@
      """
      scil_bundle_mean_fixel_afd -h
  
 -    touch ${prefix}_test_afd_metric.nii.gz
-+    for bundle in ${bundles};
-+        do
-+        ext=\${bundle#*.}
-+        pos=\$((\$(echo \$bundle | grep -b -o __ | cut -d: -f1)+2))
-+        bname=\${bundle:\$pos}
-+        bname=\$(basename \$bname \${ext})
-+        touch ${prefix}__\${bname}_afd_fixel_metric.nii.gz
++    for bundle in $bundles;
++        do\
++        bname=\$(basename \${bundle} .trk)
++        bname=\${bname/${prefix}__/}
++        bname=\${bname/_cleaned*/}
++        touch ${prefix}__\${bname}_afd_metric.nii.gz
 +    done
  
      cat <<-END_VERSIONS > versions.yml
