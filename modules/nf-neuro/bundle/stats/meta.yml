@@ -39,8 +39,8 @@ keywords:
   - json
 tools:
   - scilpy:
-      description: The Sherbrooke Connectivity Imaging Lab (SCIL) Python dMRI processing
-        toolbox.
+      description: The Sherbrooke Connectivity Imaging Lab (SCIL) Python dMRI
+        processing toolbox.
       homepage: https://github.com/scilus/scilpy.git
       identifier: ""
 input:
@@ -57,25 +57,25 @@ input:
         ontologies: []
     - labels_map:
         type: file
-        description: label map of the corresponding fiber bundle. this file must have
-          the same dimension than bundle file and have datatype in int. If you have
-          multiple bundles, it must have the same numbers of sections.
+        description: label map of the corresponding fiber bundle. this file must
+          have the same dimension than bundle file and have datatype in int. If
+          you have multiple bundles, it must have the same numbers of sections.
         pattern: "*.nii.gz"
         mandatory: true
         ontologies:
           - edam: http://edamontology.org/format_3989 # GZIP format
     - metrics:
         type: file
-        description: Nifti file to compute statistics on. Probably some tractometry
-          measure(s) such as FA, MD, RD, ... The metrics has to follow a specific naming
-          convention.
+        description: Nifti file to compute statistics on. Probably some
+          tractometry measure(s) such as FA, MD, RD, ... The metrics has to follow
+          a specific naming convention.
         pattern: "*_{bundle_name}_{metric_name}.nii.gz"
         mandatory: true
         ontologies: []
     - lesions:
         type: file
-        description: Nifti lesion volume to compute statistics on. The lesion mask must
-          be a binary mask.
+        description: Nifti lesion volume to compute statistics on. The lesion mask
+          must be a binary mask.
         pattern: "*.nii.gz"
         mandatory: false
         ontologies:
@@ -83,8 +83,8 @@ input:
 args:
   - density_weighting:
       type: boolean
-      description: If set, weights statistics by the number of fibers passing through
-        each voxel.
+      description: If set, weights statistics by the number of fibers passing
+        through each voxel.
       default: false
   - normalize_weights:
       type: boolean
@@ -100,7 +100,8 @@ args:
       default: false
   - mean_std:
       type: boolean
-      description: If set, compute the mean and std of the metrics along the bundle.
+      description: If set, compute the mean and std of the metrics along the
+        bundle.
       default: false
   - volume:
       type: boolean
@@ -124,8 +125,8 @@ args:
       default: false
   - mean_std_per_point:
       type: boolean
-      description: If set, compute the mean and std of the metrics along the bundle
-        for each point(labels).
+      description: If set, compute the mean and std of the metrics along the
+        bundle for each point(labels).
       default: false
 output:
   length:
@@ -176,7 +177,8 @@ output:
             e.g. `[ id:'sample1', single_end:false ]`
       - "*__mean_std.json":
           type: file
-          description: Average the metric values of all voxels occupied by the bundle(s).
+          description: Average the metric values of all voxels occupied by the
+            bundle(s).
           pattern: "*__mean_std.json"
           ontologies:
             - edam: http://edamontology.org/format_3464 # JSON
@@ -263,8 +265,8 @@ output:
             e.g. `[ id:'sample1', single_end:false ]`
       - "*__mean_std_per_point.json":
           type: file
-          description: Average metric values of all voxels occupied by the bundle per
-            label.
+          description: Average metric values of all voxels occupied by the bundle
+            per label.
           pattern: "*__mean_std_per_point.json"
           ontologies:
             - edam: http://edamontology.org/format_3464 # JSON
@@ -320,6 +322,55 @@ output:
           pattern: "*__lesion_map.nii.gz"
           ontologies:
             - edam: http://edamontology.org/format_3989 # GZIP format
+  mean_lesions_tsv:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', single_end:false ]`
+      - "*_desc-mean_param-lesions_stats.tsv":
+          type: file
+          description: TSV file regrouping all bundle stats in lesions
+          pattern: "*__desc-mean_param-lesions_stats.tsv"
+          ontologies:
+            - edam: http://edamontology.org/format_3475 # TSV
+  mean_per_point_lesions_tsv:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', single_end:false ]`
+      - "*_desc-point_param-lesions_stats.tsv":
+          type: file
+          description: TSV file regrouping all bundle per points stats with
+            lesions
+          pattern: "*__desc-point_param-lesions_stats.tsv"
+          ontologies:
+            - edam: http://edamontology.org/format_3475 # TSV
+  mean_tsv:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', single_end:false ]`
+      - "*_desc-mean_stats.tsv":
+          type: file
+          description: TSV file regrouping all bundle stats
+          pattern: "*__desc-mean_stats.tsv"
+          ontologies:
+            - edam: http://edamontology.org/format_3475 # TSV
+  mean_per_point_tsv:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', single_end:false ]`
+      - "*_desc-point_stats.tsv":
+          type: file
+          description: TSV file regrouping all bundle per points stats
+          pattern: "*__desc-point_stats.tsv"
+          ontologies:
+            - edam: http://edamontology.org/format_3475 # TSV
   versions:
     - versions.yml:
         type: file
@@ -329,5 +380,7 @@ output:
           - edam: http://edamontology.org/format_3750 # YAML
 authors:
   - "@ThoumyreStanislas"
+  - "@gagnonanthony"
+  - "@arnaudbore"
 maintainers:
   - "@ThoumyreStanislas"

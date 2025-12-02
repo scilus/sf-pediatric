@@ -2,19 +2,19 @@
     "bundle - stats - stub-run": {
         "content": [
             [
-                "versions.yml:md5,2a73062ec9856a8e64adff5aa950661b"
+                "versions.yml:md5,f785e17ff1d0f296e3ce7a6008e7b843"
             ]
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "25.04.7"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.0"
         },
-        "timestamp": "2025-09-22T13:27:27.673028317"
+        "timestamp": "2025-11-24T03:54:36.189723353"
     },
     "bundle - stats - lesions": {
         "content": [
             [
-                "versions.yml:md5,2a73062ec9856a8e64adff5aa950661b"
+                "versions.yml:md5,f785e17ff1d0f296e3ce7a6008e7b843"
             ],
             [
                 [
@@ -58,7 +58,7 @@
                         "id": "test",
                         "single_end": false
                     },
-                    "test__length_stats.json:md5,c343e1e2d731a5b900f7deafba3a274f"
+                    "test__length_stats.json:md5,a7abc925eac27f908503faf414a82330"
                 ]
             ],
             [
@@ -80,22 +80,10 @@
                 ]
             ],
             [
-                [
-                    {
-                        "id": "test",
-                        "single_end": false
-                    },
-                    "test__mean_std.json:md5,f7463e5519063f7e0f32709d0dfdc1a2"
-                ]
+                
             ],
             [
-                [
-                    {
-                        "id": "test",
-                        "single_end": false
-                    },
-                    "test__mean_std_per_point.json:md5,efcac000fb6c0f607b7377154e68854c"
-                ]
+                
             ],
             [
                 [
@@ -145,10 +133,10 @@
             "test__volume.json"
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "25.04.7"
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.4"
         },
-        "timestamp": "2025-09-22T16:12:23.154412962"
+        "timestamp": "2025-11-27T10:54:25.623378673"
     },
     "bundle - stats": {
         "content": [
@@ -159,7 +147,7 @@
                             "id": "test",
                             "single_end": false
                         },
-                        "test__length_stats.json:md5,c343e1e2d731a5b900f7deafba3a274f"
+                        "test__length_stats.json:md5,a7abc925eac27f908503faf414a82330"
                     ]
                 ],
                 "1": [
@@ -172,13 +160,7 @@
                     ]
                 ],
                 "10": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": false
-                        },
-                        "test__mean_std_per_point.json:md5,efcac000fb6c0f607b7377154e68854c"
-                    ]
+                    
                 ],
                 "11": [
                     
@@ -205,7 +187,31 @@
                     
                 ],
                 "15": [
-                    "versions.yml:md5,2a73062ec9856a8e64adff5aa950661b"
+                    
+                ],
+                "16": [
+                    
+                ],
+                "17": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test_desc-mean_stats.tsv:md5,e6a92bba6cebb698d66903ae3a9e5ca0"
+                    ]
+                ],
+                "18": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test_desc-point_stats.tsv:md5,a0ed4a4079d0d92c2143755e3a4b6887"
+                    ]
+                ],
+                "19": [
+                    "versions.yml:md5,f785e17ff1d0f296e3ce7a6008e7b843"
                 ],
                 "2": [
                     [
@@ -217,13 +223,7 @@
                     ]
                 ],
                 "3": [
-                    [
-                        {
-                            "id": "test",
-                            "single_end": false
-                        },
-                        "test__mean_std.json:md5,f7463e5519063f7e0f32709d0dfdc1a2"
-                    ]
+                    
                 ],
                 "4": [
                     
@@ -291,7 +291,7 @@
                             "id": "test",
                             "single_end": false
                         },
-                        "test__length_stats.json:md5,c343e1e2d731a5b900f7deafba3a274f"
+                        "test__length_stats.json:md5,a7abc925eac27f908503faf414a82330"
                     ]
                 ],
                 "lesion_map": [
@@ -300,22 +300,34 @@
                 "lesion_stats": [
                     
                 ],
-                "mean_std": [
+                "mean_lesions_tsv": [
+                    
+                ],
+                "mean_per_point_lesions_tsv": [
+                    
+                ],
+                "mean_per_point_tsv": [
                     [
                         {
                             "id": "test",
                             "single_end": false
                         },
-                        "test__mean_std.json:md5,f7463e5519063f7e0f32709d0dfdc1a2"
+                        "test_desc-point_stats.tsv:md5,a0ed4a4079d0d92c2143755e3a4b6887"
                     ]
                 ],
+                "mean_std": [
+                    
+                ],
                 "mean_std_per_point": [
+                    
+                ],
+                "mean_tsv": [
                     [
                         {
                             "id": "test",
                             "single_end": false
                         },
-                        "test__mean_std_per_point.json:md5,efcac000fb6c0f607b7377154e68854c"
+                        "test_desc-mean_stats.tsv:md5,e6a92bba6cebb698d66903ae3a9e5ca0"
                     ]
                 ],
                 "streamline_count": [
@@ -325,7 +337,7 @@
                     
                 ],
                 "versions": [
-                    "versions.yml:md5,2a73062ec9856a8e64adff5aa950661b"
+                    "versions.yml:md5,f785e17ff1d0f296e3ce7a6008e7b843"
                 ],
                 "volume": [
                     
@@ -348,10 +360,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "25.04.7"
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.4"
         },
-        "timestamp": "2025-09-22T15:41:49.239587021"
+        "timestamp": "2025-11-27T10:45:16.334357877"
     },
     "bundle - stats - light": {
         "content": [
@@ -378,7 +390,19 @@
                     
                 ],
                 "15": [
-                    "versions.yml:md5,2a73062ec9856a8e64adff5aa950661b"
+                    
+                ],
+                "16": [
+                    
+                ],
+                "17": [
+                    
+                ],
+                "18": [
+                    
+                ],
+                "19": [
+                    "versions.yml:md5,f785e17ff1d0f296e3ce7a6008e7b843"
                 ],
                 "2": [
                     
@@ -431,10 +455,22 @@
                 "lesion_stats": [
                     
                 ],
+                "mean_lesions_tsv": [
+                    
+                ],
+                "mean_per_point_lesions_tsv": [
+                    
+                ],
+                "mean_per_point_tsv": [
+                    
+                ],
                 "mean_std": [
                     
                 ],
                 "mean_std_per_point": [
+                    
+                ],
+                "mean_tsv": [
                     
                 ],
                 "streamline_count": [
@@ -450,7 +486,7 @@
                     
                 ],
                 "versions": [
-                    "versions.yml:md5,2a73062ec9856a8e64adff5aa950661b"
+                    "versions.yml:md5,f785e17ff1d0f296e3ce7a6008e7b843"
                 ],
                 "volume": [
                     
@@ -467,9 +503,9 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "25.04.7"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.0"
         },
-        "timestamp": "2025-09-22T15:42:03.885411778"
+        "timestamp": "2025-11-24T16:25:26.069003692"
     }
 }
