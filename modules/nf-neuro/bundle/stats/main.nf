@@ -53,7 +53,7 @@ process BUNDLE_STATS {
 
     for index in \${!bundles[@]};
     do\
-        bname=\$(basename \${bundles[index]} .trk)
+        bname=\$(basename \${bundles[index]} .trk);
         bname=\${bname/${prefix}__/}
         bname=\${bname%%_labels_*}
 
