@@ -3,40 +3,44 @@ report_comment: >
   analysis pipeline.
 
 report_section_order:
-  "nf-pediatric-summary":
-    order: -1001
-  "shell_qc":
-    order: -600
-  "topup_qc":
-    order: -625
-  "fd_qc":
-    order: -640
-  "eddy_qc":
-    order: -650
-  "coregistration_qc":
-    order: -670
-  "anattodwi_qc":
-    order: -680
-  "templatetodwi_qc":
-    order: -690
-  "tissue_segmentation_qc":
-    order: -700
-  "metrics_qc":
-    order: -675
-  "tracking_qc":
-    order: -725
-  "labels_qc":
-    order: -750
   "nf-pediatric-methods-description":
-    order: -900
+    order: -1002
   software_versions:
+    order: -1001
+  "nf-pediatric-summary":
+    title: "nf-pediatric Workflow Summary"
     order: -1000
+  "shell_qc":
+    order: 150
+  "topup_qc":
+    order: 140
+  framewise_displacement:
+    order: 130
+  "eddy_qc":
+    order: 120
+  "coregistration_qc":
+    order: 110
+  "metrics_qc":
+    order: 100
+  "anattodwi_qc":
+    order: 90
+  "templatetodwi_qc":
+    order: 80
+  "tissue_segmentation_qc":
+    order: 70
+  "tracking_qc":
+    order: 60
+  "labels_qc":
+    order: 50
+
+modules_order:
+  - framewise_displacement
+  - custom_content
 
 custom_content:
   order:
     - shell_qc
     - topup_qc
-    - fd_qc
     - eddy_qc
     - anattodwi_qc
     - templatetodwi_qc
@@ -44,6 +48,9 @@ custom_content:
     - metrics_qc
     - tracking_qc
     - labels_qc
+    - "nf-pediatric-summary"
+    - software_versions
+    - "nf-pediatric-methods-description"
 
 custom_data:
   shell_qc:
@@ -73,28 +80,6 @@ custom_data:
       eddy-current-induced displacements. Additionally, ensure that no new
       artifacts or excessive blurring are introduced in the corrected images.
     plot_type: "image"
-  fd_qc:
-    file_format: "csv"
-    section_name: "Framewise Displacement (FD) QC"
-    description: |
-      This section contains the Framewise Displacement (FD) values calculated
-      during EDDY correction. FD is a measure of head motion between successive
-      volumes in the diffusion-weighted imaging (DWI) time series. To assess
-      motion quality, examine the FD values for spikes or consistently high
-      values, which may indicate significant head movement during the scan.
-      High FD values can lead to artifacts and reduced data quality, potentially
-      impacting downstream analyses. Consider setting a threshold (e.g., 0.5 mm)
-      to identify volumes with excessive motion that may need to be excluded
-      from further analysis.
-    plot_type: "linegraph"
-    pconfig:
-      xlab: "Volume Number"
-      ylab: "Framewise Displacement (mm)"
-      title: "Framewise Displacement (FD) over DWI volumes"
-      ymax: 1
-      ymin: 0
-      y_lines:
-        - {value: 0.5, color: red, dash: dash, label: "Motion Threshold (0.5 mm)"}
   topup_qc:
     file_format: "gif"
     section_name: "Topup QC"
@@ -227,8 +212,8 @@ sp:
     fn: "*gradients_mqc.png"
   topup_qc:
     fn: "*_b0_topup_mqc.gif"
-  fd_qc:
-    fn: "*fd_mqc.csv"
+  framewise_displacement:
+    fn: "*dwi_eddy_restricted_movement_rms.txt"
   eddy_qc:
     fn: "*_dwi_eddy_mqc.gif"
   coregistration_qc:
@@ -247,5 +232,3 @@ sp:
     fn: "*labels_mqc.png"
 
 export_plots: true
-
-disable_version_detection: false
