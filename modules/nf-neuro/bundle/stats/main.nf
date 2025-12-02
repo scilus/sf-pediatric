@@ -54,11 +54,8 @@ process BUNDLE_STATS {
     for index in \${!bundles[@]};
     do\
         bname=\$(basename \${bundles[index]} .trk)
-        echo "Processing bundle: \${bname}"
         bname=\${bname/${prefix}__/}
-        echo "After removing prefix: \${bname}"
         bname=\${bname%%_labels_*}
-        echo "After removing labels suffix: \${bname}"
 
         echo "Bundle name: \${bname}"
 
