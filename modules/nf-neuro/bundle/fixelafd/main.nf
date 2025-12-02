@@ -8,8 +8,8 @@ process BUNDLE_FIXELAFD {
         tuple val(meta), path(bundles), path(fodf)
 
     output:
-        tuple val(meta), path("*_afd_fixel_metric.nii.gz")  , emit: fixel_afd
-        path "versions.yml"                                 , emit: versions
+        tuple val(meta), path("*_afd_metric.nii.gz"), emit: fixel_afd
+        path "versions.yml"                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -20,11 +20,10 @@ process BUNDLE_FIXELAFD {
     """
     for bundle in $bundles;
         do\
-        ext=\${bundle#*.}
-        pos=\$((\$(echo \$bundle | grep -b -o __ | cut -d: -f1)+2))
-        bname=\${bundle:\$pos}
-        bname=\$(basename \$bname .\${ext})
-        scil_bundle_mean_fixel_afd \$bundle $fodf ${prefix}__\${bname}_afd_fixel_metric.nii.gz
+        bname=\$(basename \${bundle} .trk)
+        bname=\${bname/${prefix}__/}
+        bname=\${bname/_cleaned*/}
+        scil_bundle_mean_fixel_afd \$bundle $fodf ${prefix}__\${bname}_afd_metric.nii.gz
     done
 
     cat <<-END_VERSIONS > versions.yml
@@ -39,13 +38,12 @@ process BUNDLE_FIXELAFD {
     """
     scil_bundle_mean_fixel_afd -h
 
-    for bundle in ${bundles};
-        do
-        ext=\${bundle#*.}
-        pos=\$((\$(echo \$bundle | grep -b -o __ | cut -d: -f1)+2))
-        bname=\${bundle:\$pos}
-        bname=\$(basename \$bname \${ext})
-        touch ${prefix}__\${bname}_afd_fixel_metric.nii.gz
+    for bundle in $bundles;
+        do\
+        bname=\$(basename \${bundle} .trk)
+        bname=\${bname/${prefix}__/}
+        bname=\${bname/_cleaned*/}
+        touch ${prefix}__\${bname}_afd_metric.nii.gz
     done
 
     cat <<-END_VERSIONS > versions.yml
