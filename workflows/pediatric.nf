@@ -4,8 +4,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 // ** Core modules ** //
-include { MULTIQC as MULTIQC_SUBJECT        } from '../modules/nf-core/multiqc/main'
-include { MULTIQC as MULTIQC_GLOBAL         } from '../modules/nf-core/multiqc/main'
+include { QC_MULTIQC as MULTIQC_SUBJECT        } from '../modules/nf-neuro/qc/multiqc'
+include { QC_MULTIQC as MULTIQC_GLOBAL         } from '../modules/nf-neuro/qc/multiqc'
 include { paramsSummaryMap                  } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -53,7 +53,6 @@ include { TRACTOGRAM_MATH                   } from '../modules/nf-neuro/tractogr
 // ** BundleSeg ** //
 include { BUNDLE_SEG } from '../subworkflows/local/bundleseg/main'
 include { TRACTOMETRY } from '../subworkflows/nf-neuro/tractometry/main'
-include { MERGE_TSV } from '../modules/local/utils/mergetsv.nf'
 
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
@@ -86,6 +85,7 @@ workflow PEDIATRIC {
     // Empty channels to collect data during runtime
     ch_versions = Channel.empty()
     ch_multiqc_files_sub = Channel.empty()
+    ch_multiqc_files_global = Channel.empty()
     ch_nifti_files_to_transform = Channel.empty()
     ch_rgb_files_to_transform = Channel.empty()
     ch_mask_files_to_transform = Channel.empty()
@@ -657,15 +657,24 @@ workflow PEDIATRIC {
         //
         // MODULE: MERGE_TSV
         //
-        ch_merge_tsv = TRACTOMETRY.out.mean_std_tsv
-            .map { it -> [it[1]] }
-            .mix(TRACTOMETRY.out.mean_std_per_point_tsv.map { it -> [it[1]] })
-            .collect()
-            .map{ it -> [[id: 'global'], it.flatten()] }
-
-        MERGE_TSV( ch_merge_tsv )
-        ch_versions = ch_versions.mix(MERGE_TSV.out.versions)
-
+        ch_merged_mean_tsv = TRACTOMETRY.out.mean_std_tsv
+            .map { _meta, stats -> stats }
+            .collectFile(
+                storeDir: "${params.outdir}/",
+                name: "bundles_mean_stats.tsv",
+                skip: 1,
+                keepHeader: true
+            )
+        ch_merged_point_tsv = TRACTOMETRY.out.mean_std_per_point_tsv
+            .map { _meta, stats -> stats }
+            .collectFile(
+                storeDir: "${params.outdir}/",
+                name: "bundles_point_stats.tsv",
+                skip: 1,
+                keepHeader: true
+            )
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_merged_mean_tsv)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_merged_point_tsv)
     }
 
     if ( params.connectomics ) {
@@ -982,7 +991,7 @@ workflow PEDIATRIC {
         Channel.empty()
     ch_multiqc_logo          = params.multiqc_logo ?
         Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.fromPath("$projectDir/assets/nf-pediatric-logo.png", checkIfExists: true)
+        Channel.fromPath("$projectDir/assets/nf-pediatric-light-logo.png", checkIfExists: true)
 
     summary_params      = paramsSummaryMap(
         workflow, parameters_schema: "nextflow_schema.json")
@@ -1013,7 +1022,9 @@ workflow PEDIATRIC {
         []
     )
 
-    ch_multiqc_files_global = ch_multiqc_files.mix(QC.out.dice_stats.map{ it[1] }.flatten())
+    ch_multiqc_files_global = ch_multiqc_files_global.mix(
+        ch_multiqc_files.mix(QC.out.dice_stats.map{ it[1] }.flatten())
+    )
     ch_multiqc_files_global = ch_multiqc_files_global.mix(QC.out.sc_values.map{ it[1] }.flatten())
     if ( params.segmentation ) {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.volume_lh)
@@ -1023,10 +1034,6 @@ workflow PEDIATRIC {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_lh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_rh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.subcortical)
-    }
-    if ( params.bundling ) {
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(MERGE_TSV.out.bundle_mean_stats)
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(MERGE_TSV.out.bundle_point_stats)
     }
 
     // Collect the framewise displacement files from the ch_multiqc_files_sub channel
