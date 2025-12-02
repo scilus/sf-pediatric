@@ -1,0 +1,56 @@
+Changes in component 'nf-neuro/topup_eddy'
+'subworkflows/nf-neuro/topup_eddy/meta.yml' is unchanged
+Changes in 'topup_eddy/main.nf':
+--- subworkflows/nf-neuro/topup_eddy/main.nf
++++ subworkflows/nf-neuro/topup_eddy/main.nf
+@@ -23,7 +23,7 @@
+         ch_topup_fieldcoeff = Channel.empty()
+         ch_topup_movpart = Channel.empty()
+         ch_b0_corrected = Channel.empty()
+-        if (params.topup_eddy_run_topup) {
++        if (params.topup_eddy_run_topup && !params.skip_dwi_preprocessing) {
+             // ** Create channel for TOPUP ** //
+             // Result : [ meta, dwi, bval, bvec, b0 | [], rev-dwi | [], rev-bval | [], rev-bvec | [], rev-b0 | [] ]
+             //  Steps :
+@@ -55,7 +55,7 @@
+         }
+ 
+ 
+-        if (params.topup_eddy_run_eddy) {
++        if (params.topup_eddy_run_eddy && !params.skip_dwi_preprocessing) {
+             // ** Create channel for EDDY ** //
+             // Result : [ meta, dwi, bval, bvec, rev-dwi | [], rev-bval | [], rev-bvec | [], b0 | [], coeffs | [], movpar | [] ]
+             //  Steps :
+@@ -84,14 +84,6 @@
+             ch_multiqc_files = ch_multiqc_files.mix(PREPROC_EDDY.out.rev_dwi_eddy_mqc)
+             ch_multiqc_files = ch_multiqc_files.mix(PREPROC_EDDY.out.eddy_fd_mqc)
+ 
+-            ch_dwi_extract_b0 = PREPROC_EDDY.out.dwi_corrected
+-                .join(PREPROC_EDDY.out.bval_corrected)
+-                .join(PREPROC_EDDY.out.bvec_corrected)
+-
+-            UTILS_EXTRACTB0 { ch_dwi_extract_b0 }
+-            ch_versions = ch_versions.mix(UTILS_EXTRACTB0.out.versions.first())
+-
+-            ch_b0_corrected = UTILS_EXTRACTB0.out.b0
+             ch_dwi = PREPROC_EDDY.out.dwi_corrected
+                 .join(PREPROC_EDDY.out.bval_corrected)
+                 .join(PREPROC_EDDY.out.bvec_corrected)
+@@ -104,6 +96,11 @@
+ 
+             ch_b0_mask = BETCROP_FSLBETCROP.out.mask
+         }
++
++        UTILS_EXTRACTB0 { ch_dwi }
++        ch_versions = ch_versions.mix(UTILS_EXTRACTB0.out.versions.first())
++
++        ch_b0_corrected = UTILS_EXTRACTB0.out.b0
+ 
+         ch_output_dwi = ch_dwi
+             .multiMap{ meta, dwi, bval, bvec ->
+
+'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test.snap' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/tags.yml' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/nextflow.config' is unchanged
+'subworkflows/nf-neuro/topup_eddy/tests/main.nf.test' is unchanged
+************************************************************
