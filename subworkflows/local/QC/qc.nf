@@ -1,6 +1,6 @@
 include { QC_SCREENSHOT as QC_TISSUES     } from '../../../modules/local/qc/screenshot.nf'
 include { QC_SCREENSHOT as QC_LABELS      } from '../../../modules/local/qc/screenshot.nf'
-include { QC_TRACKING                     } from '../../../modules/local/qc/tracking.nf'
+include { QC_TRACTOGRAM                   } from '../../../modules/nf-neuro/qc/tractogram/main'
 include { QC_SHELL                        } from '../../../modules/local/qc/shell.nf'
 include { QC_METRICS                      } from '../../../modules/local/qc/metrics.nf'
 
@@ -78,15 +78,15 @@ workflow QC {
         .join(ch_maps)
         .map{ it[0..3] }
 
-    QC_TRACKING ( ch_tracking_qc )
-    ch_versions = ch_versions.mix(QC_TRACKING.out.versions.first())
+    QC_TRACTOGRAM ( ch_tracking_qc )
+    ch_versions = ch_versions.mix(QC_TRACTOGRAM.out.versions.first())
 
     emit:
     tissueseg_png      = QC_TISSUES.out.tissue_seg ?: Channel.empty()   // channel: [ val(meta), [ png ] ]
     labels_png         = QC_LABELS.out.labels ?: Channel.empty()        // channel: [ val(meta), [ png ] ]
-    tracking_png       = QC_TRACKING.out.png ?: Channel.empty()         // channel: [ val(meta), [ png ] ]
-    dice_stats         = QC_TRACKING.out.dice ?: Channel.empty()        // channel: [ val(meta), [ dice ] ]
-    sc_values          = QC_TRACKING.out.sc ?: Channel.empty()          // channel: [ val(meta), [ sc ] ]
+    tracking_png       = QC_TRACTOGRAM.out.mqc ?: Channel.empty()         // channel: [ val(meta), [ png ] ]
+    dice_stats         = QC_TRACTOGRAM.out.dice ?: Channel.empty()        // channel: [ val(meta), [ dice ] ]
+    sc_values          = QC_TRACTOGRAM.out.sc ?: Channel.empty()          // channel: [ val(meta), [ sc ] ]
     shell_png          = QC_SHELL.out.shell ?: Channel.empty()          // channel: [ val(meta), [ png ] ]
     metrics_png        = QC_METRICS.out.png ?: Channel.empty()          // channel: [ val(meta), [ png ] ]
 
