@@ -800,7 +800,7 @@ def buildMethodsDescription() {
             parts << "Following segmentation, the Brainnetome Child Atlas (Li et al., 2023) was mapped in subject-space using surface-based registration methods from FreeSurfer (Fischl, 2012) and then converted into voxel labels."
             parts << "For each parcels, volume, surface area, and cortical thickness were measured and outputted in tab-separated value files."
             parts << "For younger participants (< 3 months old), cortical and sub-cortical segmentation was performed using the M-CRIB-S pipeline (Adamson et al., 2020)."
-            parts << "Younger participants were segmented using an atlas compatible with the Desikan-Killiany (Desikan et al., 2006) and Desikan-Killiany-Tourvile atlases (Klein et al., 2012, Adamson et al., 2020)."
+            parts << "Younger participants were segmented the Desikan-Killiany (Desikan et al., 2006, Adamson et al., 2020)."
             parts << "Following segmentation, volume, surface area, and cortical thickness were measured for each parcel and outputted in tab-separated value files."
 
             return parts.findAll{ it }.join(' ')
@@ -902,6 +902,7 @@ def toolBibliographyText() {
         "Henschel et al., 2020"    : "<li>Henschel, L., Conjeti, S., Estrada, S., Diers, K., Fischl, B., & Reuter, M. (2020). FastSurfer — A fast and accurate deep learning based neuroimaging pipeline. <i>NeuroImage</i>, 219, 117012. <a href=https://doi.org/10.1016/j.neuroimage.2020.117012>https://doi.org/10.1016/j.neuroimage.2020.117012</a></li>",
         "Ewels et al., 2016"        : "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. <i>Bioinformatics</i>, 32(19), 3047–3048. <a href=https://doi.org/10.1093/bioinformatics/btw354>https://doi.org/10.1093/bioinformatics/btw354</a></li>",
         "Klein et al., 2012"        : "<li>Klein. A., & Tourville, J. (2012). 101 labeled brain images and a consistent human cortical labeling protocol. <i>Frontiers in Neuroscience</i>, 6(171). <a href=https://doi.org/10.3389/fnins.2012.00171>https://doi.org/10.3389/fnins.2012.00171</a></li>",
+        "Chen et al., 2022"         : "<li>Chen, L., Wu, Z., Hu, D., Wang, Y., Zhao, F., Zhong, T., Lin, W., Wang, L., & Li, G. (2022). A 4D infant brain volumetric atlas based on the UNC/UMN baby connectome project (BCP) cohort. <i>NeuroImage</i>, 253, 119097. <a href=https://doi.org/10.1016/j.neuroimage.2022.119097>https://doi.org/10.1016/j.neuroimage.2022.119097</a></li>",
         // Not published yet.
         "Renauld et al., 2025"       : "<li>Renauld, A. et al. (2025). scilpy: a toolbox for tractography and tractometry. Submitted to <i>Aperture Neuro</i></li>",
         "Gagnon et al., 2025"       : "<li>Gagnon, A., et al. (2025). nf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. <i>In preparation</i></li>",
