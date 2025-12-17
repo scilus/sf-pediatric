@@ -70,6 +70,8 @@
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_desc-preproc_T2w.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_from-T1w_to-T2w_affine.mat",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_from-T2w_to-T1w_affine.mat",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_desc-labels.json",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_desc-labels.txt",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_dseg.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_dseg.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_stat-lh_area.tsv",
@@ -172,6 +174,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-12-02T11:10:04.760857"
+        "timestamp": "2025-12-16T17:21:56.394229"
     }
 }

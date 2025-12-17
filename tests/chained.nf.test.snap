@@ -235,6 +235,8 @@
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_from-dwi_to-MNIInfant_warp.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_from-dwi_to-MNIInfant_warp.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_from-dwi_to-T2w_warp.nii.gz",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_desc-labels.json",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_desc-labels.txt",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_dseg.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_dseg.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_stat-lh_area.tsv",
@@ -972,7 +974,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-12-02T10:36:45.3437"
+        "timestamp": "2025-12-17T09:15:03.842382"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -1665,6 +1667,8 @@
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_desc-preproc_T2w.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_from-T1w_to-T2w_affine.mat",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_from-T2w_to-T1w_affine.mat",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_desc-labels.json",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_desc-labels.txt",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_dseg.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_dseg.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_stat-lh_area.tsv",
@@ -1838,7 +1842,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-12-02T10:03:24.369894"
+        "timestamp": "2025-12-17T08:51:53.993879"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
