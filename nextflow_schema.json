@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/scilus/nf-pediatric/master/nextflow_schema.json",
-    "title": "scilus/nf-pediatric pipeline parameters",
-    "description": "nf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.",
+    "$id": "https://raw.githubusercontent.com/scilus/sf-pediatric/master/nextflow_schema.json",
+    "title": "scilus/sf-pediatric pipeline parameters",
+    "description": "sf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.",
     "type": "object",
     "$defs": {
         "input_output_options": {
@@ -17,13 +17,13 @@
                     "format": "directory-path",
                     "exists": true,
                     "description": "Path to the BIDS directory location.",
-                    "help_text": "Ensure the BIDS data structure is respected. For more information, see the [documentation](https://scilus.github.io/nf-pediatric/guides/inputs/)",
+                    "help_text": "Ensure the BIDS data structure is respected. For more information, see the [documentation](https://scilus.github.io/sf-pediatric/guides/inputs/)",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "participant_label": {
                     "type": "array",
                     "description": "List of participant IDs or a single participant ID.",
-                    "help_text": "This will be used to select the specific participants to process. The best way to provide them is in a params.yml file, see the [documentation](https://scilus.github.io/nf-pediatric/guides/usage/#using-the-paramsyml-file) for more information.",
+                    "help_text": "This will be used to select the specific participants to process. The best way to provide them is in a params.yml file, see the [documentation](https://scilus.github.io/sf-pediatric/guides/usage/#using-the-paramsyml-file) for more information.",
                     "uniqueItems": true,
                     "fa_icon": "fas id-badge"
                 },
@@ -45,7 +45,7 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "help_text": "For a detailed description of the output files, please see the [documentation](https://scilus.github.io/nf-pediatric/guides/outputs/).",
+                    "help_text": "For a detailed description of the output files, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/).",
                     "fa_icon": "fas fa-folder-open"
                 },
                 "email": {
@@ -116,7 +116,7 @@
                     "type": "string",
                     "description": "Path to FreeSurfer/FastSurfer/M-CRIB-S output directory.",
                     "fa_icon": "fas fa-folder-open",
-                    "help_text": "Default location will be alongside `--outdir`. For more information, please see the [documentation](https://scilus.github.io/nf-pediatric/guides/outputs/)",
+                    "help_text": "Default location will be alongside `--outdir`. For more information, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/)",
                     "format": "directory-path",
                     "hidden": false
                 },
@@ -675,7 +675,7 @@
                 },
                 "frf_manual_frf": {
                     "type": "string",
-                    "description": "Manual FRF values.(e.g. '15,4,4'). This is set from the normative curves. Use this option only to apply a single FRF to every participants. For more information, please see [the documentation](https://scilus.github.io/nf-pediatric/guides/priors/).",
+                    "description": "Manual FRF values.(e.g. '15,4,4'). This is set from the normative curves. Use this option only to apply a single FRF to every participants. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
                     "fa_icon": "fas fa-brain",
                     "hidden": false
                 }
@@ -1213,21 +1213,21 @@
                 "commit_para_diff": {
                     "type": "string",
                     "description": "Para diff value used in the COMMIT filtering step.",
-                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/nf-pediatric/guides/priors/).",
+                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
                     "fa_icon": "fas fa-code-branch",
                     "hidden": false
                 },
                 "commit_iso_diff": {
                     "type": "string",
                     "description": "Iso diff value used in the COMMIT filtering step.",
-                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/nf-pediatric/guides/priors/).",
+                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
                     "fa_icon": "fas fa-code-branch",
                     "hidden": false
                 },
                 "commit_perp_diff": {
                     "type": "string",
                     "description": "Perp diff value used in the COMMIT filtering step.",
-                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/nf-pediatric/guides/priors/).",
+                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
                     "fa_icon": "fas fa-code-branch",
                     "hidden": false
                 },
@@ -1382,7 +1382,7 @@
             "title": "Pipeline profile",
             "type": "object",
             "fa_icon": "fas fa-cogs",
-            "description": "Pipeline profile options. This is a short list of options. For full description, please see [the documentation](https://scilus.github.io/nf-pediatric/guides/usage/#choosing-a-profile)",
+            "description": "Pipeline profile options. This is a short list of options. For full description, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/usage/#choosing-a-profile)",
             "properties": {
                 "tracking": {
                     "type": "boolean",

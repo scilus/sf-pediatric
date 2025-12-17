@@ -1,4 +1,4 @@
-include { fetchPriors } from '../utils_nfcore_nf-pediatric_pipeline/main.nf'
+include { fetchPriors } from '../utils_nfcore_sf-pediatric_pipeline/main.nf'
 
 def readParticipantsTsv(file) {
     def participantData = []
@@ -33,7 +33,7 @@ workflow FETCH_DERIVATIVES {
         error "ERROR: Your bids dataset does not contain a participants.tsv file. " +
         "Please provide a participants.tsv file with a column indicating the participants' " +
         "age. For any questions, please refer to the documentation at " +
-        "https://github.com/scilus/nf-pediatric.git or open an issue!"
+        "https://github.com/scilus/sf-pediatric.git or open an issue!"
     }
 
     participantsTsv = file("${input_deriv}/participants.tsv")

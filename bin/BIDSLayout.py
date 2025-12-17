@@ -20,7 +20,7 @@ Formerly: scil_validate_bids.py
 
 ** This is a modified version of scil_validate_bids.py from the **
 ** scilpy package. It allows the fetching of custom BIDS fields **
-** required for nf-pediatric.                                   **
+** required for sf-pediatric.                                   **
 """
 
 import os

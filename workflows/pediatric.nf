@@ -9,9 +9,9 @@ include { QC_MULTIQC as MULTIQC_GLOBAL         } from '../modules/nf-neuro/qc/mu
 include { paramsSummaryMap                  } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
+include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
 include { FETCH_DERIVATIVES                 } from '../subworkflows/local/utils/fetch_derivatives.nf'
-include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
+include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
 
 // ** Prepare templates ** //
 include { TEMPLATES                         } from '../subworkflows/local/templates/main.nf'
@@ -971,7 +971,7 @@ workflow PEDIATRIC {
     softwareVersionsToYAML(ch_versions)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
-            name:  'nf-pediatric_software_'  + 'mqc_'  + 'versions.yml',
+            name:  'sf-pediatric_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
         ).set { ch_collated_versions }
@@ -991,7 +991,7 @@ workflow PEDIATRIC {
         Channel.empty()
     ch_multiqc_logo          = params.multiqc_logo ?
         Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.fromPath("$projectDir/assets/nf-pediatric-light-logo.png", checkIfExists: true)
+        Channel.fromPath("$projectDir/assets/sf-pediatric-light-logo.png", checkIfExists: true)
 
     summary_params      = paramsSummaryMap(
         workflow, parameters_schema: "nextflow_schema.json")
