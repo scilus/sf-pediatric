@@ -916,7 +916,7 @@ workflow PEDIATRIC {
 
     if ( params.tracking ) {
         ch_anat_qc = ANATTODWI.out.t1_warped
-    } else if ( params.segmentation ) {
+    } else if ( params.segmentation && !params.connectomics ) {
         // ** Fetching the T1w and T2w images for QC ** //
         // ** If both are provided, use T1w, else, use T2w. ** //
         ch_anat_qc = Channel.empty()
