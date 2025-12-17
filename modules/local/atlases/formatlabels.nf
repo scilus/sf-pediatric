@@ -8,7 +8,9 @@ process ATLASES_FORMATLABELS {
     tuple val(meta), path(folder), path(utils), path(fs_license)
 
     output:
-    tuple val(meta), path("*labels.nii.gz")   , emit: labels
+    tuple val(meta), path("*labels.nii.gz")     , emit: labels
+    tuple val(meta), path("*DK_v1_LUT.txt")     , emit: labels_txt
+    tuple val(meta), path("*DK_v1_LUT.json")    , emit: labels_json
     path("*.tsv")                               , emit: stats
     path "versions.yml"                         , emit: versions
 
@@ -23,6 +25,7 @@ process ATLASES_FORMATLABELS {
     # Exporting the FS license and setting up the environment
     export FS_LICENSE=./license.txt
     export SUBJECTS_DIR=\$(readlink -e ./)
+    export UTILS_DIR=\$(readlink -e $utils/freesurfer_utils/)
 
     mv $folder ${prefix}
 
@@ -33,7 +36,7 @@ process ATLASES_FORMATLABELS {
     # By default, labels are in range 1000-2000, let's reformat them.
     scil_combine_labels.py \
         --volume_ids ${prefix}${ses}__labels.nii.gz 1001 2001 1002 2002 1003 2003 \
-        1004 2004 1005 2005 1006 2006 1007 2007 1008 2008 1009 2009 1010 2010 \
+        1005 2005 1006 2006 1007 2007 1008 2008 1009 2009 1010 2010 \
         1011 2011 1012 2012 1013 2013 1014 2014 1015 2015 1016 2016 1017 2017 \
         1018 2018 1019 2019 1020 2020 1021 2021 1022 2022 1023 2023 1024 2024 \
         1025 2025 1026 2026 1027 2027 1028 2028 1029 2029 1030 2030 1031 2031 \
@@ -77,6 +80,9 @@ process ATLASES_FORMATLABELS {
         -m ThickAvg \
         -s ${prefix}
 
+    # Copy LUT files
+    cp \${UTILS_DIR}/atlas_DK_v1_LUT.json \${UTILS_DIR}/atlas_DK_v1_LUT.txt ./
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
@@ -98,6 +104,8 @@ process ATLASES_FORMATLABELS {
     touch ${prefix}${ses}__area_rh.aparc.tsv
     touch ${prefix}${ses}__thickness_lh.aparc.tsv
     touch ${prefix}${ses}__thickness_rh.aparc.tsv
+    touch ${prefix}__DK_v1_LUT.txt
+    touch ${prefix}__DK_v1_LUT.json
 
     scil_remove_labels.py -h
     scil_combine_labels.py -h
