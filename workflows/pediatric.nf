@@ -602,7 +602,7 @@ workflow PEDIATRIC {
 
             ch_fa = FETCH_DERIVATIVES.out.metrics
                 .map { meta, files ->
-                    def fa = files.findAll { it.name.contains('desc-fa.nii.gz') }
+                    def fa = files.findAll { it.name.contains('param-fa_dwimap.nii.gz') }
 
                     // ** Some logging if no files exists ** //
                     if ( fa.size() == 0 ) {

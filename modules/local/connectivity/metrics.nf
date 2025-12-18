@@ -28,7 +28,7 @@ process CONNECTIVITY_METRICS {
             base_name=\$(basename \${metric} .nii.gz)
 
             # Extract metric type from different patterns
-            if [[ "\$base_name" =~ desc-([^_]+) ]]; then
+            if [[ "\$base_name" =~ param-([^_]+) ]]; then
                 stat="\${BASH_REMATCH[1]}"  # Extract the value after 'desc-'
             else
                 stat=\${base_name/${prefix}__/}  # Fallback to old method
@@ -110,7 +110,7 @@ process CONNECTIVITY_METRICS {
             base_name=\$(basename \${metric} .nii.gz)
 
             # Extract metric type from different patterns
-            if [[ "\$base_name" =~ desc-([^_]+) ]]; then
+            if [[ "\$base_name" =~ param-([^_]+) ]]; then
                 stat="\${BASH_REMATCH[1]}"  # Extract the value after 'desc-'
             else
                 stat=\${base_name/${prefix}__/}  # Fallback to old method
