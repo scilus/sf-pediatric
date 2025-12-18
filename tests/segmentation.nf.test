@@ -2,7 +2,7 @@ nextflow_pipeline {
 
     options "-stub-run"
 
-    name "Test nf-pediatric profile segmentation"
+    name "Test sf-pediatric profile segmentation"
     script "../main.nf"
 
     test("Segmentation profile - should run successfully") {
@@ -32,7 +32,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name,
                     // All fastsurfer output.

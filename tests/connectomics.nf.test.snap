@@ -24,7 +24,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0"
+                    "scilus/sf-pediatric": "v0.1.0"
                 }
             },
             [
@@ -35,7 +35,7 @@
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
@@ -158,7 +158,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0"
+                    "scilus/sf-pediatric": "v0.1.0"
                 }
             },
             [
@@ -169,7 +169,7 @@
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",

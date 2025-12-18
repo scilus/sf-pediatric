@@ -2,7 +2,7 @@ nextflow_pipeline {
 
     options "-stub-run"
 
-    name "Test nf-pediatric bundleseg"
+    name "Test sf-pediatric bundleseg"
     script "../main.nf"
 
     test("BundleSeg - should run successfully") {
@@ -27,7 +27,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()

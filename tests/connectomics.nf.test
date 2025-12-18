@@ -2,7 +2,7 @@ nextflow_pipeline {
 
     options "-stub-run"
 
-    name "Test nf-pediatric profile connectomics"
+    name "Test sf-pediatric profile connectomics"
     script "../main.nf"
 
     test("Connectomics profile with derivatives - should run successfully") {
@@ -27,7 +27,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()
@@ -57,7 +57,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()
@@ -80,7 +80,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("ERROR: Your bids dataset does not contain a participants.tsv file. Please provide a participants.tsv file with a column indicating the participants' age. For any questions, please refer to the documentation at https://github.com/scilus/nf-pediatric.git or open an issue!")
+            assert workflow.stdout.contains("ERROR: Your bids dataset does not contain a participants.tsv file. Please provide a participants.tsv file with a column indicating the participants' age. For any questions, please refer to the documentation at https://github.com/scilus/sf-pediatric.git or open an issue!")
         }
     }
 
