@@ -115,7 +115,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Transformation files ** //
-    ch_transforms = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*from-{T1w,T2w}_to-dwi_{warp,affine}*",
+    ch_transforms = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}xfm/*from-{T1w,T2w}_to-dwi_mode-image_desc-{warp,affine}*",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
@@ -149,7 +149,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Peaks file ** //
-    ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-peaks*.nii.gz",
+    ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-peaks*.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
@@ -166,7 +166,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** fODF file ** //
-    ch_fodf = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-fodf*.nii.gz",
+    ch_fodf = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-sh*.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
@@ -223,7 +223,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Tractogram file ** //
-    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-{concatenated,local,pft}_tractogram.trk", checkIfExists: true)
+    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*tract-wholebrain_track-{sdstream,pft}*tractogram.trk", checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
@@ -252,7 +252,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Metrics files ** //
-    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-{fa,md,rd,ad,nufo,afd_total,afd_sum,afd_max}.nii.gz",
+    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-{fa,md,rd,ad,nufo,afdtotal,afdsum,afdmax}_dwimap.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
