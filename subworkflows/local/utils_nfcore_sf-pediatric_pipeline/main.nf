@@ -334,7 +334,7 @@ def generateSidecarJson(outputDir) {
             }
 
             if (niftiFile.name.contains("space-DWI")) {
-                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
+                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
                     .findAll { f ->
                         f.name.contains("to-dwi")
                     }
@@ -342,19 +342,19 @@ def generateSidecarJson(outputDir) {
                 def transformsList = transforms instanceof List ? transforms : [transforms]
                 transformsList.each { f ->
                 if (f.exists()) {
-                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
                     }
                 }
             }
             if (niftiFile.name.contains("space-T2w")) {
-                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
+                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
                     .findAll { f ->
                         f.name.contains("T1w_to-T2w")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
                 transformsList.each { f ->
                 if (f.exists()) {
-                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
                     }
                 }
             }
@@ -378,26 +378,26 @@ def generateSidecarJson(outputDir) {
             }
 
             if (niftiFile.name.contains("space-DWI")) {
-                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
+                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
                     .findAll { f ->
                         f.name.contains("to-dwi")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
                 transformsList.each { f ->
                 if (f.exists()) {
-                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
                     }
                 }
             }
             if (niftiFile.name.contains("space-T1w")) {
-                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
+                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
                     .findAll { f ->
                         f.name.contains("T2w_to-T1w")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
                 transformsList.each { f ->
                 if (f.exists()) {
-                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
                     }
                 }
             }
@@ -457,14 +457,14 @@ def generateSidecarJson(outputDir) {
             }
 
             if (niftiFile.name.contains("space-DWI")) {
-                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
+                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
                     .findAll { f ->
                         f.name.contains("to-dwi")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
                 transformsList.each { f ->
                 if (f.exists()) {
-                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
                     }
                 }
             }
@@ -498,14 +498,14 @@ def generateSidecarJson(outputDir) {
             }
 
             if (niftiFile.name.contains("space-DWI")) {
-                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
+                def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
                     .findAll { f ->
                         f.name.contains("to-dwi")
                     }
                 def transformsList = transforms instanceof List ? transforms : [transforms]
                 transformsList.each { f ->
                 if (f.exists()) {
-                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
                     }
                 }
             }
@@ -537,14 +537,14 @@ def generateSidecarJson(outputDir) {
                 }
             }
 
-            def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*")
+            def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
                 .findAll { f ->
                     f.name.contains("to-dwi")
                 }
             def transformsList = transforms instanceof List ? transforms : [transforms]
             transformsList.each { f ->
             if (f.exists()) {
-                links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
                 }
             }
 
@@ -573,7 +573,7 @@ def generateSidecarJson(outputDir) {
             file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
         }
 
-        def patterns = ["ad", "afd", "fa", "fodf", "ga", "md", "mode", "nufo", "peaks", "b0", "pwdavg", "rd", "rgb", "tensor"]
+        def patterns = ["ad", "afd", "fa", "fodf", "ga", "md", "mode", "nufo", "peaks", "b0", "rd", "rgb", "tensor"]
 
         if (patterns.any { pattern -> niftiFile.name.contains(pattern) }) {
             def links = []
