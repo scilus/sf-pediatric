@@ -28,7 +28,6 @@
                 }
             },
             [
-                "README.txt",
                 "dataset_description.json",
                 "multiqc",
                 "multiqc/global_multiqc_data",
@@ -162,7 +161,6 @@
                 }
             },
             [
-                "README.txt",
                 "dataset_description.json",
                 "multiqc",
                 "multiqc/global_multiqc_data",

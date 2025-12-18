@@ -38,7 +38,6 @@
                 }
             },
             [
-                "README.txt",
                 "bundles_mean_stats.tsv",
                 "bundles_point_stats.tsv",
                 "dataset_description.json",
