@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `Added`
 
+- Conform output to new DWI [BIDS extension proposal](https://github.com/bids-standard/bids-specification/pull/2258) and on-going tractography BIDS extension.
 - Added connectivity regions LUT files in output folder.
 - Added infrastructure to support the new multiqc report using `nf-neuro` [MultiQC_neuroimaging](https://github.com/nf-neuro/MultiQC_neuroimaging.git) plugin.
 - Date and time to multiqc report to avoid overwriting when the pipeline is run twice for the same `outdir` ([[#88](https://github.com/scilus/sf-pediatric/issues/88)])
