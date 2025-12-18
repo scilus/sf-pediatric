@@ -1,9 +1,9 @@
 lint:
   files_exist:
     - CODE_OF_CONDUCT.md
-    - assets/nf-core-nf-pediatric_logo_light.png
-    - docs/images/nf-core-nf-pediatric_logo_light.png
-    - docs/images/nf-core-nf-pediatric_logo_dark.png
+    - assets/nf-core-sf-pediatric_logo_light.png
+    - docs/images/nf-core-sf-pediatric_logo_light.png
+    - docs/images/nf-core-sf-pediatric_logo_dark.png
     - .github/ISSUE_TEMPLATE/config.yml
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
@@ -17,9 +17,9 @@ lint:
     - .github/workflows/linting.yml
     - .github/workflows/branch.yml
     - .github/workflows/linting_comment.yml
-    - assets/nf-core-nf-pediatric_logo_light.png
-    - docs/images/nf-core-nf-pediatric_logo_light.png
-    - docs/images/nf-core-nf-pediatric_logo_dark.png
+    - assets/nf-core-sf-pediatric_logo_light.png
+    - docs/images/nf-core-sf-pediatric_logo_light.png
+    - docs/images/nf-core-sf-pediatric_logo_dark.png
     - .github/ISSUE_TEMPLATE/bug_report.yml
     - .github/PULL_REQUEST_TEMPLATE.md
     - docs/README.md
@@ -30,14 +30,22 @@ lint:
     - manifest.name
     - manifest.homePage
   template_strings: false
-nf_core_version: 3.3.2
+nf_core_version: 3.4.1
 repository_type: pipeline
 template:
   author: Anthony Gagnon
-  description: nf-pediatric is a neuroimaging pipeline to process pediatric MRI data
-    (dMRI, and sMRI) ranging from 0-18 years old.
+  description: sf-pediatric is a neuroimaging pipeline to process pediatric MRI
+    data (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
-  name: nf-pediatric
+  name: sf-pediatric
   org: scilus
   outdir: .
+  skip_features:
+    - igenomes
+    - fastqc
+    - changelog
+    - license
+    - test_config
+    - seqera_platform
+  version: 0.1.0

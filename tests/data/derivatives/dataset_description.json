@@ -1,9 +1,9 @@
 {
-    "Name": "nf-pediatric derivatives",
+    "Name": "sf-pediatric derivatives",
     "BIDSVersion": "1.10.0",
     "DatasetType": "derivative",
     "GeneratedBy": {
-        "Name": "scilus/nf-pediatric",
+        "Name": "scilus/sf-pediatric",
         "Version": "1.0dev",
         "Date": "2025-04-23T12:35:51.795323"
     }

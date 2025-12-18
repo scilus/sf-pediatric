@@ -1,14 +1,35 @@
-# scilus/nf-pediatric: Changelog
+# scilus/sf-pediatric: Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## `Added`
+
+- Conform output to new DWI [BIDS extension proposal](https://github.com/bids-standard/bids-specification/pull/2258) and on-going tractography BIDS extension.
+- Added connectivity regions LUT files in output folder.
+- Added infrastructure to support the new multiqc report using `nf-neuro` [MultiQC_neuroimaging](https://github.com/nf-neuro/MultiQC_neuroimaging.git) plugin.
+- Date and time to multiqc report to avoid overwriting when the pipeline is run twice for the same `outdir` ([[#88](https://github.com/scilus/sf-pediatric/issues/88)])
+- Bundle metrics are now exported in clean `.tsv` files for easier handling.
+- Dynamic boilerplate methods section in MultiQC report ([[#87](https://github.com/scilus/sf-pediatric/issues/87)])
+
+### `Fixed`
+
+- Fix edge cases returning header errors in labels QC when running only segmentation and connectomics profiles.
+- Filter tractograms to ensure the concatenated one is used when running on derivatives.
+- Robustify tractometry steps by using centroids from the WM atlas rather than subject-specific centroids.
+- Handle cases where cortical segmentation failed without throwing an error.
+- Age validation step in M-CRIB-S module.
+- Support custom WM bundle atlas using `--atlas_directory`.
+- Fix eddy process when run without topup results ([[#78](https://github.com/scilus/sf-pediatric/issues/78)])
 
 ## [0.1.0] - [2025-10-06]
 
 ### `Added`
 
-- [Documentation site](https://github.com/scilus/nf-pediatric-documentation) describing requirements, inputs, outputs, parameters, etc.
-- Framewise displacement metric in both multiqc reports ([#29](https://github.com/scilus/nf-pediatric/issues/29))
+- [Documentation site](https://github.com/scilus/sf-pediatric-documentation) describing requirements, inputs, outputs, parameters, etc.
+- Framewise displacement metric in both multiqc reports ([#29](https://github.com/scilus/sf-pediatric/issues/29))
 - Age-matched BundleSeg WM bundle atlas for age-adaptable bundle extraction.
 - Normative curves for prior determination in FRF and COMMIT modules.
 
@@ -19,14 +40,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed`
 
 - Fix name collision when multiple sessions in concatenate stats module.
-- Fix stride in QC sections to ensure all axis are plotted correctly ([#62](https://github.com/scilus/nf-pediatric/issues/62))
-- Fix mask resampling to force same dimension as b0 volume ([#59](https://github.com/scilus/nf-pediatric/issues/59))
+- Fix stride in QC sections to ensure all axis are plotted correctly ([#62](https://github.com/scilus/sf-pediatric/issues/62))
+- Fix mask resampling to force same dimension as b0 volume ([#59](https://github.com/scilus/sf-pediatric/issues/59))
 - Fix glob pattern for template to DWI registration QC file.
-- Add dynamic resource allocation for registering tractograms in output space ([#56](https://github.com/scilus/nf-pediatric/issues/56))
+- Add dynamic resource allocation for registering tractograms in output space ([#56](https://github.com/scilus/sf-pediatric/issues/56))
 - Fix RGB FA registration to template space.
 - Add filtering step removing null values for anatomical coregistration in case of missing files.
-- Fix precedence issues in branching logic for anatomical to diffusion space registration ([#63](https://github.com/scilus/nf-pediatric/issues/63))
-- Handling of B0 threshold in `preproc/n4` and `preproc/normalize` ([[#58](https://github.com/scilus/nf-pediatric/issues/58)])
+- Fix precedence issues in branching logic for anatomical to diffusion space registration ([#63](https://github.com/scilus/sf-pediatric/issues/63))
+- Handling of B0 threshold in `preproc/n4` and `preproc/normalize` ([[#58](https://github.com/scilus/sf-pediatric/issues/58)])
 
 ## [0.1.0-beta] - [2025-08-13]
 
@@ -67,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
-- Support for using both local and PFT tracking (union of both tractograms) ([[#30](https://github.com/scilus/nf-pediatric/issues/30)])
+- Support for using both local and PFT tracking (union of both tractograms) ([[#30](https://github.com/scilus/sf-pediatric/issues/30)])
 
 ## [Unreleased] - [2025-03-18]
 
@@ -79,8 +100,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
-- Output `.annot` and `.stats` file for brainnetome in FS output ([#19](https://github.com/scilus/nf-pediatric/issues/19))
-- Resampling/reshaping according to input file when registering brainnetome atlas ([#26](https://github.com/scilus/nf-pediatric/issues/26))
+- Output `.annot` and `.stats` file for brainnetome in FS output ([#19](https://github.com/scilus/sf-pediatric/issues/19))
+- Resampling/reshaping according to input file when registering brainnetome atlas ([#26](https://github.com/scilus/sf-pediatric/issues/26))
 
 ## [Unreleased] - [2025-02-28]
 
@@ -91,8 +112,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
-- Completed the addition of QC in pipeline ([#7](https://github.com/scilus/nf-pediatric/issues/7))
-- Move cerebellum and hypothalamus sub-segmentation as optional steps in fastsurfer ([#23](https://github.com/scilus/nf-pediatric/issues/23))
+- Completed the addition of QC in pipeline ([#7](https://github.com/scilus/sf-pediatric/issues/7))
+- Move cerebellum and hypothalamus sub-segmentation as optional steps in fastsurfer ([#23](https://github.com/scilus/sf-pediatric/issues/23))
 
 ## [Unreleased] - [2025-02-14]
 
@@ -105,7 +126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
-- BIDS folder as mandatory input ([#16](https://github.com/scilus/nf-pediatric/issues/16)).
+- BIDS folder as mandatory input ([#16](https://github.com/scilus/sf-pediatric/issues/16)).
 - New test datasets (BIDS input folder and derivatives).
 - Support BIDS derivatives as input for `-profile connectomics`.
 - T2w image for pediatric data are now preprocessed and coregistered in T1w space.

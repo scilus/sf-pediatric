@@ -1,6 +1,6 @@
 {
-    "name": "scilus/nf-pediatric",
-    "homePage": "https://github.com/scilus/nf-pediatric",
+    "name": "scilus/sf-pediatric",
+    "homePage": "https://github.com/scilus/sf-pediatric",
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {
@@ -27,13 +27,13 @@
                     },
                     "utils_nfschema_plugin": {
                         "branch": "master",
-                        "git_sha": "2fd2cd6d0e7b273747f32e465fdc6bcc3ae0814e",
+                        "git_sha": "4b406a74dc0449c0401ed87d5bfff4252fd277fd",
                         "installed_by": ["subworkflows"]
                     }
                 }
             }
         },
-        "https://github.com/scilus/nf-neuro.git": {
+        "https://github.com/nf-neuro/modules.git": {
             "modules": {
                 "nf-neuro": {
                     "betcrop/antsbet": {
@@ -62,38 +62,38 @@
                     },
                     "bundle/centroid": {
                         "branch": "main",
-                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
-                        "installed_by": ["modules"],
+                        "git_sha": "f9ca7936903f1f231dba1cdc7223b758c7748bfc",
+                        "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/bundle/centroid/bundle-centroid.diff"
                     },
                     "bundle/fixelafd": {
                         "branch": "main",
-                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
-                        "installed_by": ["modules"],
+                        "git_sha": "4dd98f1039585b08d4443e207ef26130c82d8d01",
+                        "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/bundle/fixelafd/bundle-fixelafd.diff"
                     },
                     "bundle/labelmap": {
                         "branch": "main",
-                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
-                        "installed_by": ["modules"],
+                        "git_sha": "4be831dfd161675151ede8cff851c58929a98a55",
+                        "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/bundle/labelmap/bundle-labelmap.diff"
                     },
                     "bundle/recognize": {
                         "branch": "main",
-                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
-                        "installed_by": ["bundle_seg"],
+                        "git_sha": "70ec5c35fbe3d0615c87497b02f7f289b24e4819",
+                        "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/bundle/recognize/bundle-recognize.diff"
                     },
                     "bundle/stats": {
                         "branch": "main",
-                        "git_sha": "a61ef63ffe62b9c67b23e5b52a2ee18c9b1252de",
-                        "installed_by": ["modules"],
+                        "git_sha": "0059a7c5c9277288f069d6c908c016d50cc0bd0c",
+                        "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/bundle/stats/bundle-stats.diff"
                     },
                     "bundle/uniformize": {
                         "branch": "main",
-                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
-                        "installed_by": ["modules"],
+                        "git_sha": "1f0d9c4423eef56edd81ffa571206f32e3b2d11a",
+                        "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/bundle/uniformize/bundle-uniformize.diff"
                     },
                     "connectivity/afdfixel": {
@@ -158,7 +158,7 @@
                     },
                     "preproc/eddy": {
                         "branch": "main",
-                        "git_sha": "9b1c19bd5073aec628e4b9fe11bfc7510e038e09",
+                        "git_sha": "037e2526ea1446120f7a9ddf36740bbedab8dc9c",
                         "installed_by": ["topup_eddy"],
                         "patch": "modules/nf-neuro/preproc/eddy/preproc-eddy.diff"
                     },
@@ -186,6 +186,16 @@
                         "installed_by": ["topup_eddy"],
                         "patch": "modules/nf-neuro/preproc/topup/preproc-topup.diff"
                     },
+                    "qc/multiqc": {
+                        "branch": "main",
+                        "git_sha": "8bc2ced91049698a66497e9ba875385f0b9f2b77",
+                        "installed_by": ["modules"]
+                    },
+                    "qc/tractogram": {
+                        "branch": "main",
+                        "git_sha": "a06b4cd80dbbd56a2793974ff757249d4e8714dd",
+                        "installed_by": ["modules"]
+                    },
                     "reconst/dtimetrics": {
                         "branch": "main",
                         "git_sha": "d514d1193937657d3eb3ab39bfe757215a348b01",
@@ -194,9 +204,8 @@
                     },
                     "reconst/fodf": {
                         "branch": "main",
-                        "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
-                        "installed_by": ["modules"],
-                        "patch": "modules/nf-neuro/reconst/fodf/reconst-fodf.diff"
+                        "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
+                        "installed_by": ["modules"]
                     },
                     "reconst/frf": {
                         "branch": "main",
@@ -213,7 +222,7 @@
                     "registration/ants": {
                         "branch": "main",
                         "git_sha": "8b713829fd96b11f3cee6c6f4d502848cbc392d1",
-                        "installed_by": ["bundle_seg", "modules", "output_template_space"],
+                        "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/ants/registration-ants.diff"
                     },
                     "registration/antsapplytransforms": {
@@ -224,7 +233,7 @@
                     },
                     "registration/tractogram": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
+                        "git_sha": "943e98e5c806aa5c463417cefa8c7039c318892c",
                         "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/tractogram/registration-tractogram.diff"
                     },
@@ -258,16 +267,20 @@
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/tracking/pfttracking/tracking-pfttracking.diff"
                     },
+                    "tractogram/math": {
+                        "branch": "main",
+                        "git_sha": "5435f43bcda7f9a32d101137af36a9272d54f58e",
+                        "installed_by": ["modules"]
+                    },
                     "tractogram/removeinvalid": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["modules"],
-                        "patch": "modules/nf-neuro/tractogram/removeinvalid/tractogram-removeinvalid.diff"
+                        "git_sha": "d719b9b13ccad7709e749b0f113e906a9d0757d3",
+                        "installed_by": ["modules", "tractometry"]
                     },
                     "tractogram/resample": {
                         "branch": "main",
-                        "git_sha": "072538948dd406f6a88cdcf456dc3b132b66e5b6",
-                        "installed_by": ["modules"],
+                        "git_sha": "5435f43bcda7f9a32d101137af36a9272d54f58e",
+                        "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/tractogram/resample/tractogram-resample.diff"
                     },
                     "utils/extractb0": {
@@ -285,12 +298,6 @@
             },
             "subworkflows": {
                 "nf-neuro": {
-                    "bundle_seg": {
-                        "branch": "main",
-                        "git_sha": "ae4fba133e99e526b20f5642c18cfd895b45ca5d",
-                        "installed_by": ["subworkflows"],
-                        "patch": "subworkflows/nf-neuro/bundle_seg/bundle_seg.diff"
-                    },
                     "output_template_space": {
                         "branch": "main",
                         "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
@@ -311,9 +318,15 @@
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "393ffa333e3df27d18eeeac46fac04da1ff5cca2",
+                        "git_sha": "cf3c47a430239aab4371da03399ebf99499a85bf",
                         "installed_by": ["preproc_dwi"],
                         "patch": "subworkflows/nf-neuro/topup_eddy/topup_eddy.diff"
+                    },
+                    "tractometry": {
+                        "branch": "main",
+                        "git_sha": "d2f6d196a9be59dc52d8c51f765a1ae48199de8b",
+                        "installed_by": ["subworkflows"],
+                        "patch": "subworkflows/nf-neuro/tractometry/tractometry.diff"
                     }
                 }
             }

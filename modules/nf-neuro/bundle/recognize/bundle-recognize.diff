@@ -4,21 +4,30 @@ Changes in component 'nf-neuro/bundle/recognize'
 Changes in 'bundle/recognize/main.nf':
 --- modules/nf-neuro/bundle/recognize/main.nf
 +++ modules/nf-neuro/bundle/recognize/main.nf
-@@ -2,9 +2,7 @@
+@@ -2,7 +2,7 @@
      tag "$meta.id"
      label 'process_high'
  
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_latest.sif':
--        'scilus/scilus:latest' }"
-+    container 'scilus/scilus:2.1.0'
+-    container "scilus/scilpy:2.2.0_cpu"
++    container "scilus/scilpy:2.2.1_cpu"
  
      input:
          tuple val(meta), path(tractograms), path(transform), path(config), path(directory)
-@@ -49,6 +47,7 @@
+@@ -35,7 +35,7 @@
+ 
+     for bundle_file in recobundles/*.trk; do
+         bname=\$(basename \${bundle_file} .trk | sed 's/${prefix}_\\+//')
+-        out_cleaned=${prefix}_\${bname}_cleaned.trk
++        out_cleaned=${prefix}__\${bname}_cleaned.trk
+         scil_bundle_reject_outliers \${bundle_file} "\${out_cleaned}" ${outlier_alpha}
+     done
+ 
+@@ -52,7 +52,8 @@
+     scil_bundle_reject_outliers -h
  
      # dummy output for single bundle
-     touch ${prefix}__AF_L_cleaned.trk
+-    touch ${prefix}_AF_L_cleaned.trk
++    touch ${prefix}__AF_L_cleaned.trk
 +    touch ${prefix}__AF_R_cleaned.trk
  
      cat <<-END_VERSIONS > versions.yml

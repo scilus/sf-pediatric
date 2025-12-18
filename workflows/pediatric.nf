@@ -4,14 +4,14 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 // ** Core modules ** //
-include { MULTIQC as MULTIQC_SUBJECT        } from '../modules/nf-core/multiqc/main'
-include { MULTIQC as MULTIQC_GLOBAL         } from '../modules/nf-core/multiqc/main'
+include { QC_MULTIQC as MULTIQC_SUBJECT        } from '../modules/nf-neuro/qc/multiqc'
+include { QC_MULTIQC as MULTIQC_GLOBAL         } from '../modules/nf-neuro/qc/multiqc'
 include { paramsSummaryMap                  } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
+include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
 include { FETCH_DERIVATIVES                 } from '../subworkflows/local/utils/fetch_derivatives.nf'
-include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
+include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
 
 // ** Prepare templates ** //
 include { TEMPLATES                         } from '../subworkflows/local/templates/main.nf'
@@ -48,11 +48,11 @@ include { SEGMENTATION_TRACKINGMASKS as TRACKINGMASKS } from '../modules/local/s
 // ** Tracking ** //
 include { TRACKING_PFTTRACKING              } from '../modules/nf-neuro/tracking/pfttracking/main'
 include { TRACKING_LOCALTRACKING            } from '../modules/nf-neuro/tracking/localtracking/main'
-include { TRACTOGRAM_MATH                   } from '../modules/local/tractogram/math/main'
+include { TRACTOGRAM_MATH                   } from '../modules/nf-neuro/tractogram/math/main'
 
 // ** BundleSeg ** //
-include { BUNDLE_SEG } from '../subworkflows/nf-neuro/bundle_seg/main'
-include { TRACTOMETRY } from '../subworkflows/local/tractometry/main'
+include { BUNDLE_SEG } from '../subworkflows/local/bundleseg/main'
+include { TRACTOMETRY } from '../subworkflows/nf-neuro/tractometry/main'
 
 // ** Connectomics ** //
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as TRANSFORM_LABELS } from '../modules/nf-neuro/registration/antsapplytransforms/main'
@@ -85,6 +85,7 @@ workflow PEDIATRIC {
     // Empty channels to collect data during runtime
     ch_versions = Channel.empty()
     ch_multiqc_files_sub = Channel.empty()
+    ch_multiqc_files_global = Channel.empty()
     ch_nifti_files_to_transform = Channel.empty()
     ch_rgb_files_to_transform = Channel.empty()
     ch_mask_files_to_transform = Channel.empty()
@@ -599,25 +600,17 @@ workflow PEDIATRIC {
         if ( ! params.tracking ) {
             FETCH_DERIVATIVES ( params.input_deriv )
 
-            ch_fa_md = FETCH_DERIVATIVES.out.metrics
+            ch_fa = FETCH_DERIVATIVES.out.metrics
                 .map { meta, files ->
-                    def fa = files.findAll { it.name.contains('desc-fa.nii.gz') }
-                    def md = files.findAll { it.name.contains('desc-md.nii.gz') }
+                    def fa = files.findAll { it.name.contains('param-fa_dwimap.nii.gz') }
 
                     // ** Some logging if no files exists ** //
-                    if ( fa.size() == 0 && md.size() == 0 ) {
-                        error "No FA or MD files have been found in your derivatives folder. " +
+                    if ( fa.size() == 0 ) {
+                        error "No FA file have been found in your derivatives folder. " +
                         "Please validate your structure respects the BIDS specification."
                     }
-                    return [ meta, fa, md ]
+                    return [ meta, fa ]
                 }
-                .branch {
-                    infant: it[0].age < 0.5 || it[0].age > 18
-                        return [ it[0], it[2] ]
-                    child: true // Catch-all, unlikely that FA is there without MD.
-                        return [ it[0], it[1] ]
-                }
-            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
 
             ch_metrics = FETCH_DERIVATIVES.out.metrics
 
@@ -625,15 +618,7 @@ workflow PEDIATRIC {
 
             ch_trk = FETCH_DERIVATIVES.out.trk
         } else {
-            ch_fa_md = RECONST_DTIMETRICS.out.fa
-                .join(RECONST_DTIMETRICS.out.md)
-                .branch {
-                    infant: it[0].age < 0.5 || it[0].age > 18
-                        return [ it[0], it[2] ]
-                    child: true // Catch all, should work also with infant, but not optimal.
-                        return [ it[0], it[1] ]
-                }
-            ch_fa_md = ch_fa_md.infant.mix(ch_fa_md.child)
+            ch_fa = RECONST_DTIMETRICS.out.fa
 
             ch_metrics = RECONST_DTIMETRICS.out.fa
                 .join(RECONST_DTIMETRICS.out.md)
@@ -652,7 +637,7 @@ workflow PEDIATRIC {
         // SUBWORKFLOW: Run BUNDLE_SEG
         //
         BUNDLE_SEG(
-            ch_fa_md,
+            ch_fa,
             ch_trk
         )
         ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
@@ -662,11 +647,34 @@ workflow PEDIATRIC {
         //
         TRACTOMETRY (
             BUNDLE_SEG.out.bundles,
+            BUNDLE_SEG.out.centroids,
             ch_metrics,
             Channel.empty(),
             ch_fodf
         )
+        ch_versions = ch_versions.mix(TRACTOMETRY.out.versions)
 
+        //
+        // MODULE: MERGE_TSV
+        //
+        ch_merged_mean_tsv = TRACTOMETRY.out.mean_std_tsv
+            .map { _meta, stats -> stats }
+            .collectFile(
+                storeDir: "${params.outdir}/",
+                name: "bundles_mean_stats.tsv",
+                skip: 1,
+                keepHeader: true
+            )
+        ch_merged_point_tsv = TRACTOMETRY.out.mean_std_per_point_tsv
+            .map { _meta, stats -> stats }
+            .collectFile(
+                storeDir: "${params.outdir}/",
+                name: "bundles_point_stats.tsv",
+                skip: 1,
+                keepHeader: true
+            )
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_merged_mean_tsv)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_merged_point_tsv)
     }
 
     if ( params.connectomics ) {
@@ -751,6 +759,7 @@ workflow PEDIATRIC {
                 def label = reg_label ?: warped_label
                 [id, trk, label]
             }
+            .filter { it[2] != null }
 
         CONNECTIVITY_DECOMPOSE ( ch_decompose )
         ch_versions = ch_versions.mix(CONNECTIVITY_DECOMPOSE.out.versions.first())
@@ -907,7 +916,7 @@ workflow PEDIATRIC {
 
     if ( params.tracking ) {
         ch_anat_qc = ANATTODWI.out.t1_warped
-    } else if ( params.segmentation ) {
+    } else if ( params.segmentation && !params.connectomics ) {
         // ** Fetching the T1w and T2w images for QC ** //
         // ** If both are provided, use T1w, else, use T2w. ** //
         ch_anat_qc = Channel.empty()
@@ -962,7 +971,7 @@ workflow PEDIATRIC {
     softwareVersionsToYAML(ch_versions)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
-            name:  'nf-pediatric_software_'  + 'mqc_'  + 'versions.yml',
+            name:  'sf-pediatric_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
         ).set { ch_collated_versions }
@@ -982,7 +991,7 @@ workflow PEDIATRIC {
         Channel.empty()
     ch_multiqc_logo          = params.multiqc_logo ?
         Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.fromPath("$projectDir/assets/nf-pediatric-logo.png", checkIfExists: true)
+        Channel.fromPath("$projectDir/assets/sf-pediatric-light-logo.png", checkIfExists: true)
 
     summary_params      = paramsSummaryMap(
         workflow, parameters_schema: "nextflow_schema.json")
@@ -1013,7 +1022,9 @@ workflow PEDIATRIC {
         []
     )
 
-    ch_multiqc_files_global = ch_multiqc_files.mix(QC.out.dice_stats.map{ it[1] }.flatten())
+    ch_multiqc_files_global = ch_multiqc_files_global.mix(
+        ch_multiqc_files.mix(QC.out.dice_stats.map{ it[1] }.flatten())
+    )
     ch_multiqc_files_global = ch_multiqc_files_global.mix(QC.out.sc_values.map{ it[1] }.flatten())
     if ( params.segmentation ) {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.volume_lh)

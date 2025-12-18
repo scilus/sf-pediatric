@@ -1,10 +1,10 @@
-# scilus/nf-pediatric: Usage
+# scilus/sf-pediatric: Usage
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
 ## Introduction
 
-`nf-pediatric` is a neuro-imaging pipeline to process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. Here is a list of the available profiles:
+`sf-pediatric` is a neuro-imaging pipeline to process MRI pediatric data from 0-18 years old. It includes a variety of profiles that performs different steps of the pipeline and can be activated or deactivated by the user. Here is a list of the available profiles:
 
 - `tracking`: Perform DWI preprocessing, DTI and FODF modelling, anatomical segmentation, and tractography. Final outputs are the DTI/FODF metric maps, whole-brain tractogram, registered anatomical image, etc.
 - `bundling`: Perform bundle extraction from the whole-brain tractogram according to a bundle atlas. For children under 6 months, the pipeline uses a neonate atlas. For other ages, pipeline will automatically pull the atlas from [Zenodo](https://zenodo.org/records/10103446) (if you don't have access to internet, you will need to download it prior to the pipeline run, and specify its location using `--atlas_directory`). Following bundle extraction, the pipeline will perform tractometry and output various metrics for each bundle.
@@ -15,7 +15,7 @@
 
 ## Table of Contents
 
-- [nf-pediatric: Usage](#nf-pediatric-usage)
+- [sf-pediatric: Usage](#sf-pediatric-usage)
   - [Introduction](#introduction)
   - [Table of Contents](#table-of-contents)
   - [BIDS input directory](#bids-input-directory)
@@ -41,7 +41,7 @@
 
 ## BIDS input directory
 
-The [BIDS (Brain Imaging Data Structure)](https://bids-specification.readthedocs.io/en/stable/) input directory is a standardized way to organize and describe neuroimaging and behavioral data. The nf-pediatric pipeline expects the input data to be organized in the BIDS format. It is recommended that users validate their BIDS layout using the official [bids-validator tool](https://hub.docker.com/r/bids/validator).
+The [BIDS (Brain Imaging Data Structure)](https://bids-specification.readthedocs.io/en/stable/) input directory is a standardized way to organize and describe neuroimaging and behavioral data. The sf-pediatric pipeline expects the input data to be organized in the BIDS format. It is recommended that users validate their BIDS layout using the official [bids-validator tool](https://hub.docker.com/r/bids/validator).
 
 ### Directory Structure
 
@@ -72,7 +72,7 @@ The most basic BIDS directory should have a similar structure (note that session
 ### Required Files
 
 - `dataset_description.json`: A JSON file describing the dataset.
-- `participants.tsv`: A TSV file listing the participants and their metadata. **`nf-pediatric` requires the participants' age to be supplied within this file, using `age` as the column name. If not available, the pipeline will return an error at runtime. Here is an example:**
+- `participants.tsv`: A TSV file listing the participants and their metadata. **`sf-pediatric` requires the participants' age to be supplied within this file, using `age` as the column name. If not available, the pipeline will return an error at runtime. Here is an example:**
 
 > [!IMPORTANT]
 > The age can be specified using either post conceptual age (only recommended for infant data, users should indicate age in years as soon as possible) or years. If multiple session are available for a single subject, each session needs to be entered in different rows. For example, see below:
@@ -98,7 +98,7 @@ Mandatory files per subject:
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run scilus/nf-pediatric -r main --input <BIDS_directory> --outdir ./results -profile docker,tracking
+nextflow run scilus/sf-pediatric -r main --input <BIDS_directory> --outdir ./results -profile docker,tracking
 ```
 
 This will launch the pipeline with the `docker` configuration profile. There is only 2 parameters that need to be supplied at runtime: `--input`: for the path to your BIDS directory and `--outdir`: path to the output directory. A single or a subset of participants can be specified using `--participant-label`; this will constrain the pipeline to run only on those specified subjects. See below for more information about profiles.
@@ -122,7 +122,7 @@ Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run scilus/nf-pediatric -r main -profile docker -params-file params.yaml
+nextflow run scilus/sf-pediatric -r main -profile docker -params-file params.yaml
 ```
 
 with:
@@ -137,7 +137,7 @@ You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-c
 
 ### How are the priors generated?
 
-One innovative feature of `nf-pediatric` is how it generates the priors for the fiber response function (FRF) and
+One innovative feature of `sf-pediatric` is how it generates the priors for the fiber response function (FRF) and
 COMMIT. Previous pipelines (e.g., TractoFlow) used either a set FRF function or computed the mean FRF across all study subjects. One crucial issue with both methods in pediatric samples lies in the rapid neurophysiological changes
 happening during this development period. Differences between a one-year old and a four-year old children can appear
 rather drastic. Using a single FRF for both or averaging all of them together in a single mean FRF both represent
@@ -149,7 +149,7 @@ the ventricles (see figure below).
 > [!NOTE]
 > While only the FRF and COMMIT priors are currently supported using normative curves, we are working to extend this method to other processing aspects to ensure the most optimal age appropriate processing of diffusion MRI acquisitions.
 
-Each of those median normative curves were approximate using single equations, and implement into `nf-pediatric`.
+Each of those median normative curves were approximate using single equations, and implement into `sf-pediatric`.
 While this is the default option, users can still specify their own FRF using the parameter `--frf_manual_frf`. Similarly, COMMIT priors can be specified with `--commit_para_diff`, `--commit_perp_diff`, and `--commit_iso_diff`.
 
 ### Updating the pipeline
@@ -157,14 +157,14 @@ While this is the default option, users can still specify their own FRF using th
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
 
 ```bash
-nextflow pull scilus/nf-pediatric
+nextflow pull scilus/sf-pediatric
 ```
 
 ### Reproducibility
 
 It is a good idea to specify the pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [scilus/nf-pediatric releases page](https://github.com/scilus/nf-pediatric/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
+First, go to the [scilus/sf-pediatric releases page](https://github.com/scilus/sf-pediatric/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future. For example, at the bottom of the MultiQC reports.
 

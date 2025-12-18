@@ -4,18 +4,16 @@ Changes in component 'nf-neuro/bundle/uniformize'
 Changes in 'bundle/uniformize/main.nf':
 --- modules/nf-neuro/bundle/uniformize/main.nf
 +++ modules/nf-neuro/bundle/uniformize/main.nf
-@@ -2,9 +2,7 @@
+@@ -2,7 +2,7 @@
      tag "$meta.id"
      label 'process_single'
  
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.0.sif':
--        'scilus/scilus:2.0.2' }"
-+    container 'scilus/scilus:2.0.2'
+-    container "scilus/scilpy:2.2.0_cpu"
++    container "scilus/scilpy:2.2.1_cpu"
  
      input:
      tuple val(meta), path(bundles), path(centroids)
-@@ -30,7 +28,10 @@
+@@ -28,7 +28,10 @@
  
      for index in \${!bundles[@]};
          do \
@@ -27,13 +25,13 @@ Changes in 'bundle/uniformize/main.nf':
          if [[ -f "$centroids" ]]; then
              option="--centroid \${centroids[index]}"
          else
-@@ -50,11 +51,16 @@
+@@ -48,11 +51,16 @@
      stub:
      def prefix = task.ext.prefix ?: "${meta.id}"
      """
 +    bundles=(${bundles.join(" ")})
 +
-     scil_bundle_uniformize_endpoints.py -h
+     scil_bundle_uniformize_endpoints -h
  
 -    for bundles in ${bundles};
 +    for index in \${!bundles[@]};

@@ -17,7 +17,7 @@ process SEGMENTATION_MCRIBS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def validage = (meta.age > 27 && meta.age < 45) ? true : false
+    def validage = (meta.age > 27 && meta.age < 44) ? true : false
     def age = validage ? "--subjectage ${Math.round(meta.age)}": "--subjectage 44"
     def useT1 = t1 ? "--useT1" : ""
     def surf = task.ext.surf ? "--surfrecon --inflatesphere --surfreg --surfvol" : ""

@@ -1,4 +1,16 @@
 {
+    "tractogram - remove invalid - stub-run": {
+        "content": [
+            [
+                "versions.yml:md5,40c76353c3f21a5426537a0627ff7cd9"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-11-05T09:08:44.246096"
+    },
     "tractogram - remove invalid": {
         "content": [
             {
@@ -20,7 +32,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,9c98a9977d211116b5e0585b635769c1"
+                    "versions.yml:md5,40c76353c3f21a5426537a0627ff7cd9"
                 ],
                 "tractograms": [
                     [
@@ -40,14 +52,14 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,9c98a9977d211116b5e0585b635769c1"
+                    "versions.yml:md5,40c76353c3f21a5426537a0627ff7cd9"
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.8.4",
-            "nextflow": "24.04.1"
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2024-05-21T14:39:05.238848"
+        "timestamp": "2025-11-05T09:08:32.861386"
     }
 }

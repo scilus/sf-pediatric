@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an idea for the scilus/nf-pediatric pipeline
+description: Suggest an idea for the scilus/sf-pediatric pipeline
 labels: enhancement
 body:
   - type: textarea

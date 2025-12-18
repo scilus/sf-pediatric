@@ -206,6 +206,6 @@ workflow OUTPUT_TEMPLATE_SPACE {
         ch_rgb_nifti_files          = WARPRGB.out.warped_image                          // channel: [ val(meta), [ warped_rgb ] ]
         ch_warped_mask_files        = WARPMASK.out.warped_image                         // channel: [ val(meta), [ warped_mask ] ]
         ch_warped_labels_files      = WARPLABELS.out.warped_image                       // channel: [ val(meta), [ warped_labels ] ]
-        ch_warped_trk_files         = REGISTRATION_TRACTOGRAM.out.warped_tractogram     // channel: [ val(meta), [ warped_tractogram ] ]
+        ch_warped_trk_files         = REGISTRATION_TRACTOGRAM.out.tractogram            // channel: [ val(meta), [ warped_tractogram ] ]
         versions                    = ch_versions                                       // channel: [ versions.yml ]
 }

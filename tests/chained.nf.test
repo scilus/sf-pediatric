@@ -2,7 +2,7 @@ nextflow_pipeline {
 
     options "-stub-run"
 
-    name "Test nf-pediatric all profiles chained"
+    name "Test sf-pediatric all profiles chained"
     script "../main.nf"
 
     test("Segmentation + connectomics profiles - should run successfully") {
@@ -34,7 +34,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name,
                     // All fastsurfer output.
@@ -69,7 +69,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()
@@ -110,7 +110,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name,
                     // All fastsurfer output.
@@ -145,7 +145,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/nf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()

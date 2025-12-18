@@ -1,30 +1,20 @@
-id: "nf-pediatric-methods-description"
+id: "sf-pediatric-methods-description"
 description: "Suggested text and references to use when describing pipeline usage within the methods section of a publication."
-section_name: "nf-pediatric Methods Description"
-section_href: "https://github.com/scilus/nf-pediatric"
+section_name: "sf-pediatric Methods Description"
+section_href: "https://github.com/scilus/sf-pediatric"
 plot_type: "html"
 
 ## You inject any metadata in the Nextflow '${workflow}' object
 data: |
-  <h4>Methods</h4>
-  <p>Data was processed using nf-pediatric v${workflow.manifest.version} ${doi_text} of the <a href="https://github.com/scilus">Sherbrooke Connectivity Imaging Lab (SCIL)</a> ,
+  <h3>Methods</h3>
+  <p>Data was processed using sf-pediatric v${workflow.manifest.version} ${doi_text} of the <a href="https://github.com/scilus">Sherbrooke Connectivity Imaging Lab (SCIL)</a> ,
   utilizing reproducible modules and subworkflows developed by the <a href="https://github.com/scilus/nf-neuro">nf-neuro</a> Team.
-  <p>The pipeline was executed with Nextflow v${workflow.nextflow.version} (<a href="https://doi.org/10.1038/nbt.3820">Di Tommaso <em>et al.</em>, 2017</a>) with the following command:</p>
+  <p>The pipeline was executed with Nextflow v${workflow.nextflow.version} (<a href="https://doi.org/10.1038/nbt.3820">Di Tommaso <em>et al.</em>, 2017</a>) using ${workflow.containerEngine ?: "locally installed softwares"} with the following command:</p>
   <pre><code>${workflow.commandLine}</code></pre>
-  <p>${tool_citations}</p>
-  <h4>References (if you used nf-pediatric, please cite)</h4>
-  <ul>
-    <li>Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., & Notredame, C. (2017). Nextflow enables reproducible computational workflows. Nature Biotechnology, 35(4), 316-319. doi: <a href="https://doi.org/10.1038/nbt.3820">10.1038/nbt.3820</a></li>
-    <li>Merkel, D. (2014). Docker: lightweight linux containers for consistent development and deployment. Linux Journal, 2014(239), 2.</li>
-    <li>Kurtzer, G. M., Sochat, V., & Bauer, M. W. (2017). Singularity: Scientific containers for mobility of compute. PLOS ONE, 12(5), e0177459. doi: <a href="https://doi.org/10.1371/journal.pone.0177459">10.1371/journal.pone.0177459</a></li>
-    <li>Tournier, J.-D., Smith, R., Raffelt, D., Tabbara, R., Dhollander, T., Pietsch, M., Christiaens, D., Jeurissen, B., Yeh, C.-H., & Connelly, A. (2019). MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation. NeuroImage, 202, 116137. doi: <a href="https://doi.org/10.1016/j.neuroimage.2019.116137">10.1016/j.neuroimage.2019.116137</a></li>
-    <li>Jenkinson, M., Beckmann, C. F., Behrens, T. E. J., Woolrich, M. W., & Smith, S. M. (2012). FSL. NeuroImage, 62(2), 782–790. doi: <a href="https://doi.org/10.1016/j.neuroimage.2011.09.015">10.1016/j.neuroimage.2011.09.015</a></li>
-    <li>Tustison, N. J., Cook, P. A., Holbrook, A. J., Johnson, H. J., Muschelli, J., Devenyi, G. A., Duda, J. T., Das, S. R., Cullen, N. C., Gillen, D. L., Yassa, M. A., Stone, J. R., Gee, J. C., & Avants, B. B. (2021). The ANTsX ecosystem for quantitative biological and medical imaging. Scientific Reports, 11(1), 9068. doi: <a href="https://doi.org/10.1038/s41598-021-87564-6">10.1038/s41598-021-87564-6</a></li>
-    <li>Henschel, L., Conjeti, S., Estrada, S., Diers, K., Fischl, B., & Reuter, M. (2020). FastSurfer—A fast and accurate deep learning based neuroimaging pipeline. NeuroImage, 219, 117012. doi: <a href="https://doi.org/10.1016/j.neuroimage.2020.117012">10.1016/j.neuroimage.2020.117012</a></li>
-    <li>Fischl, B. (2012). FreeSurfer. NeuroImage, 62(2), 774–781. doi: <a href="https://doi.org/10.1016/j.neuroimage.2012.01.021">10.1016/j.neuroimage.2012.01.021</a></li>
-    <li>Adamson C. L., Alexander B., Ball G., Beare R., Cheong J. L. Y., Spittle A. J., Doyle L. W., Anderson P. J., Seal M. L., Thompson D. K. (2020). Parcellation of the neonatal cortex using Surface-based Melbourne Children's Regional Infant Brain atlases (M-CRIB-S). Scientific Reports, 10(1), 4359. doi: <a href="https://doi.org/10.1038/s41598-020-61326-2">10.1038/s41598-020-61326-2</a></li>
-    ${tool_bibliography}
-  </ul>
+  <h4>Processing Steps</h4>
+  ${methods_html}
+  <h4>References</h4>
+  ${tool_bibliography}
   <div class="alert alert-info">
     <h5>Notes:</h5>
     <ul>

@@ -1,88 +1,87 @@
 {
     "BundleSeg - should run successfully": {
         "content": [
-            33,
+            37,
             {
+                "BUNDLE_FIXELAFD": {
+                    "scilpy": "2.2.1"
+                },
+                "BUNDLE_LABELMAP": {
+                    "scilpy": "2.2.1"
+                },
                 "BUNDLE_RECOGNIZE": {
-                    "scilpy": "2.1.0"
+                    "scilpy": "2.2.1"
+                },
+                "BUNDLE_STATS": {
+                    "scilpy": "2.2.1"
+                },
+                "BUNDLE_UNIFORMIZE": {
+                    "scilpy": "2.2.1"
                 },
                 "REGISTRATION_ANTS": {
                     "ants": "2.4.3",
                     "mrtrix": "3.0.4",
                     "imagemagick": null
                 },
+                "TRACTOGRAM_REMOVEINVALID": {
+                    "scilpy": "2.2.1"
+                },
+                "TRACTOGRAM_RESAMPLE": {
+                    "scilpy": "2.2.1"
+                },
+                "TRANSFORM_CENTROIDS": {
+                    "ants": null,
+                    "scilpy": "2.2.1"
+                },
                 "Workflow": {
-                    "scilus/nf-pediatric": "v0.1.0"
+                    "scilus/sf-pediatric": "v0.1.0"
                 }
             },
             [
-                "README.txt",
+                "bundles_mean_stats.tsv",
+                "bundles_point_stats.tsv",
                 "dataset_description.json",
                 "multiqc",
                 "multiqc/global_multiqc_data",
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/nf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/dwi",
                 "sub-test1/ses-baseline/dwi/bundles",
-                "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_desc-AF_L.trk",
-                "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_desc-AF_R.trk",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-endpoints_map_raw_stats.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-endpoints_metric_stats.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-length_stats.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-mean_std_per_point.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-mean_std_stats.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-streamline_count.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-volume_per_label.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-volume_stats.json",
+                "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
+                "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_tract-ArcuateFasciculus_hemi-right_track-sdstream_tractogram.trk",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-mean_stats.tsv",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-point_stats.tsv",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/dwi",
                 "sub-test1/ses-time1/dwi/bundles",
-                "sub-test1/ses-time1/dwi/bundles/sub-test1_ses-time1_desc-AF_L.trk",
-                "sub-test1/ses-time1/dwi/bundles/sub-test1_ses-time1_desc-AF_R.trk",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-endpoints_map_raw_stats.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-endpoints_metric_stats.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-length_stats.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-mean_std_per_point.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-mean_std_stats.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-streamline_count.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-volume_per_label.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-volume_stats.json",
+                "sub-test1/ses-time1/dwi/bundles/sub-test1_ses-time1_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
+                "sub-test1/ses-time1/dwi/bundles/sub-test1_ses-time1_tract-ArcuateFasciculus_hemi-right_track-sdstream_tractogram.trk",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-mean_stats.tsv",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-point_stats.tsv",
                 "sub-test3",
                 "sub-test3/dwi",
                 "sub-test3/dwi/bundles",
-                "sub-test3/dwi/bundles/sub-test3_desc-AF_L.trk",
-                "sub-test3/dwi/bundles/sub-test3_desc-AF_R.trk",
-                "sub-test3/dwi/sub-test3_desc-endpoints_map_raw_stats.json",
-                "sub-test3/dwi/sub-test3_desc-endpoints_metric_stats.json",
-                "sub-test3/dwi/sub-test3_desc-length_stats.json",
-                "sub-test3/dwi/sub-test3_desc-mean_std_per_point.json",
-                "sub-test3/dwi/sub-test3_desc-mean_std_stats.json",
-                "sub-test3/dwi/sub-test3_desc-streamline_count.json",
-                "sub-test3/dwi/sub-test3_desc-volume_per_label.json",
-                "sub-test3/dwi/sub-test3_desc-volume_stats.json",
+                "sub-test3/dwi/bundles/sub-test3_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
+                "sub-test3/dwi/bundles/sub-test3_tract-ArcuateFasciculus_hemi-right_track-sdstream_tractogram.trk",
+                "sub-test3/dwi/sub-test3_desc-mean_stats.tsv",
+                "sub-test3/dwi/sub-test3_desc-point_stats.tsv",
                 "sub-test4",
                 "sub-test4/dwi",
                 "sub-test4/dwi/bundles",
-                "sub-test4/dwi/bundles/sub-test4_desc-AF_L.trk",
-                "sub-test4/dwi/bundles/sub-test4_desc-AF_R.trk",
-                "sub-test4/dwi/sub-test4_desc-endpoints_map_raw_stats.json",
-                "sub-test4/dwi/sub-test4_desc-endpoints_metric_stats.json",
-                "sub-test4/dwi/sub-test4_desc-length_stats.json",
-                "sub-test4/dwi/sub-test4_desc-mean_std_per_point.json",
-                "sub-test4/dwi/sub-test4_desc-mean_std_stats.json",
-                "sub-test4/dwi/sub-test4_desc-streamline_count.json",
-                "sub-test4/dwi/sub-test4_desc-volume_per_label.json",
-                "sub-test4/dwi/sub-test4_desc-volume_stats.json"
+                "sub-test4/dwi/bundles/sub-test4_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
+                "sub-test4/dwi/bundles/sub-test4_tract-ArcuateFasciculus_hemi-right_track-sdstream_tractogram.trk",
+                "sub-test4/dwi/sub-test4_desc-mean_stats.tsv",
+                "sub-test4/dwi/sub-test4_desc-point_stats.tsv"
             ]
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.2"
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2025-08-13T13:16:19.142493"
+        "timestamp": "2025-12-18T10:29:54.387946"
     }
 }

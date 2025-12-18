@@ -56,7 +56,7 @@ jobs:
         env:
           NFT_VER: ${{ env.NFT_VER }}
         with:
-          max_shards: 14
+          max_shards: 2
 
       - name: debug
         run: |
@@ -68,7 +68,7 @@ jobs:
     needs: [nf-test-changes]
     if: ${{ needs.nf-test-changes.outputs.total_shards != '0' }}
     runs-on: # use GitHub runners
-      - "ubuntu-latest"
+      - "scilus-docker"
     strategy:
       fail-fast: false
       matrix:

@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    scilus/nf-pediatric
+    scilus/sf-pediatric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/scilus/nf-pediatric
+    Github : https://github.com/scilus/sf-pediatric
 ----------------------------------------------------------------------------------------
 */
 
@@ -14,9 +14,8 @@
 */
 
 include { PEDIATRIC  } from './workflows/pediatric'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_nf-pediatric_pipeline'
-
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -61,7 +60,10 @@ workflow {
         args,
         params.outdir,
         params.input,
-        params.bids_script
+        params.bids_script,
+        params.help,
+        params.help_full,
+        params.show_hidden
     )
 
     //

@@ -216,8 +216,8 @@ process ATLASES_BRAINNETOMECHILD {
     """
     touch ${prefix}__brainnetome_child_v1.nii.gz
     touch ${prefix}__brainnetome_child_v1_dilated.nii.gz
-    touch ${prefix}__brainnetome_child_v1.txt
-    touch ${prefix}__brainnetome_child_v1.json
+    touch ${prefix}__brainnetome_child_v1_LUT.txt
+    touch ${prefix}__brainnetome_child_v1_LUT.json
     touch ${prefix}${ses}__volume_BN_Child_subcortical.tsv
     touch ${prefix}${ses}__volume_lh.BN_Child.tsv
     touch ${prefix}${ses}__volume_rh.BN_Child.tsv

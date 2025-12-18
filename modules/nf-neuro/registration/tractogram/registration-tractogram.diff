@@ -4,75 +4,23 @@ Changes in component 'nf-neuro/registration/tractogram'
 Changes in 'registration/tractogram/main.nf':
 --- modules/nf-neuro/registration/tractogram/main.nf
 +++ modules/nf-neuro/registration/tractogram/main.nf
-@@ -1,16 +1,15 @@
+@@ -1,8 +1,9 @@
  process REGISTRATION_TRACTOGRAM {
      tag "$meta.id"
 -    label 'process_single'
 +    label 'process_dynamic'
-+    memory { "${meta.mem} B" }
++    memory { meta.mem ? "${meta.mem} B" : "2.GB" }
  
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:2.0.2' }"
-+    container 'scilus/scilus:2.0.2'
+-    container "scilus/scilus:2.2.1"
++    container "scilus/scilpy:2.2.1_cpu"
  
      input:
-     tuple val(meta), path(anat), path(transfo), path(tractogram), path(ref) /* optional, value = [] */, path(deformation) /* optional, value = [] */
- 
-     output:
--    tuple val(meta), path("*__*.{trk,tck}"), emit: warped_tractogram
-+    tuple val(meta), path("*__*.{trk,tck,h5}"), emit: warped_tractogram
-     path "versions.yml"           , emit: versions
- 
-     when:
-@@ -38,23 +37,33 @@
-         ext=\${tractogram#*.}
-         bname=\$(basename \${tractogram} .\${ext})
- 
--        scil_tractogram_apply_transform.py \$tractogram $anat $transfo tmp.trk\
-+        if [[ \$ext == "h5" ]]; then
-+            scil_tractogram_apply_transform_to_hdf5.py \$tractogram $anat $transfo \
-+                        ${prefix}__\${bname}${suffix}.\${ext} \
-                         $in_deformation\
-                         $inverse\
-+                        $cut_invalid\
-                         $reverse_operation\
-                         $force\
-                         $reference
-+        else
-+            scil_tractogram_apply_transform.py \$tractogram $anat $transfo tmp.trk\
-+                            $in_deformation\
-+                            $inverse\
-+                            $cut_invalid\
-+                            $reverse_operation\
-+                            $force\
-+                            $reference
- 
--        scil_tractogram_remove_invalid.py tmp.trk ${prefix}__\${bname}${suffix}.\${ext}\
--                        $cut_invalid\
--                        $remove_single_point\
--                        $remove_overlapping_points\
--                        $threshold\
--                        $no_empty\
--                        -f
-+            scil_tractogram_remove_invalid.py tmp.trk ${prefix}__\${bname}${suffix}.\${ext}\
-+                            $cut_invalid\
-+                            $remove_single_point\
-+                            $remove_overlapping_points\
-+                            $threshold\
-+                            $no_empty\
-+                            -f
-+        fi
-     done
--
--
- 
-     cat <<-END_VERSIONS > versions.yml
-     "${task.process}":
+     tuple val(meta), path(anat), path(affine), path(tractogram), path(reference), path(deformation)
 
 'modules/nf-neuro/registration/tractogram/tests/main.nf.test.snap' is unchanged
-'modules/nf-neuro/registration/tractogram/tests/nextflow_suffix.config' is unchanged
+'modules/nf-neuro/registration/tractogram/tests/suffix.config' is unchanged
 'modules/nf-neuro/registration/tractogram/tests/tags.yml' is unchanged
 'modules/nf-neuro/registration/tractogram/tests/nextflow.config' is unchanged
 'modules/nf-neuro/registration/tractogram/tests/main.nf.test' is unchanged
+'modules/nf-neuro/registration/tractogram/tests/keep_invalid.config' is unchanged
 ************************************************************

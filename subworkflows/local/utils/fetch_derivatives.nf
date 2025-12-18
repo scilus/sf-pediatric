@@ -1,4 +1,4 @@
-include { fetchPriors } from '../utils_nfcore_nf-pediatric_pipeline/main.nf'
+include { fetchPriors } from '../utils_nfcore_sf-pediatric_pipeline/main.nf'
 
 def readParticipantsTsv(file) {
     def participantData = []
@@ -33,7 +33,7 @@ workflow FETCH_DERIVATIVES {
         error "ERROR: Your bids dataset does not contain a participants.tsv file. " +
         "Please provide a participants.tsv file with a column indicating the participants' " +
         "age. For any questions, please refer to the documentation at " +
-        "https://github.com/scilus/nf-pediatric.git or open an issue!"
+        "https://github.com/scilus/sf-pediatric.git or open an issue!"
     }
 
     participantsTsv = file("${input_deriv}/participants.tsv")
@@ -53,7 +53,7 @@ workflow FETCH_DERIVATIVES {
     }
 
     // ** Segmentations ** //
-    if ( params.connectomics ) {
+    if ( params.connectomics && !params.segmentation ) {
         ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
             checkIfExists: true)
             .map{ file ->
@@ -71,6 +71,14 @@ workflow FETCH_DERIVATIVES {
             }
             .groupTuple(by: 0)
             .map{ meta, files ->
+                if (files.size() == 2) {
+                    def sortedFiles = files.sort { a, b -> // sort so that space-DWI comes second
+                        if (a.name.contains('space-DWI')) return 1
+                        if (b.name.contains('space-DWI')) return -1
+                        return 0
+                    }
+                    return [meta] + sortedFiles
+                }
                 return [meta] + files
             }
             .filter {
@@ -107,7 +115,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Transformation files ** //
-    ch_transforms = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*from-{T1w,T2w}_to-dwi_{warp,affine}*",
+    ch_transforms = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}xfm/*from-{T1w,T2w}_to-dwi_mode-image_desc-{warp,affine}*",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
@@ -141,7 +149,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Peaks file ** //
-    ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-peaks*",
+    ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-peaks*.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
@@ -158,7 +166,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** fODF file ** //
-    ch_fodf = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-fodf*",
+    ch_fodf = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-sh*.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
@@ -215,7 +223,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Tractogram file ** //
-    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-*_tractogram.trk", checkIfExists: true)
+    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*tract-wholebrain_track-{sdstream,pft}*tractogram.trk", checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
@@ -229,12 +237,22 @@ workflow FETCH_DERIVATIVES {
 
             return [metadata, file]
         }
+        .groupTuple(by: 0)
+        .map{ meta, files ->
+            // Return the concatenated tractogram if it exists, else return the first available
+            def concatFile = files.find { it.name.contains('concatenated') }
+            if (concatFile) {
+                return [meta, concatFile]
+            } else {
+                return [meta, files[0]]
+            }
+        }
         .filter {
             participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
     // ** Metrics files ** //
-    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-{fa,md,rd,ad,nufo,afd_total,afd_sum,afd_max}.nii.gz",
+    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-{fa,md,rd,ad,nufo,afdtotal,afdsum,afdmax}_dwimap.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")

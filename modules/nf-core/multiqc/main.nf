@@ -25,7 +25,7 @@ process MULTIQC {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = "${meta.id}"
+    def prefix = "${meta.id}-${workflow.start.format('yyMMdd-HHmm')}"
     def config = multiqc_config ? "--config $multiqc_config" : ''
     def extra_config = extra_multiqc_config ? "--config $extra_multiqc_config" : ''
     def logo = multiqc_logo ? "--cl-config 'custom_logo: \"${multiqc_logo}\"'" : ''
@@ -88,7 +88,7 @@ process MULTIQC {
     """
 
     stub:
-    def prefix = "${meta.id}"
+    def prefix = "${meta.id}" // No timestamp for stub, otherwise tests will fail
     """
     mkdir ${prefix}_multiqc_data
     mkdir ${prefix}_multiqc_plots

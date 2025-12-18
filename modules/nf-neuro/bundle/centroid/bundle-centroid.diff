@@ -4,14 +4,12 @@ Changes in component 'nf-neuro/bundle/centroid'
 Changes in 'bundle/centroid/main.nf':
 --- modules/nf-neuro/bundle/centroid/main.nf
 +++ modules/nf-neuro/bundle/centroid/main.nf
-@@ -2,9 +2,7 @@
+@@ -2,7 +2,7 @@
      tag "$meta.id"
      label 'process_single'
  
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:2.0.2' }"
-+    container 'scilus/scilus:2.0.2'
+-    container "scilus/scilpy:2.2.0_cpu"
++    container "scilus/scilpy:2.2.1_cpu"
  
      input:
          tuple val(meta), path(bundles)

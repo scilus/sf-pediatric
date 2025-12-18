@@ -14,12 +14,12 @@ Changes in 'preproc_t1/main.nf':
  
  params.preproc_t1_run_synthbet = false
  
-@@ -20,13 +20,13 @@
+@@ -19,13 +19,13 @@
+         ch_initial_affine   // channel: [ val(meta), init_affine ]      , optional
          ch_mask_nlmeans     // channel: [ val(meta), mask ]             , optional
-         ch_ref_n4           // channel: [ val(meta), ref, ref-mask ]    , optional
          ch_ref_resample     // channel: [ val(meta), ref ]              , optional
 -        ch_weights          // channel: [ val(meta), weights ]          , optional
-+        ch_weights          // channel: [ weights ]                    , optional
++        ch_weights          // channel: [ weights ]                     , optional
  
      main:
  
@@ -30,16 +30,16 @@ Changes in 'preproc_t1/main.nf':
  
              // ** Denoising ** //
              // Result : [ meta, image, mask | [] ]
-@@ -45,7 +45,7 @@
+@@ -44,7 +44,7 @@
              image_nlmeans = ch_image
          }
  
 -        if ( params.preproc_t1_run_N4 ) {
 +        if ( params.preproc_run_N4 ) {
              // ** N4 correction ** //
-             // Result : [ meta, image, reference | [], mask | [] ]
+             // Result : [ meta, image, [], [], mask | [] ]
              //  Steps :
-@@ -67,7 +67,7 @@
+@@ -61,7 +61,7 @@
              image_N4 = image_nlmeans
          }
  
@@ -48,7 +48,7 @@ Changes in 'preproc_t1/main.nf':
              // ** Resampling ** //
              // Result : [ meta, image, reference | [] ]
              //  Steps :
-@@ -85,15 +85,21 @@
+@@ -79,15 +79,21 @@
              image_resample = image_N4
          }
  
@@ -74,7 +74,7 @@ Changes in 'preproc_t1/main.nf':
  
              BETCROP_SYNTHBET ( ch_bet )
              ch_versions = ch_versions.mix(BETCROP_SYNTHBET.out.versions.first())
-@@ -102,7 +108,7 @@
+@@ -96,7 +102,7 @@
              image_bet = BETCROP_SYNTHBET.out.bet_image
              mask_bet = BETCROP_SYNTHBET.out.brain_mask
          }
@@ -83,7 +83,7 @@ Changes in 'preproc_t1/main.nf':
              // ** ANTSBET ** //
              // The template and probability maps are mandatory if running antsBET. Since the
              // error message from nextflow when they are absent is either non-informative or
-@@ -127,23 +133,23 @@
+@@ -121,23 +127,23 @@
              mask_bet = Channel.empty()
          }
  

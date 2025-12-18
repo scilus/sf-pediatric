@@ -21,11 +21,9 @@ Changes in 'topup_eddy/main.nf':
              // ** Create channel for EDDY ** //
              // Result : [ meta, dwi, bval, bvec, rev-dwi | [], rev-bval | [], rev-bvec | [], b0 | [], coeffs | [], movpar | [] ]
              //  Steps :
-@@ -82,15 +82,8 @@
-             ch_versions = ch_versions.mix(PREPROC_EDDY.out.versions.first())
-             ch_multiqc_files = ch_multiqc_files.mix(PREPROC_EDDY.out.dwi_eddy_mqc)
+@@ -84,14 +84,6 @@
              ch_multiqc_files = ch_multiqc_files.mix(PREPROC_EDDY.out.rev_dwi_eddy_mqc)
-+            ch_multiqc_files = ch_multiqc_files.mix(PREPROC_EDDY.out.eddy_fd)
+             ch_multiqc_files = ch_multiqc_files.mix(PREPROC_EDDY.out.eddy_fd_mqc)
  
 -            ch_dwi_extract_b0 = PREPROC_EDDY.out.dwi_corrected
 -                .join(PREPROC_EDDY.out.bval_corrected)
@@ -38,7 +36,7 @@ Changes in 'topup_eddy/main.nf':
              ch_dwi = PREPROC_EDDY.out.dwi_corrected
                  .join(PREPROC_EDDY.out.bval_corrected)
                  .join(PREPROC_EDDY.out.bvec_corrected)
-@@ -103,6 +96,11 @@
+@@ -104,6 +96,11 @@
  
              ch_b0_mask = BETCROP_FSLBETCROP.out.mask
          }
