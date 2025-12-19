@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - [2025-12-19]
 
 ## `Added`
 
@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Age validation step in M-CRIB-S module.
 - Support custom WM bundle atlas using `--atlas_directory`.
 - Fix eddy process when run without topup results ([[#78](https://github.com/scilus/sf-pediatric/issues/78)])
+
+### `Changed`
+
+- Revert back default maximum shell threshold for DTI fitting to 1500.
 
 ## [0.1.0] - [2025-10-06]
 
