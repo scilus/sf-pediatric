@@ -1,12 +1,29 @@
 {
-    "@context": "https://w3id.org/ro/crate/1.1/context",
+    "@context": [
+        "https://w3id.org/ro/crate/1.1/context",
+        {
+            "GithubService": "https://w3id.org/ro/terms/test#GithubService",
+            "JenkinsService": "https://w3id.org/ro/terms/test#JenkinsService",
+            "PlanemoEngine": "https://w3id.org/ro/terms/test#PlanemoEngine",
+            "TestDefinition": "https://w3id.org/ro/terms/test#TestDefinition",
+            "TestInstance": "https://w3id.org/ro/terms/test#TestInstance",
+            "TestService": "https://w3id.org/ro/terms/test#TestService",
+            "TestSuite": "https://w3id.org/ro/terms/test#TestSuite",
+            "TravisService": "https://w3id.org/ro/terms/test#TravisService",
+            "definition": "https://w3id.org/ro/terms/test#definition",
+            "engineVersion": "https://w3id.org/ro/terms/test#engineVersion",
+            "instance": "https://w3id.org/ro/terms/test#instance",
+            "resource": "https://w3id.org/ro/terms/test#resource",
+            "runsOn": "https://w3id.org/ro/terms/test#runsOn"
+        }
+    ],
     "@graph": [
         {
             "@id": "./",
             "@type": "Dataset",
             "creativeWorkStatus": "Stable",
-            "datePublished": "2025-10-06T17:49:17+00:00",
-            "description": "# sf-pediatric\n\n[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/scilus/sf-pediatric)\n[![GitHub Actions CI Status](https://github.com/scilus/sf-pediatric/actions/workflows/nf-test.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/nf-test.yml)\n[![GitHub Actions Linting Status](https://github.com/scilus/sf-pediatric/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/linting.yml)\n[![Deploy documentation](https://github.com/scilus/sf-pediatric/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/deploy.yml)\n[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)\n[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)\n[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.5-23aa62.svg)](https://www.nextflow.io/)\n[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.4.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.4.1)\n[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)\n[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)\n\n## Introduction\n\n**sf-pediatric** is an end-to-end age-adaptable pipeline for pediatric (0-18 years old) diffusion MRI. It leverages normative models of the brain diffusivities to perform connectomics analysis, WM bundles extraction and tractometry. Each pipeline run is wrapped in an interactive quality control reports for easy quality control of the processed data.\n\n![sf-pediatric-schema](/assets/sf-pediatric-schema.png)\n\n## Documentation\n\nIf you want to use `sf-pediatric`, head over to our documentation: https://scilus.github.io/sf-pediatric/ !\n\nYou will find detailed instructions on how to organize your inputs, launch the pipeline, and analyze your processed results.\n\n**If you encounter bugs or issues, feel free to open an issue!**\n\n## Credits\n\nsf-pediatric was originally written by Anthony Gagnon.\n\nWe thank the following people for their extensive assistance in the development of this pipeline:\n\n## Contributions and Support\n\nIf you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).\n\n## Citations\n\nAn extensive list of references for the tools used by the pipeline can be found in the [documentation](https://scilus.github.io/sf-pediatric/reference/citation/).\n\nThis pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/main/LICENSE).\n\n> **The nf-core framework for community-curated bioinformatics pipelines.**\n>\n> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.\n>\n> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).\n",
+            "datePublished": "2025-12-19T16:35:16+00:00",
+            "description": "# sf-pediatric\n\n[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/scilus/sf-pediatric)\n[![GitHub Actions CI Status](https://github.com/scilus/sf-pediatric/actions/workflows/nf-test.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/nf-test.yml)\n[![GitHub Actions Linting Status](https://github.com/scilus/sf-pediatric/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/linting.yml)\n[![Deploy documentation](https://github.com/scilus/sf-pediatric/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/deploy.yml)\n[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)\n[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)\n[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.5-23aa62.svg)](https://www.nextflow.io/)\n[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.4.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.4.1)\n[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)\n[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)\n\n## Introduction\n\n**sf-pediatric** is an end-to-end age-adaptable pipeline for pediatric (0-18 years old) diffusion MRI. It leverages normative models of the brain diffusivities to perform connectomics analysis, WM bundles extraction and tractometry. Each pipeline run is wrapped in an interactive quality control reports for easy quality control of the processed data.\n\n![sf-pediatric-schema](/assets/sf-pediatric-schema.png)\n\n## Why sf-pediatric?\n\n**sf-pediatric** is the first intelligent diffusion MRI pipeline that actively adapts to the rapidly evolving pediatric brain:\n\n- **Age-Adaptable**: Leverages normative trajectories from nearly 2,000 participants across six cohorts to dynamically adjust diffusion priors, template selection, and WM atlases based on each subject's age\n- **Birth to Adulthood**: Designed specifically for the 0-18 year age range, addressing the unique challenges of processing the developmental brain\n- **Rigorously Tested**: Demonstrates improved local modeling, cortical fanning, and robust recovery of known developmental trajectories of white matter microstructure\n- **Reproducible & Transparent**: Containerized workflows (Docker/Singularity) ensure consistent results across computing environments, with comprehensive quality control reports for every processing step\n- **Scalable & Portable**: Built with Nextflow for seamless deployment on cloud platforms, HPC clusters, or local computers\u2014ideal for large-scale pediatric neuroimaging studies\n- **Fully Automated**: End-to-end processing from raw acquisitions to statistics-ready datasets with integrated quality control reports\n- **Modular Workflows**: Four specialized profiles (tracking, segmentation, connectomics, bundling) tailored to your research question. Combined, these profiles allow you to:\n  - Preprocess your diffusion and anatomical data.\n  - Fit local models\n  - Perform whole-brain tractography\n  - White matter bundles extraction with tractometry\n  - Cortical/Subcortical segmentation\n  - Structural connectome analysis\n\n## Use Cases\n\n**sf-pediatric** is designed for researchers investigating:\n\n- White matter development and maturation trajectories\n- Structural brain connectivity across the developmental age-range\n- Neurodevelopmental disorders\n- Effects of early-life environmental factors on brain development\n- Normative vs. atypical brain development patterns\n- Large-scale multi-site pediatric neuroimaging studies\n- ...and much more!\n\n## Quick Start\n\nVisit our documentation at https://scilus.github.io/sf-pediatric/ for detailed instructions on organizing inputs, launching the pipeline, and analyzing results.\n\n**Encounter an issue?** Open an issue on GitHub!\n\n## Contributions and Support\n\nContributions welcome! See our [contributing guidelines](.github/CONTRIBUTING.md).\n\n**sf-pediatric** was originally written by Anthony Gagnon.\n\n## Citations\n\n**Methods boilerplate**. sf-pediatric provides a boilerplate methods section available in the QC reports. Users are encouraged to use this boilerplate in their publication. For a complete guide on how to navigate the reports, please [refer to the documentation](https://scilus.github.io/sf-pediatric/guides/qc).\n\n**Paper**. A sf-pediatric paper is on the way, until them, please cite the github repository. Stay tuned!\n\n## License\n\nThis pipeline is released under the **MIT License**. See [LICENSE](LICENSE) for full details.\n\nThis pipeline uses code and infrastructure developed by the [nf-core](https://nf-co.re) community (MIT license) and incorporates tools from [nf-neuro](https://github.com/scilus/nf-neuro).\n",
             "hasPart": [
                 {
                     "@id": "main.nf"
@@ -48,6 +65,12 @@
                     "@id": "nextflow_schema.json"
                 },
                 {
+                    "@id": "CHANGELOG.md"
+                },
+                {
+                    "@id": "LICENSE"
+                },
+                {
                     "@id": "CITATIONS.md"
                 },
                 {
@@ -76,7 +99,7 @@
             },
             "mentions": [
                 {
-                    "@id": "#fabe6c49-64ad-4240-ab33-2891232ca145"
+                    "@id": "#e96eabb4-c276-46ea-95e7-10550ca56346"
                 }
             ],
             "name": "scilus/sf-pediatric"
@@ -105,22 +128,22 @@
             ],
             "creator": [
                 {
-                    "@id": "#anthony.gagnon7@usherbrooke.ca"
+                    "@id": "#Anthony.Gagnon7@usherbrooke.ca"
                 }
             ],
             "dateCreated": "",
-            "dateModified": "2025-10-06T17:49:17Z",
+            "dateModified": "2025-12-19T16:35:16Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
             "keywords": [
                 "nf-core",
                 "nextflow"
             ],
             "license": [
-                null
+                "MIT"
             ],
             "maintainer": [
                 {
-                    "@id": "#anthony.gagnon7@usherbrooke.ca"
+                    "@id": "#Anthony.Gagnon7@usherbrooke.ca"
                 }
             ],
             "name": [
@@ -134,10 +157,10 @@
             },
             "url": [
                 "https://github.com/scilus/sf-pediatric",
-                "https://nf-co.re/scilus/sf-pediatric/0.1.0/"
+                "https://nf-co.re/scilus/sf-pediatric/0.2.0/"
             ],
             "version": [
-                "0.1.0"
+                "0.2.0"
             ]
         },
         {
@@ -153,11 +176,11 @@
             "version": "!>=24.10.5"
         },
         {
-            "@id": "#fabe6c49-64ad-4240-ab33-2891232ca145",
+            "@id": "#e96eabb4-c276-46ea-95e7-10550ca56346",
             "@type": "TestSuite",
             "instance": [
                 {
-                    "@id": "#a6061c28-0798-4ad2-9311-07f73aa5ec75"
+                    "@id": "#f3cb74af-22dc-49f3-a73d-8313235037fc"
                 }
             ],
             "mainEntity": {
@@ -166,7 +189,7 @@
             "name": "Test suite for scilus/sf-pediatric"
         },
         {
-            "@id": "#a6061c28-0798-4ad2-9311-07f73aa5ec75",
+            "@id": "#f3cb74af-22dc-49f3-a73d-8313235037fc",
             "@type": "TestInstance",
             "name": "GitHub Actions workflow for testing scilus/sf-pediatric",
             "resource": "repos/scilus/sf-pediatric/actions/workflows/nf-test.yml",
@@ -244,6 +267,16 @@
             "description": "JSON schema for pipeline parameter specification"
         },
         {
+            "@id": "CHANGELOG.md",
+            "@type": "File",
+            "description": "Information on changes made to the pipeline"
+        },
+        {
+            "@id": "LICENSE",
+            "@type": "File",
+            "description": "The license - should be MIT"
+        },
+        {
             "@id": "CITATIONS.md",
             "@type": "File",
             "description": "Citations needed when using the pipeline"
@@ -285,9 +318,9 @@
             "url": "https://nf-co.re/"
         },
         {
-            "@id": "#anthony.gagnon7@usherbrooke.ca",
+            "@id": "#Anthony.Gagnon7@usherbrooke.ca",
             "@type": "Person",
-            "email": "anthony.gagnon7@usherbrooke.ca",
+            "email": "Anthony.Gagnon7@usherbrooke.ca",
             "name": "Anthony Gagnon"
         }
     ]

@@ -604,7 +604,7 @@
                     "type": "integer",
                     "description": "Maximum shell value used in the DTI processing step.",
                     "fa_icon": "fas fa-brain",
-                    "default": 1600,
+                    "default": 1500,
                     "hidden": true
                 },
                 "dti_shells": {
@@ -654,7 +654,7 @@
                     "type": "integer",
                     "description": "Maximum DTI shell value used.",
                     "fa_icon": "fas fa-brain",
-                    "default": 1600,
+                    "default": 1500,
                     "hidden": true
                 },
                 "frf_min_fodf_shell_value": {
