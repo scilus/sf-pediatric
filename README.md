@@ -17,32 +17,56 @@
 
 ![sf-pediatric-schema](/assets/sf-pediatric-schema.png)
 
-## Documentation
+## Why sf-pediatric?
 
-If you want to use `sf-pediatric`, head over to our documentation: https://scilus.github.io/sf-pediatric/ !
+**sf-pediatric** is the first intelligent diffusion MRI pipeline that actively adapts to the rapidly evolving pediatric brain:
 
-You will find detailed instructions on how to organize your inputs, launch the pipeline, and analyze your processed results.
+- **Age-Adaptable**: Leverages normative trajectories from nearly 2,000 participants across six cohorts to dynamically adjust diffusion priors, template selection, and WM atlases based on each subject's age
+- **Birth to Adulthood**: Designed specifically for the 0-18 year age range, addressing the unique challenges of processing the developmental brain
+- **Rigorously Tested**: Demonstrates improved local modeling, cortical fanning, and robust recovery of known developmental trajectories of white matter microstructure
+- **Reproducible & Transparent**: Containerized workflows (Docker/Singularity) ensure consistent results across computing environments, with comprehensive quality control reports for every processing step
+- **Scalable & Portable**: Built with Nextflow for seamless deployment on cloud platforms, HPC clusters, or local computers—ideal for large-scale pediatric neuroimaging studies
+- **Fully Automated**: End-to-end processing from raw acquisitions to statistics-ready datasets with integrated quality control reports
+- **Modular Workflows**: Four specialized profiles (tracking, segmentation, connectomics, bundling) tailored to your research question. Combined, these profiles allow you to:
+  - Preprocess your diffusion and anatomical data.
+  - Fit local models
+  - Perform whole-brain tractography
+  - White matter bundles extraction with tractometry
+  - Cortical/Subcortical segmentation
+  - Structural connectome analysis
 
-**If you encounter bugs or issues, feel free to open an issue!**
+## Use Cases
 
-## Credits
+**sf-pediatric** is designed for researchers investigating:
 
-sf-pediatric was originally written by Anthony Gagnon.
+- White matter development and maturation trajectories
+- Structural brain connectivity across the developmental age-range
+- Neurodevelopmental disorders
+- Effects of early-life environmental factors on brain development
+- Normative vs. atypical brain development patterns
+- Large-scale multi-site pediatric neuroimaging studies
+- ...and much more!
 
-We thank the following people for their extensive assistance in the development of this pipeline:
+## Quick Start
+
+Visit our documentation at https://scilus.github.io/sf-pediatric/ for detailed instructions on organizing inputs, launching the pipeline, and analyzing results.
+
+**Encounter an issue?** Open an issue on GitHub!
 
 ## Contributions and Support
 
-If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
+Contributions welcome! See our [contributing guidelines](.github/CONTRIBUTING.md).
+
+**sf-pediatric** was originally written by Anthony Gagnon.
 
 ## Citations
 
-An extensive list of references for the tools used by the pipeline can be found in the [documentation](https://scilus.github.io/sf-pediatric/reference/citation/).
+**Methods boilerplate**. sf-pediatric provides a boilerplate methods section available in the QC reports. Users are encouraged to use this boilerplate in their publication. For a complete guide on how to navigate the reports, please [refer to the documentation](https://scilus.github.io/sf-pediatric/guides/qc).
 
-This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/main/LICENSE).
+**Paper**. A sf-pediatric paper is on the way, until them, please cite the github repository. Stay tuned!
 
-> **The nf-core framework for community-curated bioinformatics pipelines.**
->
-> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
->
-> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
+## License
+
+This pipeline is released under the **MIT License**. See [LICENSE](LICENSE) for full details.
+
+This pipeline uses code and infrastructure developed by the [nf-core](https://nf-co.re) community (MIT license) and incorporates tools from [nf-neuro](https://github.com/scilus/nf-neuro).
