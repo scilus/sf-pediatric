@@ -19,7 +19,7 @@
 
 ## Why sf-pediatric?
 
-**sf-pediatric** is the first intelligent diffusion MRI pipeline that actively adapts to the rapidly evolving pediatric brain:
+**sf-pediatric** is an intelligent diffusion MRI pipeline that actively adapts to the rapidly evolving pediatric brain:
 
 - **Age-Adaptable**: Leverages normative trajectories from nearly 2,000 participants across six cohorts to dynamically adjust diffusion priors, template selection, and WM atlases based on each subject's age
 - **Birth to Adulthood**: Designed specifically for the 0-18 year age range, addressing the unique challenges of processing the developmental brain
