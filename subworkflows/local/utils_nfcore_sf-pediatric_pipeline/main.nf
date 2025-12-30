@@ -130,7 +130,8 @@ workflow PIPELINE_INITIALISATION {
                     def priors = fetchPriors(tempAge)
 
                     return [
-                        [id: sid, session: session, run: run, age: age.toFloat(), fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md],
+                        [id: sid, session: session, run: run, age: age.toFloat(), fa: priors.fa, ad: priors.ad,
+                        rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max],
                         item.t1 ? file(item.t1) : [],
                         item.t2 ? file(item.t2) : [],
                         item.dwi ? file(item.dwi) : [],
@@ -227,9 +228,11 @@ def fetchPriors(age) {
     def ad = 0.001835 * Math.pow(age, -0.048725)
     def rd = 0.000430 * Math.pow(age, -0.092705)
     def md = 0.004116 * (1 - Math.exp(-Math.pow((3243541.309087 * age), 0.012118)))
+    def rd_min = 0.000159 * Math.pow(age, -0.276126)
+    def rd_max = 0 * Math.pow(age, 3) + -0.000002 * Math.pow(age, 2) + 0.000022 * age + 0.000776
 
     // Return values as a map and round them.
-    return [fa: fa.round(2), ad: ad.round(5), rd: rd.round(6), md: md.round(5)]
+    return [fa: fa.round(2), ad: ad.round(5), rd: rd.round(6), md: md.round(5), rd_min: rd_min.round(6), rd_max: rd_max.round(6)]
 }
 
 //
