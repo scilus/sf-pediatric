@@ -276,6 +276,26 @@ workflow FETCH_DERIVATIVES {
             participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
+    // ** Brain mask ** //
+    ch_brain_mask = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*{ses-*,}_desc-brain_mask.nii.gz",
+        checkIfExists: true)
+        .map { file ->
+            def parts = file.toAbsolutePath().toString().split('/')
+            def id = parts.find { it.startsWith('sub-') }
+            def session = parts.find { it.startsWith('ses-') }
+            def age = getAge(id, session)
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
+            def metadata = session ? \
+                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
+                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+
+            return [metadata, file]
+        }
+        .filter {
+            participant_ids.isEmpty() || it[0].id in participant_ids
+        }
+
     emit:
     anat            = ch_anat
     labels          = ch_labels
@@ -283,6 +303,7 @@ workflow FETCH_DERIVATIVES {
     peaks           = ch_peaks
     fodf            = ch_fodf
     dwi_bval_bvec   = ch_dwi_bval_bvec
+    brain_mask      = ch_brain_mask
     trk             = ch_trk
     metrics         = ch_metrics
 }
