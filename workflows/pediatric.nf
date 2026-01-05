@@ -700,15 +700,32 @@ workflow PEDIATRIC {
 
             // ** Set output channels ** //
             ch_metrics = ch_metrics
-                .join(RECONST_FW_NODDI.out.noddi_fwf)
-                .join(RECONST_FW_NODDI.out.noddi_ndi)
-                .join(RECONST_FW_NODDI.out.noddi_ecvf)
-                .join(RECONST_FW_NODDI.out.noddi_odi)
-                .join(RECONST_FW_NODDI.out.fw_fw)
-                .join(RECONST_FW_NODDI.out.fw_dti_md)
-                .join(RECONST_FW_NODDI.out.fw_dti_rd)
-                .join(RECONST_FW_NODDI.out.fw_dti_ad)
-                .join(RECONST_FW_NODDI.out.fw_dti_fa)
+                .mix(RECONST_FW_NODDI.out.noddi_fwf)
+                .mix(RECONST_FW_NODDI.out.noddi_ndi)
+                .mix(RECONST_FW_NODDI.out.noddi_ecvf)
+                .mix(RECONST_FW_NODDI.out.noddi_odi)
+                .mix(RECONST_FW_NODDI.out.fw_fw)
+                .mix(RECONST_FW_NODDI.out.fw_fibervolume)
+                .mix(RECONST_FW_NODDI.out.fw_dti_md)
+                .mix(RECONST_FW_NODDI.out.fw_dti_rd)
+                .mix(RECONST_FW_NODDI.out.fw_dti_ad)
+                .mix(RECONST_FW_NODDI.out.fw_dti_fa)
+                .groupTuple(by: 0)
+
+            // ** Update files to transform ** //
+            ch_nifti_files_to_transform = ch_nifti_files_to_transform
+                .mix(RECONST_FW_NODDI.out.noddi_fwf)
+                .mix(RECONST_FW_NODDI.out.noddi_ndi)
+                .mix(RECONST_FW_NODDI.out.noddi_ecvf)
+                .mix(RECONST_FW_NODDI.out.noddi_odi)
+                .mix(RECONST_FW_NODDI.out.fw_fw)
+                .mix(RECONST_FW_NODDI.out.fw_fibervolume)
+                .mix(RECONST_FW_NODDI.out.fw_dti_md)
+                .mix(RECONST_FW_NODDI.out.fw_dti_rd)
+                .mix(RECONST_FW_NODDI.out.fw_dti_ad)
+                .mix(RECONST_FW_NODDI.out.fw_dti_fa)
+            ch_rgb_files_to_transform = ch_rgb_files_to_transform
+                .mix(RECONST_FW_NODDI.out.fw_dti_rgb)
         }
 
     if ( params.bundling ) {
@@ -721,13 +738,20 @@ workflow PEDIATRIC {
         )
         ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
 
+        // ** Format metrics channel ** //
+        ch_metrics_tractometry = ch_metrics.map { items ->
+            def meta = items[0]
+            def metrics = items[1..-1].flatten()
+            return [meta, metrics]
+        }
+
         //
         // SUBWORKFLOW: RUN TRACTOMETRY
         //
         TRACTOMETRY (
             BUNDLE_SEG.out.bundles,
             BUNDLE_SEG.out.centroids,
-            ch_metrics,
+            ch_metrics_tractometry,
             Channel.empty(),
             ch_fodf
         )
@@ -824,6 +848,12 @@ workflow PEDIATRIC {
         //
         // MODULE: Run CONNECTIVITY_METRICS
         //
+        ch_metrics_connectivity = ch_metrics.map { items ->
+            def meta = items[0]
+            def metrics = items[1..-1].flatten()
+            return [meta, metrics]
+        }
+
         ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
             .join(ch_labels.reg, remainder: true)
             .map { id, trk, reg_label ->
@@ -835,7 +865,7 @@ workflow PEDIATRIC {
                 [id, trk, label]
             }
             .join(CONNECTIVITY_DECOMPOSE.out.labels_list)
-            .join(ch_metrics)
+            .join(ch_metrics_connectivity)
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())
