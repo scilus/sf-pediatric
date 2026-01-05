@@ -14,7 +14,8 @@ nextflow_pipeline {
                 params.outdir = "$outputDir"
 
                 params.tracking = true
-
+                params.run_freewater = true
+                params.run_noddi = true
             }
         }
 
