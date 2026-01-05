@@ -252,8 +252,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Metrics files ** //
-    // TODO: Add freewater and noddi metrics here
-    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-{fa,md,rd,ad,nufo,afdtotal,afdsum,afdmax}_dwimap.nii.gz",
+    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-{fa,md,rd,ad,nufo,afdtotal,afdsum,afdmax,fw,fibervolume,icvf,odi,fwf,isovf}{_desc-fwc,}_dwimap.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
@@ -269,9 +268,6 @@ workflow FETCH_DERIVATIVES {
             return [metadata, file]
         }
         .groupTuple(by: 0)
-        .map{ meta, files ->
-            return [meta] + [files]
-        }
         .filter {
             participant_ids.isEmpty() || it[0].id in participant_ids
         }
