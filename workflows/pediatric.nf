@@ -641,7 +641,7 @@ workflow PEDIATRIC {
         } else {
             ch_labels = FETCH_DERIVATIVES.out.labels
         }
-    } else {
+    } else if ( params.tracking && (params.run_noddi || params.run_freewater || params.connectomics || params.bundling) ) {
         ch_metrics = RECONST_DTIMETRICS.out.fa
             .join(RECONST_DTIMETRICS.out.md)
             .join(RECONST_DTIMETRICS.out.ad)
@@ -680,10 +680,10 @@ workflow PEDIATRIC {
             // ** Prepare channels for priors coming from the normative curves ** //
             ch_normative_diff = ch_dwi_bval_bvec
                 .multiMap { meta, _dwi, _bval, _bvec ->
-                    para: params.para_diff ? channel.value(params.para_diff) : tuple(meta, meta.ad)
-                    iso: params.iso_diff ? channel.value(params.iso_diff) : tuple(meta, meta.md)
-                    perp_min: params.perp_diff_min ? channel.value(params.perp_diff_min) : tuple(meta, meta.rd_min)
-                    perp_max: params.perp_diff_max ? channel.value(params.perp_diff_max) : tuple(meta, meta.rd_max)
+                    para_diff: params.average_diff_priors ? channel.empty() : params.para_diff ? channel.value(params.para_diff) : tuple(meta, meta.ad)
+                    iso_diff: params.average_diff_priors ? channel.empty() : params.iso_diff ? channel.value(params.iso_diff) : tuple(meta, meta.md)
+                    perp_diff_min: params.average_diff_priors ? channel.empty() : params.perp_diff_min ? channel.value(params.perp_diff_min) : tuple(meta, meta.rd_min)
+                    perp_diff_max: params.average_diff_priors ? channel.empty() : params.perp_diff_max ? channel.value(params.perp_diff_max) : tuple(meta, meta.rd_max)
                 }
 
             // ** Run NODDI / FreeWater reconstruction ** //
@@ -691,10 +691,12 @@ workflow PEDIATRIC {
                 ch_dwi_bval_bvec,
                 ch_brain_mask,
                 ch_fa_ad_rd_md,
-                params.average_diff_priors ? channel.empty() : ch_normative_diff.para,
-                params.average_diff_priors ? channel.empty() : ch_normative_diff.iso,
-                params.average_diff_priors ? channel.empty() : ch_normative_diff.perp_min,
-                params.average_diff_priors ? channel.empty() : ch_normative_diff.perp_max
+                [
+                    para_diff: ch_normative_diff.para_diff,
+                    iso_diff: ch_normative_diff.iso_diff,
+                    perp_diff_min: ch_normative_diff.perp_diff_min,
+                    perp_diff_max: ch_normative_diff.perp_diff_max
+                ]
             )
             ch_versions = ch_versions.mix(RECONST_FW_NODDI.out.versions)
 

@@ -9,10 +9,7 @@ workflow RECONST_FW_NODDI {
     dwi_bval_bvec
     brain_mask
     fa_ad_rd_md
-    para_diff       // Can either be empty, a single value, or a per-subject value.
-    iso_diff        // Can either be empty, a single value, or a per-subject value.
-    perp_diff_min   // Can either be empty, a single value, or a per-subject value.
-    perp_diff_max   // Can either be empty, a single value, or a per-subject value.
+    diffusivities // multiMap channel with para_diff, iso_diff, perp_diff_min, perp_diff_max
 
     main:
 
@@ -27,8 +24,8 @@ workflow RECONST_FW_NODDI {
     ch_base_noddi = dwi_bval_bvec.join(brain_mask)
     ch_base_freewater = dwi_bval_bvec.join(brain_mask)
 
-    // Normalize inputs to get the same shape of tuple for all possible cases.
-    def normalize_input = { ch ->
+    // Format inputs to get the same shape of tuple for all possible cases.
+    def format_input = { ch ->
         ch.ifEmpty { [[tag: 'empty'], null] }
             .map { it ->
                 // If we have subject-bound, leave as is
@@ -40,14 +37,14 @@ workflow RECONST_FW_NODDI {
                 }
             }
     }
-    para_diff = normalize_input(para_diff)
-    iso_diff = normalize_input(iso_diff)
-    perp_diff_min = normalize_input(perp_diff_min)
-    perp_diff_max = normalize_input(perp_diff_max)
+    para_diff = format_input(diffusivities.para_diff)
+    iso_diff = format_input(diffusivities.iso_diff)
+    perp_diff_min = format_input(diffusivities.perp_diff_min)
+    perp_diff_max = format_input(diffusivities.perp_diff_max)
 
     // Combine all diffusivity priors together, and assess wheter they are
     // empty, single value, or per-subject values.
-    para_diff
+    ch_priors_branched = para_diff
         .combine( iso_diff )
         .combine( perp_diff_min )
         .combine( perp_diff_max )
@@ -101,7 +98,6 @@ workflow RECONST_FW_NODDI {
                 // No custom priors provided, will compute them later
                 return true
         }
-        .set { ch_priors_branched }
 
     // Prepare NODDI inputs. This channel will be combined/joined in the
     // lines that follow with diffusivity priors w.r.t the following 3 scenarios:
@@ -110,14 +106,13 @@ workflow RECONST_FW_NODDI {
     // Option 3: The user wants to compute diffusivity priors for each subject individually.
 
     // Branch 1: Custom diffusivity priors provided per-subject
-    ch_priors_branched.custom_subject_bound
+    ch_custom_subject = ch_priors_branched.custom_subject_bound
         .multiMap{ para_t, iso_t, perp_min_t, perp_max_t ->
             para: para_t
             iso: iso_t
             perp_min: perp_min_t
             perp_max: perp_max_t
         }
-        .set { ch_custom_subject }
 
     ch_noddi_custom_subj = ch_base_noddi
         .join( ch_custom_subject.para )         // para
@@ -130,14 +125,13 @@ workflow RECONST_FW_NODDI {
         .join( ch_custom_subject.perp_max )     // perp_max
 
     // Branch 2: Custom diffusivity priors provided (single value across subjects)
-    ch_priors_branched.custom
+    ch_custom = ch_priors_branched.custom
         .multiMap{ para, iso, perp_min, perp_max ->
             para: para
             iso: iso
             perp_min: perp_min
             perp_max: perp_max
         }
-        .set { ch_custom }
 
     ch_noddi_custom = ch_base_noddi
         .combine( ch_custom.para )        // para
@@ -150,12 +144,11 @@ workflow RECONST_FW_NODDI {
         .combine( ch_custom.perp_max )    // perp_max
 
     // Branch 3: Compute diffusivity priors
-    ch_priors_branched.compute
+    ch_compute_diff_priors = ch_priors_branched.compute
         .combine( fa_ad_rd_md )
         .map{ bool, meta, fa, ad, rd, md ->
             return tuple(meta, fa, ad, rd, md)
         }
-        .set { ch_compute_diff_priors }
 
     RECONST_DIFFUSIVITYPRIORS( ch_compute_diff_priors )
     ch_versions = ch_versions.mix(RECONST_DIFFUSIVITYPRIORS.out.versions)

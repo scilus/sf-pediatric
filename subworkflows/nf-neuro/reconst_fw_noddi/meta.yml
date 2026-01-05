@@ -39,6 +39,29 @@ input:
         Structure: [ val(meta), path(fa), path(ad), path(rd), path(md) ]
       pattern: "*.nii.gz"
       mandatory: false
+  - diffusivities:
+      type: Map
+      description: |
+        The input channel containing custom diffusivity priors to use for NODDI
+        and FreeWater models. If not provided, the diffusivity priors will be
+        computed automatically. Can be subject-bound (i.e. different values per
+        subject), a single-value for all subjects, or empty to compute them
+        automatically. IMPORTANT: all priors must be provided the same way,
+        meaning that if one prior is subject-bound, all others must be subject-bound
+        as well (same for single-value or empty).
+        Structure: [
+          para_diff: Channel.empty(),     // Example of empty to compute automatically
+          iso_diff: Channel.value(0.003), // Example of single-value for all subjects
+          perp_diff_min: Channel.of(      // Example of subject-bound values
+            tuple([ id:'subj1' ], 0.0001),
+            tuple([ id:'subj2' ], 0.00015)
+          ),
+          perp_diff_max: Channel.of(
+            tuple([ id:'subj1' ], 0.0007),
+            tuple([ id:'subj2' ], 0.00065)
+          )
+        ]
+      mandatory: false
 args:
   - run_noddi:
       type: boolean
@@ -50,28 +73,6 @@ args:
       default: false
       description: |
         Whether to run the FreeWater correction.
-  - para_diff:
-      type: float
-      default: null
-      description: |
-        Custom parallel diffusivity prior to use for NODDI and FreeWater models.
-  - iso_diff:
-      type: float
-      default: null
-      description: |
-        Custom isotropic diffusivity prior to use for NODDI and FreeWater models.
-  - perp_diff_min:
-      type: float
-      default: null
-      description: |
-        Minimum perpendicular diffusivity prior to use for NODDI and FreeWater
-        models when computing diffusivity priors automatically.
-  - perp_diff_max:
-      type: float
-      default: null
-      description: |
-        Maximum perpendicular diffusivity prior to use for NODDI and FreeWater
-        models when computing diffusivity priors automatically.
   - average_diff_priors:
       type: boolean
       default: false

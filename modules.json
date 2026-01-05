@@ -338,7 +338,7 @@
                     },
                     "reconst_fw_noddi": {
                         "branch": "main",
-                        "git_sha": "cf3c47a430239aab4371da03399ebf99499a85bf",
+                        "git_sha": "9e7f3827913a7cf93c45e7d994ecc5fdcfb45ecc",
                         "installed_by": ["subworkflows"]
                     },
                     "topup_eddy": {
