@@ -91,7 +91,7 @@ workflow PIPELINE_INITIALISATION {
         error "ERROR: Your bids dataset does not contain a participants.tsv file. " +
         "Please provide a participants.tsv file with a column indicating the participants' " +
         "age. For any questions, please refer to the documentation at " +
-        "https://github.com/scilus/sf-pediatric.git or open an issue!"
+        "https://scilus.github.io/sf-pediatric/ or open an issue!"
     }
 
     //
