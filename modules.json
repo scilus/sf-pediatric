@@ -339,7 +339,8 @@
                     "reconst_fw_noddi": {
                         "branch": "main",
                         "git_sha": "9e7f3827913a7cf93c45e7d994ecc5fdcfb45ecc",
-                        "installed_by": ["subworkflows"]
+                        "installed_by": ["subworkflows"],
+                        "patch": "subworkflows/nf-neuro/reconst_fw_noddi/reconst_fw_noddi.diff"
                     },
                     "topup_eddy": {
                         "branch": "main",
