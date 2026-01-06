@@ -68,10 +68,10 @@ process RECONST_FREEWATER {
     scil_freewater_maps -h
     mkdir kernels
     touch "${prefix}__dwi_fw_corrected.nii.gz"
-    touch "${prefix}__FIT_dir.nii.gz"
-    touch "${prefix}__FIT_FiberVolume.nii.gz"
-    touch "${prefix}__FIT_FW.nii.gz"
-    touch "${prefix}__FIT_nrmse.nii.gz"
+    touch "${prefix}__dir.nii.gz"
+    touch "${prefix}__FiberVolume.nii.gz"
+    touch "${prefix}__FW.nii.gz"
+    touch "${prefix}__NRMSE.nii.gz"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
