@@ -70,6 +70,13 @@ process CONNECTIVITY_METRICS {
         for file in *.npy; do
             if [[ "\$file" == *"fit_"* ]]; then
                 new_file=\${file/fit_/}
+                # If contains FWF, NDI, ECVF, and ODI, convert to lowercase
+                new_file=\$(sed -E 's/(FWF|ODI)/\\L\\1/g' <<< "\$new_file")
+                if [[ "\$new_file" == *"NDI"* ]]; then
+                    new_file=\$(sed -E 's/NDI/icvf/g' <<< "\$new_file")
+                elif [[ "\$new_file" == *"ECVF"* ]]; then
+                    new_file=\$(sed -E 's/ECVF/ecvf/g' <<< "\$new_file")
+                fi
                 mv "\$file" "\$new_file"
             fi
         done
@@ -138,9 +145,16 @@ process CONNECTIVITY_METRICS {
         done
 
         # Remove "fit_" from filenames if present (only for .npy files)
-        for file in ${prefix}_seg-${atlas}_stat-*.npy; do
+        for file in *.npy; do
             if [[ "\$file" == *"fit_"* ]]; then
                 new_file=\${file/fit_/}
+                # If contains FWF, NDI, ECVF, and ODI, convert to lowercase
+                new_file=\$(sed -E 's/(FWF|ODI)/\\L\\1/g' <<< "\$new_file")
+                if [[ "\$new_file" == *"NDI"* ]]; then
+                    new_file=\$(sed -E 's/NDI/icvf/g' <<< "\$new_file")
+                elif [[ "\$new_file" == *"ECVF"* ]]; then
+                    new_file=\$(sed -E 's/ECVF/ecvf/g' <<< "\$new_file")
+                fi
                 mv "\$file" "\$new_file"
             fi
         done
