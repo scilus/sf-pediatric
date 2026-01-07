@@ -228,8 +228,8 @@ workflow RECONST_FW_NODDI {
     emit:
     // NODDI
     noddi_dir           = params.run_noddi ? RECONST_NODDI.out.dir : Channel.empty()
-    noddi_fwf           = params.run_noddi ? RECONST_NODDI.out.fwf : Channel.empty()
-    noddi_ndi           = params.run_noddi ? RECONST_NODDI.out.ndi : Channel.empty()
+    noddi_isovf         = params.run_noddi ? RECONST_NODDI.out.isovf : Channel.empty()
+    noddi_icvf          = params.run_noddi ? RECONST_NODDI.out.icvf : Channel.empty()
     noddi_ecvf          = params.run_noddi ? RECONST_NODDI.out.ecvf : Channel.empty()
     noddi_odi           = params.run_noddi ? RECONST_NODDI.out.odi : Channel.empty()
 
@@ -237,7 +237,7 @@ workflow RECONST_FW_NODDI {
     fw_dwi              = params.run_freewater ? RECONST_FREEWATER.out.dwi_fw_corrected : Channel.empty()
     fw_dir              = params.run_freewater ? RECONST_FREEWATER.out.dir : Channel.empty()
     fw_fibervolume      = params.run_freewater ? RECONST_FREEWATER.out.fibervolume : Channel.empty()
-    fw_fw               = params.run_freewater ? RECONST_FREEWATER.out.fw : Channel.empty()
+    fw_fwf              = params.run_freewater ? RECONST_FREEWATER.out.fwf : Channel.empty()
     fw_nrmse            = params.run_freewater ? RECONST_FREEWATER.out.nrmse : Channel.empty()
 
     fw_dti_tensor       = params.run_freewater ? FW_CORRECTED_DTIMETRICS.out.tensor : Channel.empty()

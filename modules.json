@@ -86,9 +86,8 @@
                     },
                     "bundle/stats": {
                         "branch": "main",
-                        "git_sha": "0059a7c5c9277288f069d6c908c016d50cc0bd0c",
-                        "installed_by": ["modules", "tractometry"],
-                        "patch": "modules/nf-neuro/bundle/stats/bundle-stats.diff"
+                        "git_sha": "6ba75286a86c1ec82a91040c626b4571e92578a3",
+                        "installed_by": ["modules", "tractometry"]
                     },
                     "bundle/uniformize": {
                         "branch": "main",
@@ -203,7 +202,7 @@
                     },
                     "reconst/dtimetrics": {
                         "branch": "main",
-                        "git_sha": "d514d1193937657d3eb3ab39bfe757215a348b01",
+                        "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
                         "installed_by": ["modules", "reconst_fw_noddi"],
                         "patch": "modules/nf-neuro/reconst/dtimetrics/reconst-dtimetrics.diff"
                     },
@@ -214,7 +213,7 @@
                     },
                     "reconst/freewater": {
                         "branch": "main",
-                        "git_sha": "0eef6f86bca0cad0c9144161467b104a0e95eec1",
+                        "git_sha": "4fb30bc14d52f5e0a36c10de60ff81e5c6343053",
                         "installed_by": ["reconst_fw_noddi"]
                     },
                     "reconst/frf": {
@@ -230,7 +229,7 @@
                     },
                     "reconst/noddi": {
                         "branch": "main",
-                        "git_sha": "27c194efef0eeff128d6cc70833f8e707bd72817",
+                        "git_sha": "4fb30bc14d52f5e0a36c10de60ff81e5c6343053",
                         "installed_by": ["reconst_fw_noddi"]
                     },
                     "registration/anattodwi": {
@@ -338,7 +337,7 @@
                     },
                     "reconst_fw_noddi": {
                         "branch": "main",
-                        "git_sha": "9e7f3827913a7cf93c45e7d994ecc5fdcfb45ecc",
+                        "git_sha": "4fb30bc14d52f5e0a36c10de60ff81e5c6343053",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/reconst_fw_noddi/reconst_fw_noddi.diff"
                     },
