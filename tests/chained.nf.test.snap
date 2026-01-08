@@ -86,8 +86,9 @@
                     "freesurfer": "7.4.1"
                 },
                 "FW_CORRECTED_DTIMETRICS": {
-                    "scilpy": "2.1.0",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.0",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12"
                 },
                 "IMAGE_POWDERAVERAGE": {
                     "scilpy": "2.0.2"
@@ -117,8 +118,9 @@
                     "freesurfer": "8.0.0"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.1.0",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.0",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12"
                 },
                 "RECONST_FODF": {
                     "scilpy": "2.2.0"
@@ -310,12 +312,12 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-direction_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fibervolume_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fibervolume_dwimap.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fw_dwimap.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fw_dwimap.nii.gz",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fwf_dwimap.json",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fwf_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-direction_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-fwf_dwimap.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-fwf_dwimap.nii.gz",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-ecvf_dwimap.json",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-ecvf_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-icvf_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-icvf_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-isovf_dwimap.json",
@@ -358,14 +360,14 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_desc-fwc_stat-fa.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_desc-fwc_stat-md.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_desc-fwc_stat-rd.npy",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-FW.npy",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-FiberVolume.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-ad.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-afd_total.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-ecvf.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-fa.npy",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-fibervolume.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-fwf.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-icvf.npy",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-isovf.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-md.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-mode.npy",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_seg-DK_stat-nufo.npy",
@@ -422,14 +424,14 @@
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_desc-fwc_stat-fa.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_desc-fwc_stat-md.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_desc-fwc_stat-rd.png",
-                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-FW.png",
-                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-FiberVolume.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ad.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-afd_total.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ecvf.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-fa.png",
+                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-fibervolume.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-fwf.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-icvf.png",
+                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-isovf.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-md.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-mode.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-nufo.png",
@@ -537,12 +539,12 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-direction_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fibervolume_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fibervolume_dwimap.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fw_dwimap.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fw_dwimap.nii.gz",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fwf_dwimap.json",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fwf_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-direction_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-fwf_dwimap.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-fwf_dwimap.nii.gz",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-ecvf_dwimap.json",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-ecvf_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-icvf_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-icvf_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-isovf_dwimap.json",
@@ -585,14 +587,14 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_desc-fwc_stat-fa.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_desc-fwc_stat-md.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_desc-fwc_stat-rd.npy",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-FW.npy",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-FiberVolume.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-afd_total.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ecvf.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.npy",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fibervolume.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fwf.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-icvf.npy",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-isovf.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-md.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-mode.npy",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_seg-BrainnetomeChild_stat-nufo.npy",
@@ -649,14 +651,14 @@
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_desc-fwc_stat-fa.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_desc-fwc_stat-md.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_desc-fwc_stat-rd.png",
-                "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-FW.png",
-                "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-FiberVolume.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-afd_total.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ecvf.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.png",
+                "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fibervolume.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fwf.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-icvf.png",
+                "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-isovf.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-md.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-mode.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-nufo.png",
@@ -758,12 +760,12 @@
                 "sub-test2/dwi/sub-test2_model-fw_param-direction_dwimap.nii.gz",
                 "sub-test2/dwi/sub-test2_model-fw_param-fibervolume_dwimap.json",
                 "sub-test2/dwi/sub-test2_model-fw_param-fibervolume_dwimap.nii.gz",
-                "sub-test2/dwi/sub-test2_model-fw_param-fw_dwimap.json",
-                "sub-test2/dwi/sub-test2_model-fw_param-fw_dwimap.nii.gz",
+                "sub-test2/dwi/sub-test2_model-fw_param-fwf_dwimap.json",
+                "sub-test2/dwi/sub-test2_model-fw_param-fwf_dwimap.nii.gz",
                 "sub-test2/dwi/sub-test2_model-noddi_param-direction_dwimap.json",
                 "sub-test2/dwi/sub-test2_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test2/dwi/sub-test2_model-noddi_param-fwf_dwimap.json",
-                "sub-test2/dwi/sub-test2_model-noddi_param-fwf_dwimap.nii.gz",
+                "sub-test2/dwi/sub-test2_model-noddi_param-ecvf_dwimap.json",
+                "sub-test2/dwi/sub-test2_model-noddi_param-ecvf_dwimap.nii.gz",
                 "sub-test2/dwi/sub-test2_model-noddi_param-icvf_dwimap.json",
                 "sub-test2/dwi/sub-test2_model-noddi_param-icvf_dwimap.nii.gz",
                 "sub-test2/dwi/sub-test2_model-noddi_param-isovf_dwimap.json",
@@ -806,14 +808,14 @@
                 "sub-test2/dwi/sub-test2_seg-DK_desc-fwc_stat-fa.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_desc-fwc_stat-md.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_desc-fwc_stat-rd.npy",
-                "sub-test2/dwi/sub-test2_seg-DK_stat-FW.npy",
-                "sub-test2/dwi/sub-test2_seg-DK_stat-FiberVolume.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-ad.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-afd_total.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-ecvf.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-fa.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-fibervolume.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-fwf.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-icvf.npy",
+                "sub-test2/dwi/sub-test2_seg-DK_stat-isovf.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-md.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-mode.npy",
                 "sub-test2/dwi/sub-test2_seg-DK_stat-nufo.npy",
@@ -870,14 +872,14 @@
                 "sub-test2/figures/sub-test2_seg-DK_desc-fwc_stat-fa.png",
                 "sub-test2/figures/sub-test2_seg-DK_desc-fwc_stat-md.png",
                 "sub-test2/figures/sub-test2_seg-DK_desc-fwc_stat-rd.png",
-                "sub-test2/figures/sub-test2_seg-DK_stat-FW.png",
-                "sub-test2/figures/sub-test2_seg-DK_stat-FiberVolume.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-ad.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-afd_total.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-ecvf.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-fa.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-fibervolume.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-fwf.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-icvf.png",
+                "sub-test2/figures/sub-test2_seg-DK_stat-isovf.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-md.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-mode.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-nufo.png",
@@ -977,12 +979,12 @@
                 "sub-test3/dwi/sub-test3_model-fw_param-direction_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-fw_param-fibervolume_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-fw_param-fibervolume_dwimap.nii.gz",
-                "sub-test3/dwi/sub-test3_model-fw_param-fw_dwimap.json",
-                "sub-test3/dwi/sub-test3_model-fw_param-fw_dwimap.nii.gz",
+                "sub-test3/dwi/sub-test3_model-fw_param-fwf_dwimap.json",
+                "sub-test3/dwi/sub-test3_model-fw_param-fwf_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-noddi_param-direction_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test3/dwi/sub-test3_model-noddi_param-fwf_dwimap.json",
-                "sub-test3/dwi/sub-test3_model-noddi_param-fwf_dwimap.nii.gz",
+                "sub-test3/dwi/sub-test3_model-noddi_param-ecvf_dwimap.json",
+                "sub-test3/dwi/sub-test3_model-noddi_param-ecvf_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-noddi_param-icvf_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-noddi_param-icvf_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-noddi_param-isovf_dwimap.json",
@@ -1025,14 +1027,14 @@
                 "sub-test3/dwi/sub-test3_seg-DK_desc-fwc_stat-fa.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_desc-fwc_stat-md.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_desc-fwc_stat-rd.npy",
-                "sub-test3/dwi/sub-test3_seg-DK_stat-FW.npy",
-                "sub-test3/dwi/sub-test3_seg-DK_stat-FiberVolume.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-ad.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-afd_total.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-ecvf.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-fa.npy",
+                "sub-test3/dwi/sub-test3_seg-DK_stat-fibervolume.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-fwf.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-icvf.npy",
+                "sub-test3/dwi/sub-test3_seg-DK_stat-isovf.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-md.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-mode.npy",
                 "sub-test3/dwi/sub-test3_seg-DK_stat-nufo.npy",
@@ -1089,14 +1091,14 @@
                 "sub-test3/figures/sub-test3_seg-DK_desc-fwc_stat-fa.png",
                 "sub-test3/figures/sub-test3_seg-DK_desc-fwc_stat-md.png",
                 "sub-test3/figures/sub-test3_seg-DK_desc-fwc_stat-rd.png",
-                "sub-test3/figures/sub-test3_seg-DK_stat-FW.png",
-                "sub-test3/figures/sub-test3_seg-DK_stat-FiberVolume.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-ad.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-afd_total.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-ecvf.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-fa.png",
+                "sub-test3/figures/sub-test3_seg-DK_stat-fibervolume.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-fwf.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-icvf.png",
+                "sub-test3/figures/sub-test3_seg-DK_stat-isovf.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-md.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-mode.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-nufo.png",
@@ -1172,7 +1174,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-06T15:38:58.553475"
+        "timestamp": "2026-01-07T18:08:44.943574"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -1257,8 +1259,9 @@
                     "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.1.0",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.0",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12"
                 },
                 "RECONST_FODF": {
                     "scilpy": "2.2.0"
@@ -1715,7 +1718,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-12-18T13:44:02.257579"
+        "timestamp": "2026-01-07T18:17:56.775363"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -2068,8 +2071,9 @@
                     "imagemagick": "6.9.11"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.1.0",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.0",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12"
                 },
                 "RECONST_FODF": {
                     "scilpy": "2.2.0"
@@ -2566,6 +2570,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-04T14:27:44.284863"
+        "timestamp": "2026-01-07T17:59:06.348381"
     }
 }

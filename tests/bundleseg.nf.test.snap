@@ -19,8 +19,9 @@
                     "scilpy": "2.2.1"
                 },
                 "FW_CORRECTED_DTIMETRICS": {
-                    "scilpy": "2.1.0",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.0",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12"
                 },
                 "RECONST_FREEWATER": {
                     "scilpy": "2.2.0"
@@ -68,8 +69,8 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-direction_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fibervolume_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fibervolume_dwimap.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fw_dwimap.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fw_dwimap.nii.gz",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fwf_dwimap.json",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fwf_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-diffusivity_desc-fwc_dwimap.json",
@@ -99,8 +100,8 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-direction_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fibervolume_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fibervolume_dwimap.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fw_dwimap.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fw_dwimap.nii.gz",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fwf_dwimap.json",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fwf_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-diffusivity_desc-fwc_dwimap.json",
@@ -130,8 +131,8 @@
                 "sub-test3/dwi/sub-test3_model-fw_param-direction_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-fw_param-fibervolume_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-fw_param-fibervolume_dwimap.nii.gz",
-                "sub-test3/dwi/sub-test3_model-fw_param-fw_dwimap.json",
-                "sub-test3/dwi/sub-test3_model-fw_param-fw_dwimap.nii.gz",
+                "sub-test3/dwi/sub-test3_model-fw_param-fwf_dwimap.json",
+                "sub-test3/dwi/sub-test3_model-fw_param-fwf_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-tensor_param-diffusivity_desc-fwc_dwimap.json",
@@ -161,8 +162,8 @@
                 "sub-test4/dwi/sub-test4_model-fw_param-direction_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-fw_param-fibervolume_dwimap.json",
                 "sub-test4/dwi/sub-test4_model-fw_param-fibervolume_dwimap.nii.gz",
-                "sub-test4/dwi/sub-test4_model-fw_param-fw_dwimap.json",
-                "sub-test4/dwi/sub-test4_model-fw_param-fw_dwimap.nii.gz",
+                "sub-test4/dwi/sub-test4_model-fw_param-fwf_dwimap.json",
+                "sub-test4/dwi/sub-test4_model-fw_param-fwf_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test4/dwi/sub-test4_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-tensor_param-diffusivity_desc-fwc_dwimap.json",
@@ -185,6 +186,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-06T15:20:38.338378"
+        "timestamp": "2026-01-07T15:46:41.25077"
     }
 }

@@ -702,11 +702,11 @@ workflow PEDIATRIC {
 
             // ** Set output channels ** //
             ch_metrics = ch_metrics
-                .mix(RECONST_FW_NODDI.out.noddi_fwf)
-                .mix(RECONST_FW_NODDI.out.noddi_ndi)
+                .mix(RECONST_FW_NODDI.out.noddi_isovf)
+                .mix(RECONST_FW_NODDI.out.noddi_icvf)
                 .mix(RECONST_FW_NODDI.out.noddi_ecvf)
                 .mix(RECONST_FW_NODDI.out.noddi_odi)
-                .mix(RECONST_FW_NODDI.out.fw_fw)
+                .mix(RECONST_FW_NODDI.out.fw_fwf)
                 .mix(RECONST_FW_NODDI.out.fw_fibervolume)
                 .mix(RECONST_FW_NODDI.out.fw_dti_md)
                 .mix(RECONST_FW_NODDI.out.fw_dti_rd)
@@ -716,11 +716,11 @@ workflow PEDIATRIC {
 
             // ** Update files to transform ** //
             ch_nifti_files_to_transform = ch_nifti_files_to_transform
-                .mix(RECONST_FW_NODDI.out.noddi_fwf)
-                .mix(RECONST_FW_NODDI.out.noddi_ndi)
+                .mix(RECONST_FW_NODDI.out.noddi_isovf)
+                .mix(RECONST_FW_NODDI.out.noddi_icvf)
                 .mix(RECONST_FW_NODDI.out.noddi_ecvf)
                 .mix(RECONST_FW_NODDI.out.noddi_odi)
-                .mix(RECONST_FW_NODDI.out.fw_fw)
+                .mix(RECONST_FW_NODDI.out.fw_fwf)
                 .mix(RECONST_FW_NODDI.out.fw_fibervolume)
                 .mix(RECONST_FW_NODDI.out.fw_dti_md)
                 .mix(RECONST_FW_NODDI.out.fw_dti_rd)
