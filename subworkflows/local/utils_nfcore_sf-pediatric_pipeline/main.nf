@@ -817,7 +817,7 @@ def buildMethodsDescription() {
             if ( !enabled("run_noddi") ) return ""
             def parts = []
             parts << """<h5>Neurite Orientation Dispersion and Density Imaging (NODDI)</h5>"""
-            parts << "Neurite Orientation Dispersion and Density Imaging (NODDI) models were fitted on the processed DWI volume using the AMICO implementation (Daducci et al., 2015; Zhang et al., 2012); intra-cellular volume fraction (ICVF), orientation dispersion index (ODI), freewater volume fraction (FWF), and isotropic volume fraction (ISOVF) maps were generated."
+            parts << "Neurite Orientation Dispersion and Density Imaging (NODDI) models were fitted on the processed DWI volume using the AMICO implementation (Daducci et al., 2015; Zhang et al., 2012); intra-cellular volume fraction (ICVF), orientation dispersion index (ODI), extra-cellular volume fraction (ECVF), and isotropic volume fraction (ISOVF) maps were generated."
             parts << "The regularization parameters for the NODDI model fitting were: &lambda;<sub>1</sub> of ${params.noddi_lambda1} and &lambda;<sub>2</sub> of ${params.noddi_lambda2}."
             if ( enabled('para_diff') ) {
                 parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff} and an isotropic diffusivity of ${params.iso_diff}."
