@@ -252,7 +252,7 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Metrics files ** //
-    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-{fa,md,rd,ad,nufo,afdtotal,afdsum,afdmax,fw,fibervolume,icvf,odi,fwf,isovf}{_desc-fwc,}_dwimap.nii.gz",
+    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-{fa,md,rd,ad,nufo,afdtotal,afdsum,afdmax,fwf,fibervolume,icvf,odi,ecvf,isovf}{_desc-fwc,}_dwimap.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
