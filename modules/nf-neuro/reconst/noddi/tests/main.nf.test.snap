@@ -1,0 +1,63 @@
+{
+    "reconst - noddi - extract_metrics": {
+        "content": [
+            "test__dir.nii.gz",
+            "test__isovf.nii.gz",
+            "test__icvf.nii.gz",
+            "test__ecvf.nii.gz",
+            "test__odi.nii.gz",
+            [
+                "versions.yml:md5,3c8accc418234ecdbf36f805b000818c"
+            ],
+            145
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2026-01-07T12:49:41.217264"
+    },
+    "reconst - noddi - with priors": {
+        "content": [
+            "test__dir.nii.gz",
+            "test__isovf.nii.gz",
+            "test__icvf.nii.gz",
+            "test__ecvf.nii.gz",
+            "test__odi.nii.gz",
+            [
+                "versions.yml:md5,3c8accc418234ecdbf36f805b000818c"
+            ],
+            145
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2026-01-07T12:52:14.874089"
+    },
+    "reconst - noddi - save_kernels - no mask": {
+        "content": [
+            [
+                "versions.yml:md5,3c8accc418234ecdbf36f805b000818c"
+            ],
+            145
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-12-11T15:12:31.541942034"
+    },
+    "reconst - noddi - stub-run": {
+        "content": [
+            [
+                "versions.yml:md5,3c8accc418234ecdbf36f805b000818c"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-11-13T16:58:51.218060667"
+    }
+}

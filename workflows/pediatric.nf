@@ -30,6 +30,9 @@ include { PREPROC_DWI                       } from '../subworkflows/nf-neuro/pre
 // ** DTI Metrics ** //
 include { RECONST_DTIMETRICS                } from '../modules/nf-neuro/reconst/dtimetrics/main'
 
+// ** Freewater / NODDI ** //
+include { RECONST_FW_NODDI                  } from '../subworkflows/nf-neuro/reconst_fw_noddi/main'
+
 // ** FRF ** //
 include { RECONST_FRF                       } from '../modules/nf-neuro/reconst/frf/main'
 
@@ -594,45 +597,140 @@ workflow PEDIATRIC {
             }
     }
 
-    if ( params.bundling ) {
+    // ** Setting channels for downstream analyses (this avoids code duplication) ** //
+    // ** We need a few stuff for either NODDI/FW, Bundleseg or connectomics ** //
+    if ( !params.tracking && (params.run_noddi || params.run_freewater || params.connectomics || params.bundling) ) {
+        FETCH_DERIVATIVES ( params.input_deriv )
 
-        // ** Fetch files from an input_deriv if tracking is not run ** //
-        if ( ! params.tracking ) {
-            FETCH_DERIVATIVES ( params.input_deriv )
+        ch_metrics = FETCH_DERIVATIVES.out.metrics
+        ch_fa_ad_rd_md = FETCH_DERIVATIVES.out.metrics
+            .map { meta, files ->
+                def fa = files.findAll { it.name.contains('param-fa_dwimap.nii.gz') }
+                def ad = files.findAll { it.name.contains('param-ad_dwimap.nii.gz') }
+                def rd = files.findAll { it.name.contains('param-rd_dwimap.nii.gz') }
+                def md = files.findAll { it.name.contains('param-md_dwimap.nii.gz') }
 
-            ch_fa = FETCH_DERIVATIVES.out.metrics
-                .map { meta, files ->
-                    def fa = files.findAll { it.name.contains('param-fa_dwimap.nii.gz') }
+                // ** Some logging if no files exists ** //
+                if ( fa.size() == 0 || ad.size() == 0 || rd.size() == 0 || md.size() == 0 ) {
+                    log.warn "No DTI metrics files have been found in your derivatives folder. " +
+                    "This might affect NODDI / FreeWater processing and throw errors."
+                }
+                return [ meta, fa, ad, rd, md ]
+            }
+        ch_fa = FETCH_DERIVATIVES.out.metrics
+            .map { meta, files ->
+                def fa = files.findAll { it.name.contains('param-fa_dwimap.nii.gz') }
 
-                    // ** Some logging if no files exists ** //
-                    if ( fa.size() == 0 ) {
-                        error "No FA file have been found in your derivatives folder. " +
-                        "Please validate your structure respects the BIDS specification."
-                    }
-                    return [ meta, fa ]
+                // ** Some logging if no files exists ** //
+                if ( fa.size() == 0 ) {
+                    error "No FA file have been found in your derivatives folder. " +
+                    "Please validate your structure respects the BIDS specification."
+                }
+                return [ meta, fa ]
+            }
+        ch_fodf = FETCH_DERIVATIVES.out.fodf
+        ch_peaks = FETCH_DERIVATIVES.out.peaks
+        ch_trk = FETCH_DERIVATIVES.out.trk
+        ch_transforms = FETCH_DERIVATIVES.out.transforms
+        ch_dwi_bval_bvec = FETCH_DERIVATIVES.out.dwi_bval_bvec
+        ch_brain_mask = FETCH_DERIVATIVES.out.brain_mask
+        ch_anat = FETCH_DERIVATIVES.out.anat
+
+        if ( params.segmentation ) {
+            ch_labels = SEGMENTATION.out.labels
+        } else {
+            ch_labels = FETCH_DERIVATIVES.out.labels
+        }
+    } else if ( params.tracking && (params.run_noddi || params.run_freewater || params.connectomics || params.bundling) ) {
+        ch_metrics = RECONST_DTIMETRICS.out.fa
+            .join(RECONST_DTIMETRICS.out.md)
+            .join(RECONST_DTIMETRICS.out.ad)
+            .join(RECONST_DTIMETRICS.out.rd)
+            .join(RECONST_DTIMETRICS.out.mode)
+            .join(RECONST_FODF.out.afd_total)
+            .join(RECONST_FODF.out.nufo)
+        ch_fa_ad_rd_md = RECONST_DTIMETRICS.out.fa
+            .join(RECONST_DTIMETRICS.out.ad)
+            .join(RECONST_DTIMETRICS.out.rd)
+            .join(RECONST_DTIMETRICS.out.md)
+        ch_fa = RECONST_DTIMETRICS.out.fa
+        ch_fodf = RECONST_FODF.out.fodf
+        ch_peaks = RECONST_FODF.out.peaks
+        ch_transforms = ANATTODWI.out.warp
+            .join(ANATTODWI.out.affine)
+        ch_dwi_bval_bvec = PREPROC_DWI.out.dwi
+            .join(PREPROC_DWI.out.bval)
+            .join(PREPROC_DWI.out.bvec)
+        ch_brain_mask = PREPROC_DWI.out.b0_mask
+        ch_anat = ANATTODWI.out.t1_warped
+
+        if ( params.segmentation ) {
+            ch_labels = SEGMENTATION.out.labels
+        } else if ( params.connectomics ) {
+            if ( !params.input_deriv ) {
+                error "No cortical/subcortical segmentation derivatives provided. Please provide a valid --input_deriv path or run the segmentation profile using `-profile segmentation`."
+            } else {
+                FETCH_DERIVATIVES ( params.input_deriv )
+                ch_labels = FETCH_DERIVATIVES.out.labels
+            }
+        }
+    }
+
+    if (params.run_noddi || params.run_freewater) {
+            // ** Prepare channels for priors coming from the normative curves ** //
+            ch_normative_diff = ch_dwi_bval_bvec
+                .multiMap { meta, _dwi, _bval, _bvec ->
+                    para_diff: params.average_diff_priors ? channel.empty() : params.para_diff ? channel.value(params.para_diff) : tuple(meta, meta.ad)
+                    iso_diff: params.average_diff_priors ? channel.empty() : params.iso_diff ? channel.value(params.iso_diff) : tuple(meta, meta.md)
+                    perp_diff_min: params.average_diff_priors ? channel.empty() : params.perp_diff_min ? channel.value(params.perp_diff_min) : tuple(meta, meta.rd_min)
+                    perp_diff_max: params.average_diff_priors ? channel.empty() : params.perp_diff_max ? channel.value(params.perp_diff_max) : tuple(meta, meta.rd_max)
                 }
 
-            ch_metrics = FETCH_DERIVATIVES.out.metrics
+            // ** Run NODDI / FreeWater reconstruction ** //
+            RECONST_FW_NODDI (
+                ch_dwi_bval_bvec,
+                ch_brain_mask,
+                ch_fa_ad_rd_md,
+                [
+                    para_diff: ch_normative_diff.para_diff,
+                    iso_diff: ch_normative_diff.iso_diff,
+                    perp_diff_min: ch_normative_diff.perp_diff_min,
+                    perp_diff_max: ch_normative_diff.perp_diff_max
+                ]
+            )
+            ch_versions = ch_versions.mix(RECONST_FW_NODDI.out.versions)
 
-            ch_fodf = FETCH_DERIVATIVES.out.fodf
+            // ** Set output channels ** //
+            ch_metrics = ch_metrics
+                .mix(RECONST_FW_NODDI.out.noddi_isovf)
+                .mix(RECONST_FW_NODDI.out.noddi_icvf)
+                .mix(RECONST_FW_NODDI.out.noddi_ecvf)
+                .mix(RECONST_FW_NODDI.out.noddi_odi)
+                .mix(RECONST_FW_NODDI.out.fw_fwf)
+                .mix(RECONST_FW_NODDI.out.fw_fibervolume)
+                .mix(RECONST_FW_NODDI.out.fw_dti_md)
+                .mix(RECONST_FW_NODDI.out.fw_dti_rd)
+                .mix(RECONST_FW_NODDI.out.fw_dti_ad)
+                .mix(RECONST_FW_NODDI.out.fw_dti_fa)
+                .groupTuple(by: 0)
 
-            ch_trk = FETCH_DERIVATIVES.out.trk
-        } else {
-            ch_fa = RECONST_DTIMETRICS.out.fa
-
-            ch_metrics = RECONST_DTIMETRICS.out.fa
-                .join(RECONST_DTIMETRICS.out.md)
-                .join(RECONST_DTIMETRICS.out.ad)
-                .join(RECONST_DTIMETRICS.out.rd)
-                .join(RECONST_DTIMETRICS.out.mode)
-                .join(RECONST_FODF.out.afd_total)
-                .join(RECONST_FODF.out.nufo)
-                .map{ meta, fa, md, ad, rd, mode, afd_total, nufo ->
-                    tuple(meta, [ fa, md, ad, rd, mode, afd_total, nufo ])}
-
-            ch_fodf = RECONST_FODF.out.fodf
+            // ** Update files to transform ** //
+            ch_nifti_files_to_transform = ch_nifti_files_to_transform
+                .mix(RECONST_FW_NODDI.out.noddi_isovf)
+                .mix(RECONST_FW_NODDI.out.noddi_icvf)
+                .mix(RECONST_FW_NODDI.out.noddi_ecvf)
+                .mix(RECONST_FW_NODDI.out.noddi_odi)
+                .mix(RECONST_FW_NODDI.out.fw_fwf)
+                .mix(RECONST_FW_NODDI.out.fw_fibervolume)
+                .mix(RECONST_FW_NODDI.out.fw_dti_md)
+                .mix(RECONST_FW_NODDI.out.fw_dti_rd)
+                .mix(RECONST_FW_NODDI.out.fw_dti_ad)
+                .mix(RECONST_FW_NODDI.out.fw_dti_fa)
+            ch_rgb_files_to_transform = ch_rgb_files_to_transform
+                .mix(RECONST_FW_NODDI.out.fw_dti_rgb)
         }
 
+    if ( params.bundling ) {
         //
         // SUBWORKFLOW: Run BUNDLE_SEG
         //
@@ -642,13 +740,20 @@ workflow PEDIATRIC {
         )
         ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
 
+        // ** Format metrics channel ** //
+        ch_metrics_tractometry = ch_metrics.map { items ->
+            def meta = items[0]
+            def metrics = items[1..-1].flatten()
+            return [meta, metrics]
+        }
+
         //
         // SUBWORKFLOW: RUN TRACTOMETRY
         //
         TRACTOMETRY (
             BUNDLE_SEG.out.bundles,
             BUNDLE_SEG.out.centroids,
-            ch_metrics,
+            ch_metrics_tractometry,
             Channel.empty(),
             ch_fodf
         )
@@ -678,54 +783,6 @@ workflow PEDIATRIC {
     }
 
     if ( params.connectomics ) {
-
-        if ( params.input_deriv ) {
-            FETCH_DERIVATIVES ( params.input_deriv )
-        }
-
-        if ( params.tracking ) {
-
-            ch_transforms = ANATTODWI.out.warp
-                .join(ANATTODWI.out.affine)
-            ch_peaks = RECONST_FODF.out.peaks
-            ch_fodf = RECONST_FODF.out.fodf
-            ch_dwi_bval_bvec = PREPROC_DWI.out.dwi
-                .join(PREPROC_DWI.out.bval)
-                .join(PREPROC_DWI.out.bvec)
-            ch_anat = ANATTODWI.out.t1_warped
-            ch_metrics = RECONST_DTIMETRICS.out.fa
-                .join(RECONST_DTIMETRICS.out.md)
-                .join(RECONST_DTIMETRICS.out.ad)
-                .join(RECONST_DTIMETRICS.out.rd)
-                .join(RECONST_DTIMETRICS.out.mode)
-                .join(RECONST_FODF.out.afd_total)
-                .join(RECONST_FODF.out.nufo)
-                .map{ meta, fa, md, ad, rd, mode, afd_total, nufo ->
-                    tuple(meta, [ fa, md, ad, rd, mode, afd_total, nufo ])}
-
-        } else {
-
-            FETCH_DERIVATIVES ( params.input_deriv )
-
-            ch_trk = FETCH_DERIVATIVES.out.trk
-            ch_transforms = FETCH_DERIVATIVES.out.transforms
-            ch_peaks = FETCH_DERIVATIVES.out.peaks
-            ch_fodf = FETCH_DERIVATIVES.out.fodf
-            ch_dwi_bval_bvec = FETCH_DERIVATIVES.out.dwi_bval_bvec
-            ch_anat = FETCH_DERIVATIVES.out.anat
-            ch_metrics = FETCH_DERIVATIVES.out.metrics
-
-        }
-
-        if ( params.segmentation ) {
-
-            ch_labels = SEGMENTATION.out.labels
-
-        } else {
-
-            ch_labels = FETCH_DERIVATIVES.out.labels
-
-        }
         //
         // MODULE : Run AntsApplyTransforms.
         //
@@ -793,6 +850,12 @@ workflow PEDIATRIC {
         //
         // MODULE: Run CONNECTIVITY_METRICS
         //
+        ch_metrics_connectivity = ch_metrics.map { items ->
+            def meta = items[0]
+            def metrics = items[1..-1].flatten()
+            return [meta, metrics]
+        }
+
         ch_metrics_conn = CONNECTIVITY_AFDFIXEL.out.hdf5
             .join(ch_labels.reg, remainder: true)
             .map { id, trk, reg_label ->
@@ -804,7 +867,7 @@ workflow PEDIATRIC {
                 [id, trk, label]
             }
             .join(CONNECTIVITY_DECOMPOSE.out.labels_list)
-            .join(ch_metrics)
+            .join(ch_metrics_connectivity)
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())

@@ -91,7 +91,7 @@ workflow PIPELINE_INITIALISATION {
         error "ERROR: Your bids dataset does not contain a participants.tsv file. " +
         "Please provide a participants.tsv file with a column indicating the participants' " +
         "age. For any questions, please refer to the documentation at " +
-        "https://github.com/scilus/sf-pediatric.git or open an issue!"
+        "https://scilus.github.io/sf-pediatric/ or open an issue!"
     }
 
     //
@@ -130,7 +130,8 @@ workflow PIPELINE_INITIALISATION {
                     def priors = fetchPriors(tempAge)
 
                     return [
-                        [id: sid, session: session, run: run, age: age.toFloat(), fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md],
+                        [id: sid, session: session, run: run, age: age.toFloat(), fa: priors.fa, ad: priors.ad,
+                        rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max],
                         item.t1 ? file(item.t1) : [],
                         item.t2 ? file(item.t2) : [],
                         item.dwi ? file(item.dwi) : [],
@@ -227,9 +228,11 @@ def fetchPriors(age) {
     def ad = 0.001835 * Math.pow(age, -0.048725)
     def rd = 0.000430 * Math.pow(age, -0.092705)
     def md = 0.004116 * (1 - Math.exp(-Math.pow((3243541.309087 * age), 0.012118)))
+    def rd_min = 0.000159 * Math.pow(age, -0.276126)
+    def rd_max = 0 * Math.pow(age, 3) + -0.000002 * Math.pow(age, 2) + 0.000022 * age + 0.000776
 
     // Return values as a map and round them.
-    return [fa: fa.round(2), ad: ad.round(5), rd: rd.round(6), md: md.round(5)]
+    return [fa: fa.round(2), ad: ad.round(5), rd: rd.round(6), md: md.round(5), rd_min: rd_min.round(6), rd_max: rd_max.round(6)]
 }
 
 //
@@ -537,6 +540,27 @@ def generateSidecarJson(outputDir) {
             file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
         }
 
+        if (niftiFile.name.contains("desc-fwc")) {
+            def links = []
+
+            def fileNames = file("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*dwi.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}dwi/${f.name}")
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                SkullStripped: true,
+                Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                Description: "Free-water corrected diffusion volume",
+                ParameterURL: "https://doi.org/10.1002/mrm.22055"
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+
         def sh_basis = params.fodf_sh_basis.contains("descoteaux") ? "descoteaux" : "MRtrix3"
 
         // We should read the fiber response function from the subject file.
@@ -558,17 +582,17 @@ def generateSidecarJson(outputDir) {
 
         // Map patterns to their specific metadata
         def patternMetadata = [
-            "param-ad": [Description: "Axial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-ad_dwimap": [Description: "Axial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
             "param-afd": [Description: "Apparent fiber density", Model: [Description: "Single-Shell Single-Tissue (SSST) Constrained Spherical Deconvolution (CSD)"],
                     OrientationEncoding: [SphericalHarmonicBasis: sh_basis, SphericalHarmonicDegree: params.fodf_sh_order, Type: "sh"],
                     ResponseFunction: [Coefficients: responseList, Type: "zsh"]],
-            "param-fa": [Description: "Fractional Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-fa_dwimap": [Description: "Fractional Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
             "param-sh": [Description: "White matter", Model: [Description: "Single-Shell Single-Tissue (SSST) Constrained Spherical Deconvolution (CSD)"],
                     OrientationEncoding: [SphericalHarmonicBasis: sh_basis, SphericalHarmonicDegree: params.fodf_sh_order, Type: "sh"],
                     ResponseFunction: [Coefficients: responseList, Type: "zsh"]],
-            "param-ga": [Description: "Geodesic Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
-            "param-md": [Description: "Mean Diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
-            "param-mode": [Description: "Mode", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-ga_dwimap": [Description: "Geodesic Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-md_dwimap": [Description: "Mean Diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-mode_dwimap": [Description: "Mode", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
             "param-nufo": [Description: "Number of Fiber Orientation", Model: [Description: "Single-Shell Single-Tissue (SSST) Constrained Spherical Deconvolution (CSD)"],
                     OrientationEncoding: [SphericalHarmonicBasis: sh_basis, SphericalHarmonicDegree: params.fodf_sh_order, Type: "sh"],
                     ResponseFunction: [Coefficients: responseList, Type: "zsh"]],
@@ -576,10 +600,33 @@ def generateSidecarJson(outputDir) {
                     OrientationEncoding: [SphericalHarmonicBasis: sh_basis, SphericalHarmonicDegree: params.fodf_sh_order, Type: "sh"],
                     ResponseFunction: [Coefficients: responseList, Type: "zsh"]],
             "b0": [Type: "DWI", Description: "Mean B0 image"],
-            "param-rd": [Description: "Radial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
-            "param-rgb": [Description: "Color-coded Fractional Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
-            "param-diffusivity": [Description: "Diffusion Coefficient, encoded as a tensor representation", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]],
-            Units: "mm^2/s"],
+            "param-rd_dwimap": [Description: "Radial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-rgb_dwimap": [Description: "Color-coded Fractional Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-diffusivity_dwimap": [Description: "Diffusion Coefficient, encoded as a tensor representation", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-icvf": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Intra-cellular volume fraction CVF", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "param-odi": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Orientation dispersion index", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "model-noddi_param-direction": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Direction", OrientationEncoding: [EncodingAxis: 3, Type: "unit3vector", Reference: "xyz"]],
+            "param-ecvf": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Extracellular volume fraction ECVF", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "param-isovf": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Isotropic volume fraction ISOVF", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "model-fw_param-direction": [Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Direction", OrientationEncoding: [EncodingAxis: 3, Type: "unit3vector", Reference: "xyz"]],
+            "param-fwf": [Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Freewater fraction", ParameterURL: "https://doi.org/10.1002/mrm.22055"],
+            "param-fibervolume": [Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Fiber volume", ParameterURL: "https://doi.org/10.1002/mrm.22055"],
+            "param-ad_desc-fwc": [Description: "Freewater-corrected axial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-rd_desc-fwc": [Description: "Freewater-corrected radial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-md_desc-fwc": [Description: "Freewater-corrected mean diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-fa_desc-fwc": [Description: "Freewater-corrected fractional anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-mode_desc-fwc": [Description: "Freewater-corrected mode", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-diffusivity_desc-fwc": [Description: "Freewater-corrected diffusion Coefficient, encoded as a tensor representation", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-rgb_desc-fwc": [Description: "Freewater-corrected color-coded Fractional Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-ga_desc-fwc": [Description: "Freewater-corrected Geodesic Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
         ]
 
         def matchedPattern = patternMetadata.keySet().find { pattern -> niftiFile.name.contains(pattern) }
@@ -599,6 +646,25 @@ def generateSidecarJson(outputDir) {
             preprocList.each { f ->
                 if (f.exists()) {
                     links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}dwi/${f.name}")
+                }
+            }
+
+            // ** If the file is in a specific space, add the transforms ** //
+            if (niftiFile.name.contains("space-")) {
+                // Extract the space label
+                def spaceLabelMatch = (niftiFile.name =~ /space-([a-zA-Z0-9]+)/)
+                if (spaceLabelMatch) {
+                    def spaceLabel = spaceLabelMatch[0][1]
+                    def transforms = file("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                        .findAll { f ->
+                            f.name.contains("from-dwi") && f.name.contains("to-${spaceLabel}")
+                        }
+                    def transformsList = transforms instanceof List ? transforms : [transforms]
+                    transformsList.each { f ->
+                    if (f.exists()) {
+                        links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                        }
+                    }
                 }
             }
 
@@ -701,7 +767,7 @@ def buildMethodsDescription() {
             parts << """<h5>Fiber Orientation Distribution Function (fODF)</h5>"""
             parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2025) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.tokenize().join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_fodf_shell_value + " s/mm²"}."
             parts << "fODF were computed using a maximum spherical harmonic order of ${params.fodf_sh_order} in basis ${params.fodf_sh_basis}."
-            parts << "Fiber response functions were estimated based on normative curves of the brain's diffusivities through the developmental age-range as described in Gagnon et al. 2025."
+            parts << "Fiber response functions were estimated based on normative curves of the brain's diffusivities through the developmental age-range as described in Gagnon et al. 2026."
 
             return parts.findAll{ it }.join(' ')
         },
@@ -743,6 +809,34 @@ def buildMethodsDescription() {
             }
             if ( enabled('run_pft_tracking') && enabled('run_local_tracking') ) {
                 parts << "The resulting two tractograms from both methods were then concatenated to form the final whole-brain tractogram."
+            }
+
+            return parts.findAll{ it }.join(' ')
+        },
+        noddi: { ->
+            if ( !enabled("run_noddi") ) return ""
+            def parts = []
+            parts << """<h5>Neurite Orientation Dispersion and Density Imaging (NODDI)</h5>"""
+            parts << "Neurite Orientation Dispersion and Density Imaging (NODDI) models were fitted on the processed DWI volume using the AMICO implementation (Daducci et al., 2015; Zhang et al., 2012); intra-cellular volume fraction (ICVF), orientation dispersion index (ODI), freewater volume fraction (FWF), and isotropic volume fraction (ISOVF) maps were generated."
+            parts << "The regularization parameters for the NODDI model fitting were: &lambda;<sub>1</sub> of ${params.noddi_lambda1} and &lambda;<sub>2</sub> of ${params.noddi_lambda2}."
+            if ( enabled('para_diff') ) {
+                parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff} and an isotropic diffusivity of ${params.iso_diff}."
+            } else {
+                parts << "Diffusivity priors were automatically derived based on the participant's age using normative growth curves as described in Gagnon et al. 2026."
+            }
+
+            return parts.findAll{ it }.join(' ')
+        },
+        freewater: { ->
+            if ( !enabled("run_freewater") ) return ""
+            def parts = []
+            parts << """<h5>Freewater Elimination</h5>"""
+            parts << "Freewater was removed from diffusion tensor imaging (DTI) maps using the Freewater model implemented in the AMICO toolbox (Daducci et al., 2015; Pasternak et al., 2009); freewater-corrected diffusion volume, fibervolume, freewater, freewater-corrected fractional anisotropy (FA), axial diffusivity (AD), radial diffusivity (RD), mean diffusivity (MD), mode of anisotropy, and color-coded FA maps were generated."
+            parts << "Regularization parameters for model fitting were set as: &lambda;<sub>1</sub> of ${params.freewater_lambda1} and &lambda;<sub>2</sub> of ${params.freewater_lambda2}."
+            if ( enabled('para_diff') ) {
+                parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff}, an isotropic diffusivity of ${params.iso_diff}, a minimum perpendicular diffusivity of ${params.perp_diff_min}, and a maximum perpendicular diffusivity of ${params.perp_diff_max}."
+            } else {
+                parts << "Diffusivity priors were automatically derived based on the participant's age using normative growth curves as described in Gagnon et al. 2026."
             }
 
             return parts.findAll{ it }.join(' ')
@@ -834,7 +928,7 @@ def buildMethodsDescription() {
                 parts << "Curvature-based filtering was applied to remove streamlines with sharp curves using a maximum angle of ${params.decompose_max_angle}° over ${params.decompose_max_curv} mm."
             }
             parts << "To mitigate the risk of false-positive connections, COMMIT (Daducci et al., 2015) was applied to the tractogram using the ${params.commit_ball_stick ? "ball and stick" : "stick, zeppelin, and ball"} model to optimize the fit between the tractogram and the diffusion data."
-            parts << "Diffusivity parameters for COMMIT were set based on age-specific normative values as described in Gagnon et al. 2025."
+            parts << "Diffusivity parameters for COMMIT were set based on age-specific normative values as described in Gagnon et al. 2026."
             if ( enabled('run_commit2') ) {
                 parts << "Using COMMIT2 (Schiavi et al., 2020) with a clustering prior strength of ${params.commit2_lambda}, the contribution of each streamline to the diffusion signal was evaluated and streamlines with zero contribution were removed from the tractogram to further reduce false-positive connections."
             } else {
@@ -912,9 +1006,12 @@ def toolBibliographyText() {
         "Ewels et al., 2016"        : "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. <i>Bioinformatics</i>, 32(19), 3047–3048. <a href=https://doi.org/10.1093/bioinformatics/btw354>https://doi.org/10.1093/bioinformatics/btw354</a></li>",
         "Klein et al., 2012"        : "<li>Klein. A., & Tourville, J. (2012). 101 labeled brain images and a consistent human cortical labeling protocol. <i>Frontiers in Neuroscience</i>, 6(171). <a href=https://doi.org/10.3389/fnins.2012.00171>https://doi.org/10.3389/fnins.2012.00171</a></li>",
         "Chen et al., 2022"         : "<li>Chen, L., Wu, Z., Hu, D., Wang, Y., Zhao, F., Zhong, T., Lin, W., Wang, L., & Li, G. (2022). A 4D infant brain volumetric atlas based on the UNC/UMN baby connectome project (BCP) cohort. <i>NeuroImage</i>, 253, 119097. <a href=https://doi.org/10.1016/j.neuroimage.2022.119097>https://doi.org/10.1016/j.neuroimage.2022.119097</a></li>",
+        "Daducci et al., 2015"      : "<li>Daducci, A., Canales-Rodríguez, E. J., Zhang, H., Dyrby, T. B., Alexander, D. C., & Thiran, J.-P. (2015). Accelerated Microstructure Imaging via Convex Optimization (AMICO) from diffusion MRI data. <i>NeuroImage</i>, 105, 32–44. <a href=https://doi.org/10.1016/j.neuroimage.2014.10.026>https://doi.org/10.1016/j.neuroimage.2014.10.026</a></li>",
+        "Zhang et al. 2012"         : "<li>Zhang, H., Schneider, T., Wheeler-Kingshott, C. A., & Alexander, D. C. (2012). NODDI: Practical in vivo neurite orientation dispersion and density imaging of the human brain. <i>NeuroImage</i>, 61(4), 1000–1016. <a href=https://doi.org/10.1016/j.neuroimage.2012.03.072>https://doi.org/10.1016/j.neuroimage.2012.03.072</a></li>",
+        "Pasternak et al., 2009"     : "<li>Pasternak, O., Sochen, N., Gur, Y., Intrator, N., & Assaf, Y. (2009). Free water elimination and mapping from diffusion MRI. <i>Magnetic Resonance in Medicine</i>, 62(3), 717–730. <a href=https://doi.org/10.1002/mrm.22055>https://doi.org/10.1002/mrm.22055</a></li>",
         // Not published yet.
         "Renauld et al., 2025"       : "<li>Renauld, A. et al. (2025). scilpy: a toolbox for tractography and tractometry. Submitted to <i>Aperture Neuro</i></li>",
-        "Gagnon et al., 2025"       : "<li>Gagnon, A., et al. (2025). sf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. <i>In preparation</i></li>",
+        "Gagnon et al., 2026"       : "<li>Gagnon, A., et al. (2026). sf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. <i>In preparation</i></li>",
     ]
 
     // Build the bibliography in the order tokens were found.

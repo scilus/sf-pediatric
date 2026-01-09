@@ -15,6 +15,7 @@ nextflow_pipeline {
                 params.outdir = "$outputDir"
 
                 params.bundling = true
+                params.run_freewater = true
             }
         }
 

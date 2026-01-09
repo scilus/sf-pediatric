@@ -30,11 +30,16 @@ process CONNECTIVITY_METRICS {
             # Extract metric type from different patterns
             if [[ "\$base_name" =~ param-([^_]+) ]]; then
                 stat="\${BASH_REMATCH[1]}"  # Extract the value after 'desc-'
+                stat="stat-\${stat}"
+            elif [[ "\$base_name" == *"desc-fwc"* ]]; then
+                stat=\${base_name/*__/}  # Extract the value after '__'
+                stat="desc-fwc_stat-\${stat}"
             else
                 stat=\${base_name/${prefix}__/}  # Fallback to old method
+                stat="stat-\${stat}"
             fi
 
-            metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_seg-${atlas}_stat-\${stat}.npy"
+            metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_seg-${atlas}_\${stat}.npy"
         done
 
         scil_connectivity_compute_matrices.py $h5 $labels \
@@ -60,6 +65,21 @@ process CONNECTIVITY_METRICS {
         if [ -f tot_commit*.npy ]; then
             mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
         fi
+
+        # Remove "fit_" from filenames if present (only for .npy files)
+        for file in *.npy; do
+            if [[ "\$file" == *"fit_"* ]]; then
+                new_file=\${file/fit_/}
+                # If contains FWF, NDI, ECVF, and ODI, convert to lowercase
+                new_file=\$(sed -E 's/(FWF|ODI)/\\L\\1/g' <<< "\$new_file")
+                if [[ "\$new_file" == *"NDI"* ]]; then
+                    new_file=\$(sed -E 's/NDI/icvf/g' <<< "\$new_file")
+                elif [[ "\$new_file" == *"ECVF"* ]]; then
+                    new_file=\$(sed -E 's/ECVF/ecvf/g' <<< "\$new_file")
+                fi
+                mv "\$file" "\$new_file"
+            fi
+        done
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
@@ -112,12 +132,31 @@ process CONNECTIVITY_METRICS {
             # Extract metric type from different patterns
             if [[ "\$base_name" =~ param-([^_]+) ]]; then
                 stat="\${BASH_REMATCH[1]}"  # Extract the value after 'desc-'
+                stat="stat-\${stat}"
+            elif [[ "\$base_name" == *"desc-fwc"* ]]; then
+                stat=\${base_name/*__/}  # Extract the value after '__'
+                stat="desc-fwc_stat-\${stat}"
             else
                 stat=\${base_name/${prefix}__/}  # Fallback to old method
-
+                stat="stat-\${stat}"
             fi
 
-            touch ${prefix}_seg-${atlas}_stat-\${stat}.npy
+            touch ${prefix}_seg-${atlas}_\${stat}.npy
+        done
+
+        # Remove "fit_" from filenames if present (only for .npy files)
+        for file in *.npy; do
+            if [[ "\$file" == *"fit_"* ]]; then
+                new_file=\${file/fit_/}
+                # If contains FWF, NDI, ECVF, and ODI, convert to lowercase
+                new_file=\$(sed -E 's/(FWF|ODI)/\\L\\1/g' <<< "\$new_file")
+                if [[ "\$new_file" == *"NDI"* ]]; then
+                    new_file=\$(sed -E 's/NDI/icvf/g' <<< "\$new_file")
+                elif [[ "\$new_file" == *"ECVF"* ]]; then
+                    new_file=\$(sed -E 's/ECVF/ecvf/g' <<< "\$new_file")
+                fi
+                mv "\$file" "\$new_file"
+            fi
         done
 
         scil_connectivity_compute_matrices.py -h

@@ -1026,6 +1026,112 @@
                 }
             }
         },
+        "diffusivities": {
+            "title": "Diffusivities Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Parameters for tuning diffusivities used in models fitting",
+            "help_text": "These options are used to configure the diffusivities used in the various diffusion models (fODF, NODDI, Freewater, COMMIT). If not set, they are automatically taken from the normative growth curves, as described here: https://scilus.github.io/sf-pediatric/guides/priors/",
+            "properties": {
+                "average_diff_priors": {
+                    "type": "boolean",
+                    "description": "If set to true, will compute the average diffusivities for the NODDI/Freewater models and average them across all subjects to use as fixed diffusivities for all subjects.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "para_diff": {
+                    "type": "number",
+                    "description": "Parallel diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "iso_diff": {
+                    "type": "number",
+                    "description": "Isotropic diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "perp_diff": {
+                    "type": "number",
+                    "description": "Perpendicular diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "perp_diff_min": {
+                    "type": "number",
+                    "description": "Minimum perpendicular diffusivity value (in mm^2/s) to use in models fitting. If not set, it will be derived from normative growth curves based on participant's age",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "perp_diff_max": {
+                    "type": "number",
+                    "description": "Maximum perpendicular diffusivity value (in mm^2/s) to use in models fitting. If not set, it will be derived from normative growth curves based on participant's age",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                }
+            }
+        },
+        "noddi_options": {
+            "title": "NODDI Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for NODDI model fitting.",
+            "help_text": "These options are used to configure the NODDI model fitting steps in the pipeline.",
+            "properties": {
+                "run_noddi": {
+                    "type": "boolean",
+                    "description": "Whether to run the NODDI processing step. If selected, the resulting metric maps will be added to the list used in the bundling and connectomics profile. NODDI is only available for multi-shell acquisitions, for single-shell acquisitions, please consider using Freewater model instead.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "noddi_lambda1": {
+                    "type": "number",
+                    "description": "Value to use as the first regularization parameter (lambda1) in the NODDI fitting process.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "noddi_lambda2": {
+                    "type": "number",
+                    "description": "Value to use as the second regularization parameter (lambda2) in the NODDI fitting process.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1e-3,
+                    "hidden": true
+                }
+            }
+        },
+        "freewater_options": {
+            "title": "Freewater Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for Freewater model fitting.",
+            "help_text": "These options are used to configure the Freewater model fitting steps in the pipeline.",
+            "properties": {
+                "run_freewater": {
+                    "type": "boolean",
+                    "description": "Whether to run the Freewater processing step. If selected, the resulting metric maps will be added to the list used in the bundling and connectomics profile.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "freewater_lambda1": {
+                    "type": "number",
+                    "description": "Value to use as the first regularization parameter (lambda1) in the Freewater fitting process.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0,
+                    "hidden": true
+                },
+                "freewater_lambda2": {
+                    "type": "number",
+                    "description": "Value to use as the second regularization parameter (lambda2) in the Freewater fitting process.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.25,
+                    "hidden": true
+                }
+            }
+        },
         "bundleseg_options": {
             "title": "BundleSeg Options",
             "type": "object",
@@ -1209,27 +1315,6 @@
                     "fa_icon": "fas fa-code-branch",
                     "default": 0.001,
                     "hidden": true
-                },
-                "commit_para_diff": {
-                    "type": "string",
-                    "description": "Para diff value used in the COMMIT filtering step.",
-                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
-                    "fa_icon": "fas fa-code-branch",
-                    "hidden": false
-                },
-                "commit_iso_diff": {
-                    "type": "string",
-                    "description": "Iso diff value used in the COMMIT filtering step.",
-                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
-                    "fa_icon": "fas fa-code-branch",
-                    "hidden": false
-                },
-                "commit_perp_diff": {
-                    "type": "string",
-                    "description": "Perp diff value used in the COMMIT filtering step.",
-                    "help_text": "This value is derived from normative curves in function of each participant's age. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
-                    "fa_icon": "fas fa-code-branch",
-                    "hidden": false
                 },
                 "commit_ball_stick": {
                     "type": "boolean",
@@ -1618,6 +1703,15 @@
         },
         {
             "$ref": "#/$defs/local_tracking_options"
+        },
+        {
+            "$ref": "#/$defs/diffusivities"
+        },
+        {
+            "$ref": "#/$defs/noddi_options"
+        },
+        {
+            "$ref": "#/$defs/freewater_options"
         },
         {
             "$ref": "#/$defs/bundleseg_options"
