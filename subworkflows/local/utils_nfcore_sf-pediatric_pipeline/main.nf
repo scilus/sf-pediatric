@@ -752,7 +752,7 @@ def buildMethodsDescription() {
             if ( !enabled('tracking') ) return ""
             def parts = []
             parts << """<h5>Diffusion Tensor Imaging (DTI)</h5>"""
-            parts << "Diffusion tensor imaging (DTI) models were fitted on the processed volume using the scilpy toolbox (Renauld et al., 2025); fractional anisotropy (FA), axial diffusivity (AD), radial diffusivity (RD), mean diffusivity (MD), mode of anisotropy, and color-coded FA maps were generated."
+            parts << "Diffusion tensor imaging (DTI) models were fitted on the processed volume using the scilpy toolbox (Renauld et al., 2026); fractional anisotropy (FA), axial diffusivity (AD), radial diffusivity (RD), mean diffusivity (MD), mode of anisotropy, and color-coded FA maps were generated."
             if ( enabled('dti_shells') ) {
                 parts << "DTI fitting used the following shells: ${params.dti_shells.tokenize().join(', ')}."
             } else {
@@ -765,7 +765,7 @@ def buildMethodsDescription() {
             if ( !enabled('tracking') ) return ""
             def parts = []
             parts << """<h5>Fiber Orientation Distribution Function (fODF)</h5>"""
-            parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2025) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.tokenize().join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_fodf_shell_value + " s/mm²"}."
+            parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2026) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.tokenize().join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_fodf_shell_value + " s/mm²"}."
             parts << "fODF were computed using a maximum spherical harmonic order of ${params.fodf_sh_order} in basis ${params.fodf_sh_basis}."
             parts << "Fiber response functions were estimated based on normative curves of the brain's diffusivities through the developmental age-range as described in Gagnon et al. 2026."
 
@@ -795,7 +795,7 @@ def buildMethodsDescription() {
             if ( !enabled('tracking') ) return ""
             def parts = []
             parts << """<h5>Tractography</h5>"""
-            parts << "Whole-brain tractography was performed using the scilpy toolbox (Renauld et al., 2025)."
+            parts << "Whole-brain tractography was performed using the scilpy toolbox (Renauld et al., 2026)."
             if ( enabled('run_pft_tracking') ) {
                 parts << "Particle Filter Tracking (PFT) was used to leverage anatomical priors from the tissue segmentation to improve streamline generation (Girard et al., 2014)."
                 parts << "Tracking seeds were randomly placed ${params.pft_seeding_mask_type == "wm" ? "within the white matter mask" : params.pft_seeding_mask_type == "interface" ? "at the grey matter-white matter interface" : "in voxels with FA values over ${params.pft_fa_threshold}"} with a density of ${params.pft_seeding_type == "npv" ? "${params.pft_nbr_seeds} seeds per voxel." : "${params.pft_nbr_seeds} seeds total."}"
@@ -817,7 +817,7 @@ def buildMethodsDescription() {
             if ( !enabled("run_noddi") ) return ""
             def parts = []
             parts << """<h5>Neurite Orientation Dispersion and Density Imaging (NODDI)</h5>"""
-            parts << "Neurite Orientation Dispersion and Density Imaging (NODDI) models were fitted on the processed DWI volume using the AMICO implementation (Daducci et al., 2015; Zhang et al., 2012); intra-cellular volume fraction (ICVF), orientation dispersion index (ODI), freewater volume fraction (FWF), and isotropic volume fraction (ISOVF) maps were generated."
+            parts << "Neurite Orientation Dispersion and Density Imaging (NODDI) models were fitted on the processed DWI volume using the AMICO implementation (Daducci et al., 2015; Zhang et al., 2012); intra-cellular volume fraction (ICVF), orientation dispersion index (ODI), extra-cellular volume fraction (ECVF), and isotropic volume fraction (ISOVF) maps were generated."
             parts << "The regularization parameters for the NODDI model fitting were: &lambda;<sub>1</sub> of ${params.noddi_lambda1} and &lambda;<sub>2</sub> of ${params.noddi_lambda2}."
             if ( enabled('para_diff') ) {
                 parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff} and an isotropic diffusivity of ${params.iso_diff}."
@@ -846,9 +846,9 @@ def buildMethodsDescription() {
             def parts = []
             parts << """<h5>Bundle segmentation</h5>"""
             if ( !enabled('atlas_directory') ) {
-                parts << "The closest age-matched white matter atlas (neonates, 3 months, 6 months, 12 months, 24 months or children) was registered into subject-space using an affine transformation. Whole-brain tractograms were segmented using BundleSeg from the scilpy toolbox (St-Onge et al., 2023; Renauld et al., 2025) with a minimal vote ratio of ${params.minimal_vote_ratio}, an outlier threshold of ${params.outlier_alpha}, and the ${params.use_hyperplane ? "hyperplane method" : params.use_manhattan ? "manhattan distance" : "euclidean distance"}."
+                parts << "The closest age-matched white matter atlas (neonates, 3 months, 6 months, 12 months, 24 months or children) was registered into subject-space using an affine transformation. Whole-brain tractograms were segmented using BundleSeg from the scilpy toolbox (St-Onge et al., 2023; Renauld et al., 2026) with a minimal vote ratio of ${params.minimal_vote_ratio}, an outlier threshold of ${params.outlier_alpha}, and the ${params.use_hyperplane ? "hyperplane method" : params.use_manhattan ? "manhattan distance" : "euclidean distance"}."
             } else {
-                parts << "The provided atlas located at ${params.atlas_directory} was registered in subject-space using an affine transformation. Whole-brain tractograms were segmented using BundleSeg from the scilpy toolbox (St-Onge et al., 2023; Renauld et al., 2025) with a minimal vote ratio of ${params.minimal_vote_ratio}, an outlier threshold of ${params.outlier_alpha}, and the ${params.use_hyperplane ? "hyperplane method" : params.use_manhattan ? "manhattan distance" : "euclidean distance"}."
+                parts << "The provided atlas located at ${params.atlas_directory} was registered in subject-space using an affine transformation. Whole-brain tractograms were segmented using BundleSeg from the scilpy toolbox (St-Onge et al., 2023; Renauld et al., 2026) with a minimal vote ratio of ${params.minimal_vote_ratio}, an outlier threshold of ${params.outlier_alpha}, and the ${params.use_hyperplane ? "hyperplane method" : params.use_manhattan ? "manhattan distance" : "euclidean distance"}."
             }
             parts << "Extracted bundles were then filtered to remove invalid streamlines, single point streamlines, and overlapping points."
             parts << "Then, fixel-based apparent fiber density was computed for each bundle (Raffelt et al., 2017)."
@@ -862,7 +862,7 @@ def buildMethodsDescription() {
             if ( !enabled('atlas_directory') ) {
                 parts << "Atlas' centroids were registered into subject-space using an affine transformation."
             } else {
-                parts << "For each extracted bundle, the centroid was extracted using the scilpy toolbox (Renauld et al., 2025)."
+                parts << "For each extracted bundle, the centroid was extracted using the scilpy toolbox (Renauld et al., 2026)."
             }
             parts << "The centroids were then resampled to ${params.nb_points} points, enabling the derivation of per point metrics."
             if ( enabled('density_weighting') ) {
@@ -912,7 +912,7 @@ def buildMethodsDescription() {
             if ( !enabled('connectomics') ) return ""
             def parts = []
             parts << """<h5>Connectomics</h5>"""
-            parts << "Structural connectivity matrices were generated using the scilpy toolbox (Renauld et al., 2025) based on the Brainnetome Child Atlas (Li et al., 2023) or the Desikan-Killiany atlas (Desikan et al., 2006) depending on the participant's age."
+            parts << "Structural connectivity matrices were generated using the scilpy toolbox (Renauld et al., 2026) based on the Brainnetome Child Atlas (Li et al., 2023) or the Desikan-Killiany atlas (Desikan et al., 2006) depending on the participant's age."
             parts << "For each participant, labels in anatomical space were first registered in diffusion space using the already computed transformations with a ${params.labels_interpolation == "NearestNeighbor" ? "nearest neighbor interpolation method" : "${params.labels_interpolation}"}."
             parts << "Then, the final tractogram was decomposed into individual connections by extracting each streamline connecting a pair of parcels."
             if ( !enabled('decompose_no_pruning') ) {
@@ -1007,10 +1007,10 @@ def toolBibliographyText() {
         "Klein et al., 2012"        : "<li>Klein. A., & Tourville, J. (2012). 101 labeled brain images and a consistent human cortical labeling protocol. <i>Frontiers in Neuroscience</i>, 6(171). <a href=https://doi.org/10.3389/fnins.2012.00171>https://doi.org/10.3389/fnins.2012.00171</a></li>",
         "Chen et al., 2022"         : "<li>Chen, L., Wu, Z., Hu, D., Wang, Y., Zhao, F., Zhong, T., Lin, W., Wang, L., & Li, G. (2022). A 4D infant brain volumetric atlas based on the UNC/UMN baby connectome project (BCP) cohort. <i>NeuroImage</i>, 253, 119097. <a href=https://doi.org/10.1016/j.neuroimage.2022.119097>https://doi.org/10.1016/j.neuroimage.2022.119097</a></li>",
         "Daducci et al., 2015"      : "<li>Daducci, A., Canales-Rodríguez, E. J., Zhang, H., Dyrby, T. B., Alexander, D. C., & Thiran, J.-P. (2015). Accelerated Microstructure Imaging via Convex Optimization (AMICO) from diffusion MRI data. <i>NeuroImage</i>, 105, 32–44. <a href=https://doi.org/10.1016/j.neuroimage.2014.10.026>https://doi.org/10.1016/j.neuroimage.2014.10.026</a></li>",
-        "Zhang et al. 2012"         : "<li>Zhang, H., Schneider, T., Wheeler-Kingshott, C. A., & Alexander, D. C. (2012). NODDI: Practical in vivo neurite orientation dispersion and density imaging of the human brain. <i>NeuroImage</i>, 61(4), 1000–1016. <a href=https://doi.org/10.1016/j.neuroimage.2012.03.072>https://doi.org/10.1016/j.neuroimage.2012.03.072</a></li>",
+        "Zhang et al., 2012"         : "<li>Zhang, H., Schneider, T., Wheeler-Kingshott, C. A., & Alexander, D. C. (2012). NODDI: Practical in vivo neurite orientation dispersion and density imaging of the human brain. <i>NeuroImage</i>, 61(4), 1000–1016. <a href=https://doi.org/10.1016/j.neuroimage.2012.03.072>https://doi.org/10.1016/j.neuroimage.2012.03.072</a></li>",
         "Pasternak et al., 2009"     : "<li>Pasternak, O., Sochen, N., Gur, Y., Intrator, N., & Assaf, Y. (2009). Free water elimination and mapping from diffusion MRI. <i>Magnetic Resonance in Medicine</i>, 62(3), 717–730. <a href=https://doi.org/10.1002/mrm.22055>https://doi.org/10.1002/mrm.22055</a></li>",
-        // Not published yet.
-        "Renauld et al., 2025"       : "<li>Renauld, A. et al. (2025). scilpy: a toolbox for tractography and tractometry. Submitted to <i>Aperture Neuro</i></li>",
+        "Renauld et al., 2026"       : "<li>Renauld, E., Boré, A., Poirier, C., Valcourt-Caron, A., Karan, P., Théberge, A., Théaud, G., Edde, M., Poulin, P., Girard, G., Houde, J.-C., Gagnon, A., St-Onge, E., Little, G., Legarreta, J. H., Thoumyre, S., Grenier, G., El Yamani, Z., Ocampo Pineda, M., … Descoteaux, M. (2026). Tractography analysis with the scilpy toolbox. <i>Aperture Neuro</i>, 6. <a href=https://doi.org/10.52294/001c.154022>https://doi.org/10.52294/001c.154022</a></li>",
+        // Not yet published works
         "Gagnon et al., 2026"       : "<li>Gagnon, A., et al. (2026). sf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. <i>In preparation</i></li>",
     ]
 
