@@ -1081,7 +1081,7 @@
             "properties": {
                 "run_noddi": {
                     "type": "boolean",
-                    "description": "Whether to run the NODDI processing step. If selected, the resulting metric maps will be added to the list used in the bundling and connectomics profile.",
+                    "description": "Whether to run the NODDI processing step. If selected, the resulting metric maps will be added to the list used in the bundling and connectomics profile. NODDI is only available for multi-shell acquisitions, for single-shell acquisitions, please consider using Freewater model instead.",
                     "fa_icon": "fas fa-brain",
                     "default": false,
                     "hidden": false
