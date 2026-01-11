@@ -189,7 +189,7 @@ workflow OUTPUT_TEMPLATE_SPACE {
             // Calculate memory based on tractogram files size
             def trk_files = [trk].flatten()
             def total_size = trk_files.collect { it.size() }.sum()
-            def mem = ((4L * 1024 * 1024 * 1024) + total_size * 7.0)
+            def mem = ((8L * 1024 * 1024 * 1024) + (total_size * 10.0))
 
             // Return with memory in meta
             tuple(meta + [mem: mem as long], image, affine, trk, [], warp)
