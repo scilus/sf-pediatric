@@ -73,6 +73,7 @@ main:
     ch_versions = ch_versions.mix(BUNDLE_STATS.out.versions.first())
 
     emit:
+    bundles                         = BUNDLE_UNIFORMIZE.out.bundles ?: Channel.empty()
     stat_length                     = BUNDLE_STATS.out.length ?: Channel.empty()
     stat_endpoints_raw              = BUNDLE_STATS.out.endpoints_raw ?: Channel.empty()
     stat_endpoints_metric           = BUNDLE_STATS.out.endpoints_metric_stats ?: Channel.empty()

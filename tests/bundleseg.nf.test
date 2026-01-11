@@ -14,6 +14,10 @@ nextflow_pipeline {
                 params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
 
+                params.template = "MNIInfant"
+                params.templateflow_res = 1
+                params.templateflow_cohort = 1
+
                 params.bundling = true
                 params.run_freewater = true
             }

@@ -757,6 +757,8 @@ workflow PEDIATRIC {
             Channel.empty(),
             ch_fodf
         )
+        ch_trk_files_to_transform = ch_trk_files_to_transform
+            .mix(TRACTOMETRY.out.bundles)
         ch_versions = ch_versions.mix(TRACTOMETRY.out.versions)
 
         //
@@ -942,7 +944,7 @@ workflow PEDIATRIC {
             }
 
         OUTPUT_TEMPLATE_SPACE(
-            ANATTODWI.out.t1_warped,
+            params.tracking ? ANATTODWI.out.t1_warped : ch_anat,
             ch_nifti_files_to_transform,
             ch_rgb_files_to_transform,
             ch_mask_files_to_transform,
