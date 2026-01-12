@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `Added`
 
+- Add bundles to the list of tractograms to warp in template space.
 - Freewater correction and NODDI diffusion models ([[#100](https://github.com/scilus/sf-pediatric/issues/100)])
 
 ## [0.2.0] - [2025-12-19]

@@ -757,12 +757,14 @@ workflow PEDIATRIC {
             Channel.empty(),
             ch_fodf
         )
+        ch_trk_files_to_transform = ch_trk_files_to_transform
+            .mix(TRACTOMETRY.out.bundles)
         ch_versions = ch_versions.mix(TRACTOMETRY.out.versions)
 
         //
         // MODULE: MERGE_TSV
         //
-        ch_merged_mean_tsv = TRACTOMETRY.out.mean_std_tsv
+        ch_merged_mean_tsv = TRACTOMETRY.out.mean_tsv
             .map { _meta, stats -> stats }
             .collectFile(
                 storeDir: "${params.outdir}/",
@@ -770,7 +772,7 @@ workflow PEDIATRIC {
                 skip: 1,
                 keepHeader: true
             )
-        ch_merged_point_tsv = TRACTOMETRY.out.mean_std_per_point_tsv
+        ch_merged_point_tsv = TRACTOMETRY.out.mean_per_point_tsv
             .map { _meta, stats -> stats }
             .collectFile(
                 storeDir: "${params.outdir}/",
@@ -942,7 +944,7 @@ workflow PEDIATRIC {
             }
 
         OUTPUT_TEMPLATE_SPACE(
-            ANATTODWI.out.t1_warped,
+            params.tracking ? ANATTODWI.out.t1_warped : ch_anat,
             ch_nifti_files_to_transform,
             ch_rgb_files_to_transform,
             ch_mask_files_to_transform,

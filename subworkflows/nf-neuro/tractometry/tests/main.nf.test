@@ -79,14 +79,16 @@ nextflow_workflow {
                             [(channel.key): ["versions"].contains(channel.key)
                                 ? channel.value
                                 : channel.value.collect{ subject ->
-                                    [ subject[0] ] + subject[1..-1].collect{ entry -> entry ? file(entry).name : "" }
+                                    def meta = subject[0]
+                                    def files = subject[1..-1].flatten().findAll{ it }
+                                    [meta] + files.collect{ entry -> file(entry).name }
                             } ]
                         }
                 ).match() }
             )
         }
     }
-        test("tractometry_without_centroids") {
+    test("tractometry_without_centroids") {
         config "./nextflow.config"
         when {
             workflow {
@@ -131,7 +133,9 @@ nextflow_workflow {
                             [(channel.key): ["versions"].contains(channel.key)
                                 ? channel.value
                                 : channel.value.collect{ subject ->
-                                    [ subject[0] ] + subject[1..-1].collect{ entry -> entry ? file(entry).name : "" }
+                                    def meta = subject[0]
+                                    def files = subject[1..-1].flatten().findAll{ it }
+                                    [meta] + files.collect{ entry -> file(entry).name }
                             } ]
                         }
                 ).match() }
