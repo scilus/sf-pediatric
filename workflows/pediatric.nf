@@ -764,7 +764,7 @@ workflow PEDIATRIC {
         //
         // MODULE: MERGE_TSV
         //
-        ch_merged_mean_tsv = TRACTOMETRY.out.mean_std_tsv
+        ch_merged_mean_tsv = TRACTOMETRY.out.mean_tsv
             .map { _meta, stats -> stats }
             .collectFile(
                 storeDir: "${params.outdir}/",
@@ -772,7 +772,7 @@ workflow PEDIATRIC {
                 skip: 1,
                 keepHeader: true
             )
-        ch_merged_point_tsv = TRACTOMETRY.out.mean_std_per_point_tsv
+        ch_merged_point_tsv = TRACTOMETRY.out.mean_per_point_tsv
             .map { _meta, stats -> stats }
             .collectFile(
                 storeDir: "${params.outdir}/",
