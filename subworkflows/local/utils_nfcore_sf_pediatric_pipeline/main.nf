@@ -8,15 +8,16 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { UTILS_NFSCHEMA_PLUGIN     } from '../../nf-core/utils_nfschema_plugin'
-include { paramsSummaryMap          } from 'plugin/nf-schema'
-include { samplesheetToList         } from 'plugin/nf-schema'
-include { paramsHelp                } from 'plugin/nf-schema'
-include { completionEmail           } from '../../nf-core/utils_nfcore_pipeline'
-include { completionSummary         } from '../../nf-core/utils_nfcore_pipeline'
-include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
-include { UTILS_NEXTFLOW_PIPELINE   } from '../../nf-core/utils_nextflow_pipeline'
+include { UTILS_NFSCHEMA_PLUGIN             } from '../../nf-core/utils_nfschema_plugin'
+include { paramsSummaryMap                  } from 'plugin/nf-schema'
+include { samplesheetToList                 } from 'plugin/nf-schema'
+include { paramsHelp                        } from 'plugin/nf-schema'
+include { completionEmail                   } from '../../nf-core/utils_nfcore_pipeline'
+include { completionSummary                 } from '../../nf-core/utils_nfcore_pipeline'
+include { UTILS_NFCORE_PIPELINE             } from '../../nf-core/utils_nfcore_pipeline'
+include { UTILS_NEXTFLOW_PIPELINE           } from '../../nf-core/utils_nextflow_pipeline'
 include { UTILS_BIDSLAYOUT          } from '../../../modules/local/utils/bidslayout'
+include { fromBIDS                          } from 'plugin/nf-bids'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,8 +103,17 @@ workflow PIPELINE_INITIALISATION {
     }
 
     //
-    // Create channel from input file provided through params.input
+    // Create channel from input file provided through params.input using nf-bids plugin
     //
+
+    ch_inputs = channel.fromBIDS(
+        input_bids,
+        "$projectDir/assets/nf-bids_config.yml",
+        [flatten_output: true]
+    )
+    .view()
+
+    /* Legacy BIDS reading - to be removed once nf-bids is stable
     if ( input_bids ) {
         ch_bids_script = channel.fromPath(bids_script)
         ch_input_bids = channel.fromPath(input_bids)
@@ -181,10 +191,9 @@ workflow PIPELINE_INITIALISATION {
             .filter { meta, _t1, _t2, _dwi, _bval, _bvec, _rev_dwi, _rev_bval, _rev_bvec, _rev_topup ->
                 participant_ids.isEmpty() || meta.id in participant_ids
             }
-
     } else {
         ch_inputs = channel.empty()
-    }
+    } */
 
     emit:
     input_bids      = ch_inputs

@@ -1,0 +1,99 @@
+# Define BIDS entities to loop over
+loop_over:
+  - subject
+  - session
+  - run
+
+# Define how each data type (suffix) should be handled.
+T1w:
+  plain_set: {}
+
+T2w:
+  plain_set: {}
+
+# Plain DWI (no phase encoding direction)
+dwi:
+  plain_set:
+  additional_extensions:
+    - bvec
+    - bval
+
+dwi_ap:
+  named_set:
+    ap:
+      direction: dir-AP
+    pa:
+      direction: dir-PA
+  required: ["ap", "pa"]
+  additional_extensions:
+    - bvec
+    - bval
+  suffix_maps_to: "dwi"
+
+dwi_rl:
+  named_set:
+    rl:
+      direction: dir-RL
+    lr:
+      direction: dir-LR
+  required: ["rl", "lr"]
+  additional_extensions:
+    - bvec
+    - bval
+  suffix_maps_to: "dwi"
+
+dwi_is:
+  named_set:
+    is:
+      direction: dir-IS
+    si:
+      direction: dir-SI
+  required: ["is", "si"]
+  additional_extensions:
+    - bvec
+    - bval
+  suffix_maps_to: "dwi"
+
+sbref:
+  plain_set:
+    exclude_entities:
+      - direction
+
+sbref_ap:
+  named_set:
+    ap:
+      direction: dir-AP
+    pa:
+      direction: dir-PA
+  required: ["ap", "pa"]
+  suffix_maps_to: "sbref"
+
+sbref_rl:
+  named_set:
+    rl:
+      direction: dir-RL
+    lr:
+      direction: dir-LR
+  required: ["rl", "lr"]
+  suffix_maps_to: "sbref"
+
+sbref_is:
+  named_set:
+    is:
+      direction: dir-IS
+    si:
+      direction: dir-SI
+  required: ["is", "si"]
+  suffix_maps_to: "sbref"
+
+epi:
+  plain_set: {}
+
+epi_fullreverse:
+  suffix_maps_to: "epi"
+  named_set:
+    ap:
+      direction: "dir-AP"
+    pa:
+      direction: "dir-PA"
+  required: ["ap", "pa"]
