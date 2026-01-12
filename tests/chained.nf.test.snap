@@ -282,6 +282,7 @@
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T2w.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T2w.nii.gz",
                 "sub-test1/ses-baseline/dwi",
+                "sub-test1/ses-baseline/dwi/bundles",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-brain_mask.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-brain_mask.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_desc-fwc_dwi.json",
@@ -509,6 +510,7 @@
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-T2w_desc-preproc_T2w.json",
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-T2w_desc-preproc_T2w.nii.gz",
                 "sub-test1/ses-time1/dwi",
+                "sub-test1/ses-time1/dwi/bundles",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-brain_mask.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-brain_mask.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_desc-fwc_dwi.json",
@@ -730,6 +732,7 @@
                 "sub-test2/anat/sub-test2_space-T2w_desc-preproc_T2w.json",
                 "sub-test2/anat/sub-test2_space-T2w_desc-preproc_T2w.nii.gz",
                 "sub-test2/dwi",
+                "sub-test2/dwi/bundles",
                 "sub-test2/dwi/sub-test2_desc-brain_mask.json",
                 "sub-test2/dwi/sub-test2_desc-brain_mask.nii.gz",
                 "sub-test2/dwi/sub-test2_desc-fwc_dwi.json",
@@ -949,6 +952,7 @@
                 "sub-test3/anat/sub-test3_space-T2w_desc-preproc_T2w.json",
                 "sub-test3/anat/sub-test3_space-T2w_desc-preproc_T2w.nii.gz",
                 "sub-test3/dwi",
+                "sub-test3/dwi/bundles",
                 "sub-test3/dwi/sub-test3_desc-brain_mask.json",
                 "sub-test3/dwi/sub-test3_desc-brain_mask.nii.gz",
                 "sub-test3/dwi/sub-test3_desc-fwc_dwi.json",
@@ -1174,7 +1178,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-07T18:08:44.943574"
+        "timestamp": "2026-01-11T21:29:20.06671"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
