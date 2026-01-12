@@ -105,12 +105,16 @@ workflow SF_PEDIATRIC {
     // Decomposing the samplesheet into individual channels
     //
     ch_inputs = ch_input_bids
-        .multiMap{ meta, t1, t2, dwi, bval, bvec, rev_dwi, rev_bval, rev_bvec, rev_b0 ->
-            t1: [meta, t1]
-            t2: [meta, t2]
-            dwi_bval_bvec: [meta, dwi, bval, bvec]
-            rev_b0: [meta, rev_b0]
-            rev_dwi_bval_bvec: [meta, rev_dwi, rev_bval, rev_bvec]
+        .multiMap{ meta, t1w, t2w, dwi, bval, bvec, dwi_ap, dwi_ap_bval, dwi_ap_bvec,
+        dwi_pa, dwi_pa_bval, dwi_pa_bvec, sbref, sbref_ap, sbref_pa, epi, epi_ap, epi_pa ->
+            t1: [meta, t1w]
+            t2: [meta, t2w]
+            dwi_bval_bvec: dwi_ap ? [meta, dwi_ap, dwi_ap_bval, dwi_ap_bvec] : [meta, dwi, bval, bvec]
+            rev_dwi_bval_bvec: [meta, dwi_pa, dwi_pa_bval, dwi_pa_bvec]
+            epi_ap: epi_ap ? [meta, epi_ap] : [meta, epi]
+            epi_pa: [meta, epi_pa]
+            sbref_ap: sbref_ap ? [meta, sbref_ap] : [meta, sbref]
+            sbref_pa: [meta, sbref_pa]
         }
 
     // Check if any T1w or T2w images are provided

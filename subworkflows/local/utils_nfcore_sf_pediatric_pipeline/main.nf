@@ -100,18 +100,86 @@ workflow PIPELINE_INITIALISATION {
         "Please provide a participants.tsv file with a column indicating the participants' " +
         "age. For any questions, please refer to the documentation at " +
         "https://scilus.github.io/sf-pediatric/ or open an issue!"
+    } else {
+        participant_data = readParticipantsTsv( file("$input_bids/participants.tsv") )
     }
 
     //
     // Create channel from input file provided through params.input using nf-bids plugin
     //
-
     ch_inputs = channel.fromBIDS(
         input_bids,
         "$projectDir/assets/nf-bids_config.yml",
         [flatten_output: true]
     )
-    .view()
+    .filter { item -> item.meta.subject in (params.participant_label ?: []) || (params.participant_label ?: []).isEmpty() }
+    .map { item ->
+        def id = item.meta.subject
+        def ses = item.meta.session == "NA" ? null : item.meta.session
+        def age = getAge(participant_data, id, ses)
+        if ( age == 0.0 ) {
+            error "ERROR: Age not found for participant ${id}${ses ? " and session " + ses : ""} in participants.tsv file. Please validate."
+        }
+        // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
+        def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+        def priors = fetchPriors(tempAge)
+        def meta = [id: id, session: ses ?: "", age: age,
+                    fa: priors.fa, ad: priors.ad,
+                    rd: priors.rd, md: priors.md,
+                    rd_min: priors.rd_min, rd_max: priors.rd_max]
+
+        // T1w and T2w
+        def t1w = item.T1w ? item.T1w.nii : []
+        def t2w = item.T2w ? item.T2w.nii : []
+
+        // DWI and associated files
+        def dwi = item.dwi ? item.dwi.nii : []
+        def dwi_bval = item.dwi ? item.dwi.bval : []
+        def dwi_bvec = item.dwi ? item.dwi.bvec : []
+
+        // DWI AP/PA
+        def dwi_ap = item.dwi_ap_pa ? item.dwi_ap_pa.ap.nii : []
+        def dwi_ap_bval = item.dwi_ap_pa ? item.dwi_ap_pa.ap.bval : []
+        def dwi_ap_bvec = item.dwi_ap_pa ? item.dwi_ap_pa.ap.bvec : []
+        def dwi_pa = item.dwi_ap_pa ? item.dwi_ap_pa.pa.nii : []
+        def dwi_pa_bval = item.dwi_ap_pa ? item.dwi_ap_pa.pa.bval : []
+        def dwi_pa_bvec = item.dwi_ap_pa ? item.dwi_ap_pa.pa.bvec : []
+
+        // Sbref
+        def sbref = item.sbref ? item.sbref.nii : []
+
+        // Sbref AP/PA
+        def sbref_ap = item.sbref ? item.sbref.ap.nii : []
+        def sbref_pa = item.sbref ? item.sbref.pa.nii : []
+
+        // EPI
+        def epi = item.epi ? item.epi.nii : []
+
+        // EPI AP/PA
+        def epi_ap = item.epi_ap_pa ? item.epi_ap_pa.ap.nii : []
+        def epi_pa = item.epi_ap_pa ? item.epi_ap_pa.pa.nii : []
+
+        return [
+            meta,
+            t1w,
+            t2w,
+            dwi,
+            dwi_bval,
+            dwi_bvec,
+            dwi_ap,
+            dwi_ap_bval,
+            dwi_ap_bvec,
+            dwi_pa,
+            dwi_pa_bval,
+            dwi_pa_bvec,
+            sbref,
+            sbref_ap,
+            sbref_pa,
+            epi,
+            epi_ap,
+            epi_pa
+        ]
+    }
 
     /* Legacy BIDS reading - to be removed once nf-bids is stable
     if ( input_bids ) {
@@ -254,6 +322,43 @@ workflow PIPELINE_COMPLETION {
     FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+//
+// Read participants.tsv file
+//
+def readParticipantsTsv(file) {
+    def participantData = []
+
+    file.splitCsv(sep: '\t', header: true).each { row ->
+        if (!row.age) {
+            error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
+        }
+
+        def sessionId = (row.session_id == null || row.session_id.toString().trim() == "") ? "" : row.session_id.toString()
+
+        participantData.add([
+            participant_id: row.participant_id.toString(),
+            session_id: sessionId,
+            age: row.age.toFloat()
+        ])
+    }
+
+    return participantData
+}
+
+//
+// Get age for a specific participant from the participants.tsv data
+//
+def getAge(participant_data, participant_id, session_id) {
+    def searchParticipantId = participant_id.toString()
+    def searchSessionId = (session_id == null || session_id.toString().trim() == "") ? "" : session_id.toString()
+
+    def match = participant_data.find { row ->
+        return row.participant_id == searchParticipantId && row.session_id == searchSessionId
+    }
+
+    return match ? match.age : 0.0  // Return 0.0 instead of empty string
+}
 
 //
 // Fetch priors based on age using the following equations:
