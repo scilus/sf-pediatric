@@ -102,6 +102,8 @@ workflow PIPELINE_INITIALISATION {
         "https://scilus.github.io/sf-pediatric/ or open an issue!"
     } else {
         participant_data = readParticipantsTsv( file("$input_bids/participants.tsv") )
+        // Copy to the output directory the participants file.
+        file("$input_bids/participants.tsv").copyTo(file("$outdir/participants.tsv"))
     }
 
     //
@@ -116,6 +118,7 @@ workflow PIPELINE_INITIALISATION {
     .map { item ->
         def id = item.meta.subject
         def ses = item.meta.session == "NA" ? null : item.meta.session
+        def run = item.meta.run == "NA" ? null : item.meta.run
         def age = getAge(participant_data, id, ses)
         if ( age == 0.0 ) {
             error "ERROR: Age not found for participant ${id}${ses ? " and session " + ses : ""} in participants.tsv file. Please validate."
@@ -123,41 +126,40 @@ workflow PIPELINE_INITIALISATION {
         // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
         def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
         def priors = fetchPriors(tempAge)
-        def meta = [id: id, session: ses ?: "", age: age,
+        def meta = [id: id, session: ses ?: "", age: age, run: run ?: "",
                     fa: priors.fa, ad: priors.ad,
                     rd: priors.rd, md: priors.md,
                     rd_min: priors.rd_min, rd_max: priors.rd_max]
 
         // T1w and T2w
-        def t1w = item.T1w ? item.T1w.nii : []
-        def t2w = item.T2w ? item.T2w.nii : []
+        def t1w = item.T1w?.nii ?: []
+        def t2w = item.T2w?.nii ?: []
 
         // DWI and associated files
-        def dwi = item.dwi ? item.dwi.nii : []
-        def dwi_bval = item.dwi ? item.dwi.bval : []
-        def dwi_bvec = item.dwi ? item.dwi.bvec : []
+        def dwi = item.dwi?.nii ?: []
+        def dwi_bval = item.dwi?.bval ?: []
+        def dwi_bvec = item.dwi?.bvec ?: []
 
         // DWI AP/PA
-        def dwi_ap = item.dwi_ap_pa ? item.dwi_ap_pa.ap.nii : []
-        def dwi_ap_bval = item.dwi_ap_pa ? item.dwi_ap_pa.ap.bval : []
-        def dwi_ap_bvec = item.dwi_ap_pa ? item.dwi_ap_pa.ap.bvec : []
-        def dwi_pa = item.dwi_ap_pa ? item.dwi_ap_pa.pa.nii : []
-        def dwi_pa_bval = item.dwi_ap_pa ? item.dwi_ap_pa.pa.bval : []
-        def dwi_pa_bvec = item.dwi_ap_pa ? item.dwi_ap_pa.pa.bvec : []
+        def dwi_ap = item.dwi_ap_pa?.ap?.nii ?: []
+        def dwi_ap_bval = item.dwi_ap_pa?.ap?.bval ?: []
+        def dwi_ap_bvec = item.dwi_ap_pa?.ap?.bvec ?: []
+        def dwi_pa = item.dwi_ap_pa?.pa?.nii ?: []
+        def dwi_pa_bval = item.dwi_ap_pa?.pa?.bval ?: []
+        def dwi_pa_bvec = item.dwi_ap_pa?.pa?.bvec ?: []
 
         // Sbref
-        def sbref = item.sbref ? item.sbref.nii : []
+        def sbref = item.sbref?.nii ?: []
 
         // Sbref AP/PA
-        def sbref_ap = item.sbref ? item.sbref.ap.nii : []
-        def sbref_pa = item.sbref ? item.sbref.pa.nii : []
-
+        def sbref_ap = item.sbref?.ap?.nii ?: []
+        def sbref_pa = item.sbref?.pa?.nii ?: []
         // EPI
-        def epi = item.epi ? item.epi.nii : []
+        def epi = item.epi?.nii ?: []
 
         // EPI AP/PA
-        def epi_ap = item.epi_ap_pa ? item.epi_ap_pa.ap.nii : []
-        def epi_pa = item.epi_ap_pa ? item.epi_ap_pa.pa.nii : []
+        def epi_ap = item.epi_ap_pa?.ap?.nii ?: []
+        def epi_pa = item.epi_ap_pa?.pa?.nii ?: []
 
         return [
             meta,
@@ -179,7 +181,7 @@ workflow PIPELINE_INITIALISATION {
             epi_ap,
             epi_pa
         ]
-    }
+    }.view()
 
     /* Legacy BIDS reading - to be removed once nf-bids is stable
     if ( input_bids ) {
