@@ -830,8 +830,8 @@ def buildMethodsDescription() {
         freewater: { ->
             if ( !enabled("run_freewater") ) return ""
             def parts = []
-            parts << """<h5>Freewater Elimination</h5>"""
-            parts << "Freewater was removed from diffusion tensor imaging (DTI) maps using the Freewater model implemented in the AMICO toolbox (Daducci et al., 2015; Pasternak et al., 2009); freewater-corrected diffusion volume, fibervolume, freewater, freewater-corrected fractional anisotropy (FA), axial diffusivity (AD), radial diffusivity (RD), mean diffusivity (MD), mode of anisotropy, and color-coded FA maps were generated."
+            parts << """<h5>Freewater-corrected DTI</h5>"""
+            parts << "Freewater compartment was removed from diffusion tensor imaging (DTI) maps using the freewater model implemented in the AMICO toolbox (Daducci et al., 2015; Pasternak et al., 2009); freewater-corrected diffusion volume, fibervolume, freewater, freewater-corrected fractional anisotropy (FA), axial diffusivity (AD), radial diffusivity (RD), mean diffusivity (MD), mode of anisotropy, and color-coded FA maps were generated."
             parts << "Regularization parameters for model fitting were set as: &lambda;<sub>1</sub> of ${params.freewater_lambda1} and &lambda;<sub>2</sub> of ${params.freewater_lambda2}."
             if ( enabled('para_diff') ) {
                 parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff}, an isotropic diffusivity of ${params.iso_diff}, a minimum perpendicular diffusivity of ${params.perp_diff_min}, and a maximum perpendicular diffusivity of ${params.perp_diff_max}."
