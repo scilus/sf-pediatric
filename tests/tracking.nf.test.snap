@@ -117,7 +117,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.0"
+                    "scilus/sf-pediatric": "v0.2.1"
                 }
             },
             [
@@ -840,7 +840,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.0"
+                    "scilus/sf-pediatric": "v0.2.1"
                 }
             },
             [
