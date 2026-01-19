@@ -3,9 +3,20 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - [2026-01-18]
+
+### `Added`
+
+- Add bundles to the list of tractograms to warp in template space.
+- Freewater correction and NODDI diffusion models ([[#100](https://github.com/scilus/sf-pediatric/issues/100)])
+
+### `Changed`
+
+- Change default maximum shell threshold for DTI fitting to 1200.
+
 ## [0.2.0] - [2025-12-19]
 
-## `Added`
+### `Added`
 
 - Conform output to new DWI [BIDS extension proposal](https://github.com/bids-standard/bids-specification/pull/2258) and on-going tractography BIDS extension.
 - Added connectivity regions LUT files in output folder.

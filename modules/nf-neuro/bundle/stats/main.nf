@@ -46,10 +46,19 @@ process BUNDLE_STATS {
     def volume_per_labels = task.ext.volume_per_labels ?: ""
     def mean_std_per_point = task.ext.mean_std_per_point ?: ""
 
+    def meta_columns = task.ext.meta_columns ?: []
+    def meta_map = [:]
+    meta_columns.each { col -> meta_map[col] = meta.get(col, "") }
+    def meta_json = groovy.json.JsonOutput.toJson(meta_map).replace("'", "'\\''")
+    def meta_columns_json = groovy.json.JsonOutput.toJson(meta_columns).replace("'", "'\\''")
+
     """
     bundles=( ${bundles.join(" ")} )
     label_map=( ${labels_map.join(" ")} )
     metrics=( ${metrics.join(" ")} )
+
+    meta_vals_json='${meta_json}'
+    meta_cols_json='${meta_columns_json}'
 
     for index in \${!bundles[@]};
     do\
@@ -215,7 +224,7 @@ process BUNDLE_STATS {
     then
         f="${prefix}__mean_std_stats.json"
         out="${prefix}__mean_std_stats.tsv"
-        jq -r --arg sid "${prefix}" '
+        jq -r --arg sid "${prefix}" --argjson meta_cols "\$meta_cols_json" --argjson meta_vals "\$meta_vals_json" '
             # Get sample data
             .[\$sid] as \$s
 
@@ -226,8 +235,11 @@ process BUNDLE_STATS {
                     | map(select(.value | type == "object" and has("mean"))
                         | (.key
                             | sub("^" + \$sid + "__"; "")
-                            | if test("desc-") then capture("desc-(?<m>[^:]+)\$").m
+                            | if test("param-") then
+                                (capture("param-(?<m>[^_]+)").m + (if test("desc-fwc") then "t" else "" end))
                             elif test("_afd_metric\$") then "afd_fixel"
+                            elif test("desc-fwc") then
+                                (capture("__(?<m>[^.]+)").m + "t")
                             else . end
                         )
                     )
@@ -238,7 +250,7 @@ process BUNDLE_STATS {
             | (\$ms | add // [] | unique | sort) as \$metrics
 
             # Create header row
-            | (["sample", "bundle"] + \$metrics) | @tsv,
+            | (["sample", "bundle"] + \$meta_cols + \$metrics) | @tsv,
 
             # Create data rows for each bundle
             (\$s | to_entries[]
@@ -249,8 +261,11 @@ process BUNDLE_STATS {
                     | map(select(.value | type == "object" and has("mean"))
                         | {((.key
                             | sub("^" + \$sid + "__"; "")
-                            | if test("desc-") then capture("desc-(?<m>[^:]+)\$").m
+                            | if test("param-") then
+                                (capture("param-(?<m>[^_]+)").m + (if test("desc-fwc") then "t" else "" end))
                             elif test("_afd_metric\$") then "afd_fixel"
+                            elif test("desc-fwc") then
+                                (capture("__(?<m>[^.]+)").m + "t")
                             else . end
                         )): .value.mean}
                     )
@@ -258,6 +273,7 @@ process BUNDLE_STATS {
                 ) as \$mm
                 # Build row: sample, cleaned bundle name, then metric values
                 | [\$sid, (\$b.key | sub("^" + \$sid + "__"; "") | sub("_labels_uniformized\$"; "") | gsub("_cleaned"; ""))]
+                + (\$meta_cols | map(\$meta_vals[.]))
                 + (\$metrics | map(\$mm[.] // ""))
                 | @tsv
             )
@@ -272,7 +288,7 @@ process BUNDLE_STATS {
     then
         f="${prefix}__mean_std_per_point_stats.json"
         out="${prefix}__mean_std_per_point_stats.tsv"
-        jq -r --arg sid "${prefix}" '
+        jq -r --arg sid "${prefix}" --argjson meta_cols "\$meta_cols_json" --argjson meta_vals "\$meta_vals_json" '
             # Get sample data
             .[\$sid] as \$s
 
@@ -285,15 +301,21 @@ process BUNDLE_STATS {
                             # Simple metric with direct mean
                             (.key
                                 | sub("^" + \$sid + "__"; "")
-                                | if test("desc-") then capture("desc-(?<metric>[^:]+)\$").metric
+                                | if test("param-") then
+                                    (capture("param-(?<m>[^_]+)").m + (if test("desc-fwc") then "t" else "" end))
                                 elif test("_afd_metric\$") then "afd_fixel"
+                                elif test("desc-fwc") then
+                                    (capture("__(?<m>[^.]+)").m + "t")
                                 else . end)
                         elif (.value | type == "object") then
                             # Per-point metric
                             (.key
                                 | sub("^" + \$sid + "__"; "")
-                                | if test("desc-") then capture("desc-(?<metric>[^:]+)\$").metric
+                                | if test("param-") then
+                                    (capture("param-(?<m>[^_]+)").m + (if test("desc-fwc") then "t" else "" end))
                                 elif test("_afd_metric\$") then "afd_fixel"
+                                elif test("desc-fwc") then
+                                    (capture("__(?<m>[^.]+)").m + "t")
                                 else . end)
                         else empty end
                     )
@@ -304,7 +326,7 @@ process BUNDLE_STATS {
             | (\$metric_lists | add // [] | unique | sort) as \$metrics
 
             # Create header row with "points" column
-            | (["sample", "bundle", "points"] + \$metrics) | @tsv,
+            | (["sample", "bundle", "points"] + \$meta_cols + \$metrics) | @tsv,
 
             # Create data rows for each bundle and point
             (\$s | to_entries[] as \$b
@@ -334,8 +356,11 @@ process BUNDLE_STATS {
                     | map({
                         key: (.key
                             | sub("^" + \$sid + "__"; "")
-                            | if test("desc-") then capture("desc-(?<metric>[^:]+)\$").metric
+                            | if test("param-") then
+                                (capture("param-(?<m>[^_]+)").m + (if test("desc-fwc") then "t" else "" end))
                             elif test("_afd_metric\$") then "afd_fixel"
+                            elif test("desc-fwc") then
+                                (capture("__(?<m>[^.]+)").m + "t")
                             else . end),
                         value: .value
                     })
@@ -364,6 +389,7 @@ process BUNDLE_STATS {
                 | [\$sid,
                     (\$b.key | sub("^" + \$sid + "__"; "") | sub("_labels_uniformized\$"; "") | gsub("_cleaned"; "")),
                     (\$pt // "")]
+                + (\$meta_cols | map(\$meta_vals[.]))
                 + (\$metrics | map(\$rowmap[.] // ""))
                 | @tsv
             )
@@ -378,7 +404,7 @@ process BUNDLE_STATS {
     then
         f="${prefix}__volume.json"
         out="${prefix}__volume.tsv"
-        jq -r --arg sid "${prefix}" '
+        jq -r --arg sid "${prefix}" --argjson meta_cols "\$meta_cols_json" --argjson meta_vals "\$meta_vals_json" '
             # Get sample data
             .[\$sid] as \$s
 
@@ -389,7 +415,7 @@ process BUNDLE_STATS {
             | (\$bundles | map(.value | keys) | add // [] | unique | sort) as \$metrics
 
             # Create header row
-            | (["sample", "bundle"] + \$metrics) | @tsv,
+            | (["sample", "bundle"] + \$meta_cols + \$metrics) | @tsv,
 
             # Create data rows for each bundle
             (\$bundles[]
@@ -399,6 +425,7 @@ process BUNDLE_STATS {
                 | ([\$sid,
                     (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "")
                         | gsub("(_volume_stat|_labels_uniformized)\$"; ""))]
+                    + (\$meta_cols | map(\$meta_vals[.]))
                     + (\$metrics | map((\$vals[.] // ""))))
                 | @tsv
             )
@@ -413,7 +440,7 @@ process BUNDLE_STATS {
     then
         f="${prefix}__length_stats.json"
         out="${prefix}__length.tsv"
-        jq -r --arg sid "${prefix}" '
+        jq -r --arg sid "${prefix}" --argjson meta_cols "\$meta_cols_json" --argjson meta_vals "\$meta_vals_json" '
             # Get sample data
             .[\$sid] as \$s
 
@@ -427,7 +454,7 @@ process BUNDLE_STATS {
                 | unique | sort) as \$metrics
 
             # Create header row
-            | (["sample", "bundle"] + \$metrics) | @tsv,
+            | (["sample", "bundle"] + \$meta_cols + \$metrics) | @tsv,
 
             # Create data rows for each bundle
             (\$bundles[]
@@ -439,6 +466,7 @@ process BUNDLE_STATS {
                 | ([\$sid,
                     (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "")
                         | gsub("(_volume_stat|_labels_uniformized|_length)\$"; ""))]
+                    + (\$meta_cols | map(\$meta_vals[.]))
                     + (\$metrics | map((\$cleaned_vals[.] // ""))))
                 | @tsv
             )
@@ -453,7 +481,7 @@ process BUNDLE_STATS {
     then
         f="${prefix}__volume_per_label.json"
         out="${prefix}__volume_per_label.tsv"
-        jq -r --arg sid "${prefix}" '
+        jq -r --arg sid "${prefix}" --argjson meta_cols "\$meta_cols_json" --argjson meta_vals "\$meta_vals_json" '
             # Get sample data
             .[\$sid] as \$s
 
@@ -467,7 +495,7 @@ process BUNDLE_STATS {
                 | unique | sort) as \$metrics
 
             # Create header row with "points" column
-            | (["sample", "bundle", "points"] + \$metrics) | @tsv,
+            | (["sample", "bundle", "points"] + \$meta_cols + \$metrics) | @tsv,
 
             # Create data rows for each bundle (and points if available)
             (\$bundles[]
@@ -491,6 +519,7 @@ process BUNDLE_STATS {
                             (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "")
                                 | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "")),
                             ""]
+                            + (\$meta_cols | map(\$meta_vals[.]))
                             + (\$metrics | map((\$cleaned_vals[.] // ""))))
                     else
                         # Multiple points - one row per point
@@ -500,6 +529,7 @@ process BUNDLE_STATS {
                                 (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "")
                                     | gsub("(_volume_stat|_labels_uniformized|_length)\$"; "")),
                                 \$pt]
+                                + (\$meta_cols | map(\$meta_vals[.]))
                                 + (\$metrics | map(
                                     if (\$cleaned_vals[.] | type) == "object"
                                     then (\$cleaned_vals[.][\$pt] // "")
@@ -521,7 +551,7 @@ process BUNDLE_STATS {
     then
         f="${prefix}__streamline_count_lesions.json"
         out="${prefix}__streamline_count_lesions.tsv"
-        jq -r --arg sid "${prefix}" '
+        jq -r --arg sid "${prefix}" --argjson meta_cols "\$meta_cols_json" --argjson meta_vals "\$meta_vals_json" '
             # Get sample data
             .[\$sid] as \$s
 
@@ -532,7 +562,7 @@ process BUNDLE_STATS {
             | (\$bundles | map(.value | keys | map(sub("^" + \$sid + "__"; ""))) | add // [] | unique | sort) as \$metrics
 
             # Create header row with "lesion" column
-            | (["sample", "bundle", "lesion"] + \$metrics) | @tsv,
+            | (["sample", "bundle", "lesion"] + \$meta_cols + \$metrics) | @tsv,
 
             # Create data rows for each bundle and lesion
             (\$bundles[]
@@ -549,8 +579,9 @@ process BUNDLE_STATS {
                         | [\$sid,
                             (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned"; "")
                                 | gsub("(_streamline_count_lesions_stat|_volume_stat|_labels_uniformized)\$"; "")),
-                            \$lesion_id,
-                            \$cleaned_vals[\$metric][\$lesion_id]]
+                            \$lesion_id]
+                            + (\$meta_cols | map(\$meta_vals[.]))
+                            + [\$cleaned_vals[\$metric][\$lesion_id]]
                     else
                         empty
                     end
@@ -568,7 +599,7 @@ process BUNDLE_STATS {
     then
         f="${prefix}__volume_per_label_lesions.json"
         out="${prefix}__volume_per_label_lesions.tsv"
-        jq -r --arg sid "${prefix}" '
+        jq -r --arg sid "${prefix}" --argjson meta_cols "\$meta_cols_json" --argjson meta_vals "\$meta_vals_json" '
             # Get sample data
             .[\$sid] as \$s
 
@@ -582,7 +613,7 @@ process BUNDLE_STATS {
                 | unique | sort) as \$metrics
 
             # Create header row without "lesion" column
-            | (["sample", "bundle", "points"] + \$metrics) | @tsv,
+            | (["sample", "bundle", "points"] + \$meta_cols + \$metrics) | @tsv,
 
             # Create data rows for each bundle and point
             (\$bundles[]
@@ -605,6 +636,7 @@ process BUNDLE_STATS {
                     (\$b.key | sub("^" + \$sid + "__"; "") | gsub("_cleaned|_labels_map"; "")
                         | gsub("(_volume_per_label_lesions_stat|_volume_stat|_labels_uniformized|_length)\$"; "")),
                     \$pt]
+                + (\$meta_cols | map(\$meta_vals[.]))
                 + (\$metrics | map(
                     if (\$cleaned_vals[.] | type) == "object" then
                         # Object format: metric -> point_id -> value

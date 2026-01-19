@@ -86,9 +86,8 @@
                     },
                     "bundle/stats": {
                         "branch": "main",
-                        "git_sha": "0059a7c5c9277288f069d6c908c016d50cc0bd0c",
-                        "installed_by": ["modules", "tractometry"],
-                        "patch": "modules/nf-neuro/bundle/stats/bundle-stats.diff"
+                        "git_sha": "6ba75286a86c1ec82a91040c626b4571e92578a3",
+                        "installed_by": ["modules", "tractometry"]
                     },
                     "bundle/uniformize": {
                         "branch": "main",
@@ -196,10 +195,15 @@
                         "git_sha": "a06b4cd80dbbd56a2793974ff757249d4e8714dd",
                         "installed_by": ["modules"]
                     },
+                    "reconst/diffusivitypriors": {
+                        "branch": "main",
+                        "git_sha": "320e102f3847658279bd8eb9fe2c3d99699b16bf",
+                        "installed_by": ["reconst_fw_noddi"]
+                    },
                     "reconst/dtimetrics": {
                         "branch": "main",
-                        "git_sha": "d514d1193937657d3eb3ab39bfe757215a348b01",
-                        "installed_by": ["modules"],
+                        "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
+                        "installed_by": ["modules", "reconst_fw_noddi"],
                         "patch": "modules/nf-neuro/reconst/dtimetrics/reconst-dtimetrics.diff"
                     },
                     "reconst/fodf": {
@@ -207,11 +211,26 @@
                         "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
                         "installed_by": ["modules"]
                     },
+                    "reconst/freewater": {
+                        "branch": "main",
+                        "git_sha": "4fb30bc14d52f5e0a36c10de60ff81e5c6343053",
+                        "installed_by": ["reconst_fw_noddi"]
+                    },
                     "reconst/frf": {
                         "branch": "main",
                         "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/reconst/frf/reconst-frf.diff"
+                    },
+                    "reconst/meandiffusivitypriors": {
+                        "branch": "main",
+                        "git_sha": "9a8aa0d8294f5b1e9047acb22be7b812ff5a759c",
+                        "installed_by": ["reconst_fw_noddi"]
+                    },
+                    "reconst/noddi": {
+                        "branch": "main",
+                        "git_sha": "4fb30bc14d52f5e0a36c10de60ff81e5c6343053",
+                        "installed_by": ["reconst_fw_noddi"]
                     },
                     "registration/anattodwi": {
                         "branch": "main",
@@ -316,6 +335,12 @@
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/preproc_t1/preproc_t1.diff"
                     },
+                    "reconst_fw_noddi": {
+                        "branch": "main",
+                        "git_sha": "4fb30bc14d52f5e0a36c10de60ff81e5c6343053",
+                        "installed_by": ["subworkflows"],
+                        "patch": "subworkflows/nf-neuro/reconst_fw_noddi/reconst_fw_noddi.diff"
+                    },
                     "topup_eddy": {
                         "branch": "main",
                         "git_sha": "cf3c47a430239aab4371da03399ebf99499a85bf",
@@ -324,7 +349,7 @@
                     },
                     "tractometry": {
                         "branch": "main",
-                        "git_sha": "d2f6d196a9be59dc52d8c51f765a1ae48199de8b",
+                        "git_sha": "0451030c38cb4b7b1eec3d48695627be2df367b2",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/tractometry/tractometry.diff"
                     }

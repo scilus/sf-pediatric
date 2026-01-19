@@ -14,6 +14,7 @@ nextflow_pipeline {
                 params.outdir = "$outputDir"
 
                 params.connectomics = true
+                params.run_noddi = true
 
             }
         }
@@ -80,7 +81,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("ERROR: Your bids dataset does not contain a participants.tsv file. Please provide a participants.tsv file with a column indicating the participants' age. For any questions, please refer to the documentation at https://github.com/scilus/sf-pediatric.git or open an issue!")
+            assert workflow.stdout.contains("ERROR: Your bids dataset does not contain a participants.tsv file. Please provide a participants.tsv file with a column indicating the participants' age. For any questions, please refer to the documentation at https://scilus.github.io/sf-pediatric/ or open an issue!")
         }
     }
 
