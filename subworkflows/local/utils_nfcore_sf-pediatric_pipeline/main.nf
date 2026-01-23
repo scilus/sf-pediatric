@@ -767,7 +767,7 @@ def buildMethodsDescription() {
             parts << """<h5>Fiber Orientation Distribution Function (fODF)</h5>"""
             parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2026) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.tokenize().join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_fodf_shell_value + " s/mm²"}."
             parts << "fODF were computed using a maximum spherical harmonic order of ${params.fodf_sh_order} in basis ${params.fodf_sh_basis}."
-            parts << "Fiber response functions were estimated based on normative curves of the brain's diffusivities through the developmental age-range as described in Gagnon et al. 2026."
+            parts << "Fiber response functions were estimated based on normative curves of the brain's diffusivities through the developmental age-range (Gagnon et al., 2026)."
 
             return parts.findAll{ it }.join(' ')
         },
@@ -822,7 +822,7 @@ def buildMethodsDescription() {
             if ( enabled('para_diff') ) {
                 parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff} and an isotropic diffusivity of ${params.iso_diff}."
             } else {
-                parts << "Diffusivity priors were automatically derived based on the participant's age using normative growth curves as described in Gagnon et al. 2026."
+                parts << "Diffusivity priors were automatically derived based on the participant's age using normative growth curves (Gagnon et al., 2026)."
             }
 
             return parts.findAll{ it }.join(' ')
@@ -836,7 +836,7 @@ def buildMethodsDescription() {
             if ( enabled('para_diff') ) {
                 parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff}, an isotropic diffusivity of ${params.iso_diff}, a minimum perpendicular diffusivity of ${params.perp_diff_min}, and a maximum perpendicular diffusivity of ${params.perp_diff_max}."
             } else {
-                parts << "Diffusivity priors were automatically derived based on the participant's age using normative growth curves as described in Gagnon et al. 2026."
+                parts << "Diffusivity priors were automatically derived based on the participant's age using normative growth curves (Gagnon et al., 2026)."
             }
 
             return parts.findAll{ it }.join(' ')
@@ -928,7 +928,7 @@ def buildMethodsDescription() {
                 parts << "Curvature-based filtering was applied to remove streamlines with sharp curves using a maximum angle of ${params.decompose_max_angle}° over ${params.decompose_max_curv} mm."
             }
             parts << "To mitigate the risk of false-positive connections, COMMIT (Daducci et al., 2015) was applied to the tractogram using the ${params.commit_ball_stick ? "ball and stick" : "stick, zeppelin, and ball"} model to optimize the fit between the tractogram and the diffusion data."
-            parts << "Diffusivity parameters for COMMIT were set based on age-specific normative values as described in Gagnon et al. 2026."
+            parts << "Diffusivity parameters for COMMIT were set based on age-specific normative values (Gagnon et al., 2026)."
             if ( enabled('run_commit2') ) {
                 parts << "Using COMMIT2 (Schiavi et al., 2020) with a clustering prior strength of ${params.commit2_lambda}, the contribution of each streamline to the diffusion signal was evaluated and streamlines with zero contribution were removed from the tractogram to further reduce false-positive connections."
             } else {
