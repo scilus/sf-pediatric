@@ -4,7 +4,7 @@
 [![GitHub Actions CI Status](https://github.com/scilus/sf-pediatric/actions/workflows/nf-test.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/nf-test.yml)
 [![GitHub Actions Linting Status](https://github.com/scilus/sf-pediatric/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/linting.yml)
 [![Deploy documentation](https://github.com/scilus/sf-pediatric/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/deploy.yml)
-[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![Static Badge](https://img.shields.io/badge/bioarXiv-10?style=flat&logo=arxiv&logoColor=%23B31B1B&label=10.64898%2F2026.01.19.700454&color=%23B31B1B&link=https%3A%2F%2Fdoi.org%2F10.64898%2F2026.01.19.700454)](https://doi.org/10.64898/2026.01.19.700454)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.5-23aa62.svg)](https://www.nextflow.io/)
 [![nf-core template version](https://img.shields.io/badge/nf--core_template-3.4.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.4.1)
@@ -63,7 +63,7 @@ Contributions welcome! See our [contributing guidelines](.github/CONTRIBUTING.md
 
 **Methods boilerplate**. sf-pediatric provides a boilerplate methods section available in the QC reports. Users are encouraged to use this boilerplate in their publication. For a complete guide on how to navigate the reports, please [refer to the documentation](https://scilus.github.io/sf-pediatric/guides/qc).
 
-**Paper**. A sf-pediatric paper is on the way, until them, please cite the github repository. Stay tuned!
+Gagnon, A., Boré, A., Valcourt Caron, A., Edde, M., Thoumyre, S., Lepage, J.-F., Talati, A., Posner, J., Ouellet, A., Brunet, M. A., Takser, L., Rheault, F., & Descoteaux, M. (2026). sf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. bioRxiv. https://doi.org/10.64898/2026.01.19.700454
 
 ## License
 
