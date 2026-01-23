@@ -1010,8 +1010,8 @@ def toolBibliographyText() {
         "Zhang et al., 2012"         : "<li>Zhang, H., Schneider, T., Wheeler-Kingshott, C. A., & Alexander, D. C. (2012). NODDI: Practical in vivo neurite orientation dispersion and density imaging of the human brain. <i>NeuroImage</i>, 61(4), 1000–1016. <a href=https://doi.org/10.1016/j.neuroimage.2012.03.072>https://doi.org/10.1016/j.neuroimage.2012.03.072</a></li>",
         "Pasternak et al., 2009"     : "<li>Pasternak, O., Sochen, N., Gur, Y., Intrator, N., & Assaf, Y. (2009). Free water elimination and mapping from diffusion MRI. <i>Magnetic Resonance in Medicine</i>, 62(3), 717–730. <a href=https://doi.org/10.1002/mrm.22055>https://doi.org/10.1002/mrm.22055</a></li>",
         "Renauld et al., 2026"       : "<li>Renauld, E., Boré, A., Poirier, C., Valcourt-Caron, A., Karan, P., Théberge, A., Théaud, G., Edde, M., Poulin, P., Girard, G., Houde, J.-C., Gagnon, A., St-Onge, E., Little, G., Legarreta, J. H., Thoumyre, S., Grenier, G., El Yamani, Z., Ocampo Pineda, M., … Descoteaux, M. (2026). Tractography analysis with the scilpy toolbox. <i>Aperture Neuro</i>, 6. <a href=https://doi.org/10.52294/001c.154022>https://doi.org/10.52294/001c.154022</a></li>",
-        // Not yet published works
-        "Gagnon et al., 2026"       : "<li>Gagnon, A., et al. (2026). sf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. <i>In preparation</i></li>",
+        // Preprints and in-preparation works
+        "Gagnon et al., 2026"       : "<li>Gagnon, A., Boré, A., Valcourt Caron, A., Edde, M., Thoumyre, S., Lepage, J.-F., Talati, A., Posner, J., Ouellet, A., Brunet, M. A., Takser, L., Rheault, F., & Descoteaux, M. (2026). sf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. <i>bioRxiv</i>. <a href=https://doi.org/10.64898/2026.01.19.700454>https://doi.org/10.64898/2026.01.19.700454</a></li>",
     ]
 
     // Build the bibliography in the order tokens were found.
