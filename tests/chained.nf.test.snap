@@ -201,7 +201,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.1"
+                    "scilus/sf-pediatric": "v0.2.2"
                 }
             },
             [
@@ -1317,7 +1317,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.1"
+                    "scilus/sf-pediatric": "v0.2.2"
                 }
             },
             [
@@ -1778,7 +1778,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.1"
+                    "scilus/sf-pediatric": "v0.2.2"
                 }
             },
             [
@@ -2119,7 +2119,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.1"
+                    "scilus/sf-pediatric": "v0.2.2"
                 }
             },
             [
