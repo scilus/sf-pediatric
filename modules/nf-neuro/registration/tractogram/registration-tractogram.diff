@@ -9,7 +9,7 @@ Changes in 'registration/tractogram/main.nf':
      tag "$meta.id"
 -    label 'process_single'
 +    label 'process_dynamic'
-+    memory { meta.mem ? "${meta.mem} B" : "2.GB" }
++    memory meta.mem ? "${Math.ceil(meta.mem / (1024 ** 3))} GB" : "2.GB"
  
 -    container "scilus/scilus:2.2.1"
 +    container "scilus/scilpy:2.2.1_cpu"
