@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Memory allocation issues in tractogram registration where fallback default values was not set.
 
+### `Changed`
+
+- Temporarily removed HDF5 outputs from files transformed into template space until the DPS issue is fixed.
+
 ## [0.2.1] - [2026-01-18]
 
 ### `Added`
