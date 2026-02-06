@@ -1,7 +1,7 @@
 process REGISTRATION_TRACTOGRAM {
     tag "$meta.id"
     label 'process_dynamic'
-    memory { "${Math.ceil(meta.mem / (1024 ** 3))} GB" }
+    memory { meta.mem ? "${Math.ceil(meta.mem / (1024 ** 3))} GB" : "4.GB" }
 
     container "scilus/scilpy:2.2.1_cpu"
 

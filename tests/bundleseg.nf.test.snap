@@ -70,7 +70,7 @@
                     "imagemagick": null
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.1"
+                    "scilus/sf-pediatric": "v0.2.2"
                 }
             },
             [
@@ -86,8 +86,8 @@
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T2w.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T2w.nii.gz",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T1w.json",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T1w.nii.gz",
                 "sub-test1/ses-baseline/dwi",
                 "sub-test1/ses-baseline/dwi/bundles",
                 "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_space-MNIInfant_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
@@ -188,8 +188,8 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test3",
                 "sub-test3/anat",
-                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T2w.json",
-                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T2w.nii.gz",
+                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T1w.json",
+                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T1w.nii.gz",
                 "sub-test3/dwi",
                 "sub-test3/dwi/bundles",
                 "sub-test3/dwi/bundles/sub-test3_space-MNIInfant_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
@@ -294,6 +294,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-11T12:21:39.737503"
+        "timestamp": "2026-02-05T17:24:42.186942"
     }
 }

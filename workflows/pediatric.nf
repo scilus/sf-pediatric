@@ -834,8 +834,8 @@ workflow PEDIATRIC {
         FILTERING_COMMIT ( ch_commit )
         ch_versions = ch_versions.mix(FILTERING_COMMIT.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(FILTERING_COMMIT.out.zip.collect{it[1]})
-        ch_trk_files_to_transform = ch_trk_files_to_transform
-            .mix(FILTERING_COMMIT.out.hdf5)
+        // ch_trk_files_to_transform = ch_trk_files_to_transform
+        //    .mix(FILTERING_COMMIT.out.hdf5)
 
         //
         // MODULE: Run AFDFIXEL
@@ -846,8 +846,8 @@ workflow PEDIATRIC {
         CONNECTIVITY_AFDFIXEL ( ch_afdfixel )
         ch_versions = ch_versions.mix(CONNECTIVITY_AFDFIXEL.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(CONNECTIVITY_AFDFIXEL.out.zip.collect{it[1]})
-        ch_trk_files_to_transform = ch_trk_files_to_transform
-            .mix(CONNECTIVITY_AFDFIXEL.out.hdf5)
+        // ch_trk_files_to_transform = ch_trk_files_to_transform
+        //    .mix(CONNECTIVITY_AFDFIXEL.out.hdf5)
 
         //
         // MODULE: Run CONNECTIVITY_METRICS

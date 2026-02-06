@@ -16,7 +16,7 @@ process CONNECTIVITY_METRICS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def atlas = (meta.age < 2.5 || meta.age > 18) ? "DK" : "BrainnetomeChild"
+    def atlas = (meta.age < 0.5 || meta.age > 18) ? "DK" : "BrainnetomeChild"
 
     if ( metrics ) {
         metrics_list = metrics.join(", ").replace(',', '')
