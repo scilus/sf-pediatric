@@ -21,7 +21,7 @@
                     "fa_icon": "fas fa-file-csv"
                 },
                 "participant_label": {
-                    "type": "array",
+                    "type": ["array", "string"],
                     "description": "List of participant IDs or a single participant ID.",
                     "help_text": "This will be used to select the specific participants to process. The best way to provide them is in a params.yml file, see the [documentation](https://scilus.github.io/sf-pediatric/guides/usage/#using-the-paramsyml-file) for more information.",
                     "uniqueItems": true,
@@ -648,20 +648,6 @@
                     "description": "Radius of the ROI used to compute the FRF.",
                     "fa_icon": "fas fa-brain",
                     "default": 20,
-                    "hidden": true
-                },
-                "frf_max_dti_shell_value": {
-                    "type": "integer",
-                    "description": "Maximum DTI shell value used.",
-                    "fa_icon": "fas fa-brain",
-                    "default": 1200,
-                    "hidden": true
-                },
-                "frf_min_fodf_shell_value": {
-                    "type": "integer",
-                    "description": "Minimum FODF shell value used.",
-                    "fa_icon": "fas fa-brain",
-                    "default": 700,
                     "hidden": true
                 },
                 "frf_set_method": {
