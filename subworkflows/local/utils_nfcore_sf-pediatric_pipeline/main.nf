@@ -100,7 +100,10 @@ workflow PIPELINE_INITIALISATION {
     if ( input_bids ) {
         ch_bids_script = Channel.fromPath(bids_script)
         ch_input_bids = Channel.fromPath(input_bids)
-        participant_ids = params.participant_label ?: []
+        def participant_ids = params.participant_label ?
+            params.participant_label instanceof String ?
+            params.participant_label.tokenize(',') :
+            params.participant_label : []
 
         UTILS_BIDSLAYOUT( ch_input_bids, ch_bids_script )
         ch_versions = ch_versions.mix(UTILS_BIDSLAYOUT.out.versions)

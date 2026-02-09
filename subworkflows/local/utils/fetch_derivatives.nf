@@ -38,7 +38,10 @@ workflow FETCH_DERIVATIVES {
 
     participantsTsv = file("${input_deriv}/participants.tsv")
     participantData = readParticipantsTsv(participantsTsv)
-    def participant_ids = params.participant_label ?: []
+    def participant_ids = params.participant_label ?
+        params.participant_label instanceof String ?
+        params.participant_label.tokenize(',') :
+        params.participant_label : []
 
     // Helper function to get age with session support
     def getAge = { participantId, sessionId = null ->
