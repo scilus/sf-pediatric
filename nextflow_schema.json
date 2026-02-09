@@ -605,7 +605,7 @@
                     "description": "Maximum shell value used in the DTI processing step.",
                     "fa_icon": "fas fa-brain",
                     "default": 1200,
-                    "hidden": true
+                    "hidden": false
                 },
                 "dti_shells": {
                     "type": "string",
@@ -624,14 +624,14 @@
             "properties": {
                 "frf_fa": {
                     "type": "number",
-                    "description": "Minimum FA threshold to use to compute the FRF.",
+                    "description": "Initial minimum FA threshold to use to compute the FRF.",
                     "fa_icon": "fas fa-brain",
                     "default": 0.7,
                     "hidden": true
                 },
                 "frf_min_fa": {
                     "type": "number",
-                    "description": "Minimum FA threshold to use to compute the FRF.",
+                    "description": "If frf_fa does not extract enough voxels, this is the minimum FA threshold that will be tried.",
                     "fa_icon": "fas fa-brain",
                     "default": 0.5,
                     "hidden": true
@@ -674,12 +674,12 @@
             "description": "Options for FODF processing.",
             "help_text": "These options are used to configure the FODF processing steps in the pipeline. You can use these options to customise the behaviour of the FODF processing steps.",
             "properties": {
-                "fodf_min_fodf_shell_value": {
+                "fodf_min_shell_value": {
                     "type": "integer",
                     "description": "Minimum FODF shell value used.",
                     "fa_icon": "fas fa-brain",
                     "default": 700,
-                    "hidden": true
+                    "hidden": false
                 },
                 "fodf_shells": {
                     "type": "string",
