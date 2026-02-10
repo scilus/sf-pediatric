@@ -54,6 +54,8 @@ nextflow_pipeline {
                 params.input_deriv = "$projectDir/tests/data/derivatives/"
                 params.outdir = "$outputDir"
 
+                params.dti_max_shell_value = 1500
+
                 params.connectomics = true
                 params.tracking = true
 
@@ -85,6 +87,8 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/bids/"
                 params.participant_label = ["sub-test1", "sub-test2", "sub-test3"]
                 params.outdir = "$outputDir"
+
+                params.dti_max_shell_value = 1500
 
                 params.template = "MNIInfant"
                 params.templateflow_res = 1
@@ -131,6 +135,8 @@ nextflow_pipeline {
                 params.input = "$projectDir/tests/data/bids/"
                 params.participant_label = ["sub-test1", "sub-test2", "sub-test4"]
                 params.outdir = "$outputDir"
+
+                params.dti_max_shell_value = 1500
 
                 params.bundling = true
                 params.tracking = true

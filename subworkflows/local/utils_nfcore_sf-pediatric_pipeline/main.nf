@@ -100,7 +100,10 @@ workflow PIPELINE_INITIALISATION {
     if ( input_bids ) {
         ch_bids_script = Channel.fromPath(bids_script)
         ch_input_bids = Channel.fromPath(input_bids)
-        participant_ids = params.participant_label ?: []
+        def participant_ids = params.participant_label ?
+            params.participant_label instanceof String ?
+            params.participant_label.tokenize(',') :
+            params.participant_label : []
 
         UTILS_BIDSLAYOUT( ch_input_bids, ch_bids_script )
         ch_versions = ch_versions.mix(UTILS_BIDSLAYOUT.out.versions)
@@ -128,6 +131,30 @@ workflow PIPELINE_INITIALISATION {
                     // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
                     def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
                     def priors = fetchPriors(tempAge)
+
+                    // Add a check that b-values are within the params.dti_max_shell_value and params.fodf_min_shell_value, and if not, throw an error.
+                    if ( item.bval && !params.dti_shells && !params.fodf_shells && params.tracking ) {
+                        def bvals = file(item.bval).text.trim().split(/\s+/).findAll { it }.collect { it as Double }.toSet()
+                            .findAll { !(it >= 0 - params.dwi_b0_threshold) || !(it <= 0 + params.dwi_b0_threshold) }
+
+                        // Check if any values fits the threshold for DTI fitting (shells under the threshold)
+                        def belowDTI = bvals.findAll { it <= params.dti_max_shell_value }
+                        if ( belowDTI.size() == 0) {
+                            error "ERROR: No b-values are below the dti_max_shell_value threshold of ${params.dti_max_shell_value} for subject ${sid}. " +
+                                "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
+                                "Please check your acquisition protocol and provide the shells to use for DTI fitting using --dti_shells. " +
+                                "Alternatively, you can increase this threshold using --dti_max_shell_value."
+                        }
+
+                        // Check if any values fits the threshold for fODF fitting (shells over the threshold)
+                        def aboveFODF = bvals.findAll { it >= params.fodf_min_shell_value }
+                        if ( aboveFODF.size() == 0) {
+                            error "ERROR: No b-values are above the fodf_min_shell_value threshold of ${params.fodf_min_shell_value} for subject ${sid}. " +
+                                "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
+                                "Please check your acquisition protocol and provide the shells to use for fODF fitting using --fodf_shells. " +
+                                "Alternatively, you can decrease this threshold using --fodf_min_shell_value."
+                        }
+                    }
 
                     return [
                         [id: sid, session: session, run: run, age: age.toFloat(), fa: priors.fa, ad: priors.ad,
@@ -206,7 +233,7 @@ workflow PIPELINE_COMPLETION {
     }
 
     workflow.onError {
-        log.error "Pipeline failed. Please refer to troubleshooting docs: https://nf-co.re/docs/usage/troubleshooting"
+        log.error "Pipeline failed. Please refer to troubleshooting docs: https://scilus.github.io/sf-pediatric/guides/troubleshooting/"
     }
 }
 
@@ -765,7 +792,7 @@ def buildMethodsDescription() {
             if ( !enabled('tracking') ) return ""
             def parts = []
             parts << """<h5>Fiber Orientation Distribution Function (fODF)</h5>"""
-            parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2026) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.tokenize().join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_fodf_shell_value + " s/mm²"}."
+            parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2026) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.tokenize().join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_shell_value + " s/mm²"}."
             parts << "fODF were computed using a maximum spherical harmonic order of ${params.fodf_sh_order} in basis ${params.fodf_sh_basis}."
             parts << "Fiber response functions were estimated based on normative curves of the brain's diffusivities through the developmental age-range (Gagnon et al., 2026)."
 
