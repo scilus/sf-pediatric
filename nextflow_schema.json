@@ -21,7 +21,7 @@
                     "fa_icon": "fas fa-file-csv"
                 },
                 "participant_label": {
-                    "type": "array",
+                    "type": ["array", "string"],
                     "description": "List of participant IDs or a single participant ID.",
                     "help_text": "This will be used to select the specific participants to process. The best way to provide them is in a params.yml file, see the [documentation](https://scilus.github.io/sf-pediatric/guides/usage/#using-the-paramsyml-file) for more information.",
                     "uniqueItems": true,
@@ -53,17 +53,20 @@
                     "description": "Email address for completion summary.",
                     "fa_icon": "fas fa-envelope",
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
+                    "hidden": true
                 },
                 "multiqc_title_subject": {
                     "type": "string",
                     "description": "MultiQC report title for subject report. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
+                    "fa_icon": "fas fa-file-signature",
+                    "hidden": true
                 },
                 "multiqc_title_global": {
                     "type": "string",
                     "description": "MultiQC report title for global report. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
+                    "fa_icon": "fas fa-file-signature",
+                    "hidden": true
                 }
             }
         },
@@ -605,7 +608,7 @@
                     "description": "Maximum shell value used in the DTI processing step.",
                     "fa_icon": "fas fa-brain",
                     "default": 1200,
-                    "hidden": true
+                    "hidden": false
                 },
                 "dti_shells": {
                     "type": "string",
@@ -624,14 +627,14 @@
             "properties": {
                 "frf_fa": {
                     "type": "number",
-                    "description": "Minimum FA threshold to use to compute the FRF.",
+                    "description": "Initial minimum FA threshold to use to compute the FRF.",
                     "fa_icon": "fas fa-brain",
                     "default": 0.7,
                     "hidden": true
                 },
                 "frf_min_fa": {
                     "type": "number",
-                    "description": "Minimum FA threshold to use to compute the FRF.",
+                    "description": "If frf_fa does not extract enough voxels, this is the minimum FA threshold that will be tried.",
                     "fa_icon": "fas fa-brain",
                     "default": 0.5,
                     "hidden": true
@@ -648,20 +651,6 @@
                     "description": "Radius of the ROI used to compute the FRF.",
                     "fa_icon": "fas fa-brain",
                     "default": 20,
-                    "hidden": true
-                },
-                "frf_max_dti_shell_value": {
-                    "type": "integer",
-                    "description": "Maximum DTI shell value used.",
-                    "fa_icon": "fas fa-brain",
-                    "default": 1200,
-                    "hidden": true
-                },
-                "frf_min_fodf_shell_value": {
-                    "type": "integer",
-                    "description": "Minimum FODF shell value used.",
-                    "fa_icon": "fas fa-brain",
-                    "default": 700,
                     "hidden": true
                 },
                 "frf_set_method": {
@@ -688,12 +677,12 @@
             "description": "Options for FODF processing.",
             "help_text": "These options are used to configure the FODF processing steps in the pipeline. You can use these options to customise the behaviour of the FODF processing steps.",
             "properties": {
-                "fodf_min_fodf_shell_value": {
+                "fodf_min_shell_value": {
                     "type": "integer",
                     "description": "Minimum FODF shell value used.",
                     "fa_icon": "fas fa-brain",
                     "default": 700,
-                    "hidden": true
+                    "hidden": false
                 },
                 "fodf_shells": {
                     "type": "string",
@@ -1152,14 +1141,14 @@
                     "description": "Ratio of vote across models to consider a streamline for saving. If you have 5 input models and a ratio of 0.5, you will need at least 3 votes.",
                     "fa_icon": "fas fa-brain",
                     "default": 0.5,
-                    "hidden": false
+                    "hidden": true
                 },
                 "outlier_alpha": {
                     "type": "number",
                     "description": "Percentage of the length of the tree that clusters of individual streamlines will be pruned. Higher values will remove more streamlines.",
                     "fa_icon": "fas fa-brain",
                     "default": 0.6,
-                    "hidden": false
+                    "hidden": true
                 },
                 "nb_points": {
                     "type": "integer",
@@ -1194,14 +1183,14 @@
                     "description": "If set, weight statistics based on the number of voxel going through the voxel.",
                     "fa_icon": "fas fa-brain",
                     "default": true,
-                    "hidden": false
+                    "hidden": true
                 },
                 "normalize_weights": {
                     "type": "boolean",
                     "description": "If set, the weights will be normalized to the [0,1] range.",
                     "fa_icon": "fas fa-brain",
                     "default": true,
-                    "hidden": false
+                    "hidden": true
                 },
                 "length_stats": {
                     "type": "boolean",
@@ -1574,7 +1563,7 @@
                     "type": "boolean",
                     "description": "Do not copy intermediate files to output directory.",
                     "fa_icon": "fas fa-file-import",
-                    "hidden": false
+                    "hidden": true
                 },
                 "email_on_fail": {
                     "type": "string",
@@ -1627,7 +1616,8 @@
                 "multiqc_methods_description": {
                     "type": "string",
                     "description": "Custom MultiQC yaml file containing HTML including a methods description.",
-                    "fa_icon": "fas fa-cog"
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
                 },
                 "validate_params": {
                     "type": "boolean",
