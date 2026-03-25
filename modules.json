@@ -59,9 +59,8 @@
                     },
                     "bundle/centroid": {
                         "branch": "main",
-                        "git_sha": "f9ca7936903f1f231dba1cdc7223b758c7748bfc",
-                        "installed_by": ["modules", "tractometry"],
-                        "patch": "modules/nf-neuro/bundle/centroid/bundle-centroid.diff"
+                        "git_sha": "ffb3edf0fdca5a8c1262224da72d088043de7949",
+                        "installed_by": ["modules", "tractometry"]
                     },
                     "bundle/fixelafd": {
                         "branch": "main",
