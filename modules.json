@@ -41,12 +41,6 @@
                         "git_sha": "6fcc3344bd0bc606f27097a4ba05a5d9242a3ed3",
                         "installed_by": ["preproc_t1"]
                     },
-                    "betcrop/cropvolume": {
-                        "branch": "main",
-                        "git_sha": "9f12f6cb6245d1cb633ccdc11593524a5befc0dc",
-                        "installed_by": ["preproc_dwi", "preproc_t1"],
-                        "patch": "modules/nf-neuro/betcrop/cropvolume/betcrop-cropvolume.diff"
-                    },
                     "betcrop/fslbetcrop": {
                         "branch": "main",
                         "git_sha": "ab9e5404528545237c63c5d887b5a54079529b01",
@@ -143,9 +137,8 @@
                     },
                     "image/cropvolume": {
                         "branch": "main",
-                        "git_sha": "3e2e971f5bdaafcd5f72cb9c69f9d0b2a6f20de3",
-                        "installed_by": ["preproc_dwi", "preproc_t1"],
-                        "patch": "modules/nf-neuro/image/cropvolume/image-cropvolume.diff"
+                        "git_sha": "c3a5dc48a6f49376557fecdd212d077946cf0c2e",
+                        "installed_by": ["preproc_dwi", "preproc_t1"]
                     },
                     "image/powderaverage": {
                         "branch": "main",
