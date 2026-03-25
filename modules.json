@@ -38,9 +38,8 @@
                 "nf-neuro": {
                     "betcrop/antsbet": {
                         "branch": "main",
-                        "git_sha": "c6e31e3d425759d7f17f8f2d5149ede2b4a231ac",
-                        "installed_by": ["preproc_t1"],
-                        "patch": "modules/nf-neuro/betcrop/antsbet/betcrop-antsbet.diff"
+                        "git_sha": "6fcc3344bd0bc606f27097a4ba05a5d9242a3ed3",
+                        "installed_by": ["preproc_t1"]
                     },
                     "betcrop/cropvolume": {
                         "branch": "main",
