@@ -60,6 +60,11 @@
                         "installed_by": ["preproc_dwi", "preproc_t1"],
                         "patch": "modules/nf-neuro/betcrop/synthbet/betcrop-synthbet.diff"
                     },
+                    "betcrop/synthstrip": {
+                        "branch": "main",
+                        "git_sha": "77e61a22e4ef0934df7bb733c26836e6627911a3",
+                        "installed_by": ["modules"]
+                    },
                     "bundle/centroid": {
                         "branch": "main",
                         "git_sha": "f9ca7936903f1f231dba1cdc7223b758c7748bfc",

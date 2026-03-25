@@ -1,0 +1,83 @@
+nextflow_process {
+
+    name "Test Process BETCROP_SYNTHSTRIP"
+    script "../main.nf"
+    process "BETCROP_SYNTHSTRIP"
+    config "./nextflow.config"
+
+    tag "modules"
+    tag "modules_nfneuro"
+    tag "betcrop"
+    tag "betcrop/synthstrip"
+
+    tag "subworkflows"
+    tag "subworkflows/load_test_data"
+
+    test("betcrop - synthstrip") {
+        setup {
+            run("LOAD_TEST_DATA", alias: "LOAD_DATA") {
+                script "../../../../../subworkflows/nf-neuro/load_test_data/main.nf"
+                process {
+                    """
+                    input[0] = channel.from( [ "freesurfer.zip" ] )
+                    input[1] = "test.load-test-data"
+                    """
+                }
+            }
+        }
+        when {
+            process {
+                """
+                input[0] = LOAD_DATA.out.test_data_directory.map{
+                    test_data_directory -> [
+                        [ id:'test', single_end:false ], // meta map
+                        file("\${test_data_directory}/anat_image.nii.gz"),
+                        []
+                    ]
+                }
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+
+    test("betcrop - synthstrip - stub-run") {
+        tag "stub"
+        options "-stub-run"
+        setup {
+            run("LOAD_TEST_DATA", alias: "LOAD_DATA") {
+                script "../../../../../subworkflows/nf-neuro/load_test_data/main.nf"
+                process {
+                    """
+                    input[0] = channel.from( [ "freesurfer.zip" ] )
+                    input[1] = "test.load-test-data"
+                    """
+                }
+            }
+        }
+        when {
+            process {
+                """
+                input[0] = LOAD_DATA.out.test_data_directory.map{
+                    test_data_directory -> [
+                        [ id:'test', single_end:false ], // meta map
+                        file("\${test_data_directory}/anat_image.nii.gz"),
+                        []
+                    ]
+                }
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.versions).match() }
+            )
+        }
+    }
+}
