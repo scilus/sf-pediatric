@@ -64,7 +64,7 @@
                     },
                     "bundle/fixelafd": {
                         "branch": "main",
-                        "git_sha": "4dd98f1039585b08d4443e207ef26130c82d8d01",
+                        "git_sha": "ffb3edf0fdca5a8c1262224da72d088043de7949",
                         "installed_by": ["modules", "tractometry"],
                         "patch": "modules/nf-neuro/bundle/fixelafd/bundle-fixelafd.diff"
                     },
