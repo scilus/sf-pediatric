@@ -38,7 +38,7 @@ process BUNDLE_RECOGNIZE {
 
     for bundle_file in recobundles/*.trk; do
         bname=\$(basename \${bundle_file} .trk | sed 's/${prefix}_\\+//')
-        out_cleaned=${prefix}_\${bname}_cleaned.trk
+        out_cleaned=${prefix}__\${bname}_cleaned.trk
         echo "scil_bundle_reject_outliers \${bundle_file} \${out_cleaned} ${outlier_alpha}" >> commands.txt
     done
 
@@ -88,7 +88,8 @@ process BUNDLE_RECOGNIZE {
     scil_json_merge_entries -h
 
     # dummy output for single bundle
-    touch ${prefix}_AF_L_cleaned.trk
+    touch ${prefix}__AF_L_cleaned.trk
+    touch ${prefix}__AF_R_cleaned.trk
     touch ${prefix}__bundles_mosaic_mqc.png
     touch ${prefix}__bundles_stats_mqc.json
 
