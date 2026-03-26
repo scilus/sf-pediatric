@@ -158,7 +158,7 @@
                     },
                     "preproc/normalize": {
                         "branch": "main",
-                        "git_sha": "a439fe5eda4249ba0c9d221ba04ede81c1c29f40",
+                        "git_sha": "2c6b000e9e4e1d882a6c2d3739c440596ca039dd",
                         "installed_by": ["preproc_dwi"],
                         "patch": "modules/nf-neuro/preproc/normalize/preproc-normalize.diff"
                     },
