@@ -102,9 +102,8 @@
                     },
                     "connectivity/visualize": {
                         "branch": "main",
-                        "git_sha": "1ad734ec15ca7c36d67160b68f17b5f944691487",
-                        "installed_by": ["modules"],
-                        "patch": "modules/nf-neuro/connectivity/visualize/connectivity-visualize.diff"
+                        "git_sha": "0606cd86e04ccf5c61da8b1b705620477ece5edc",
+                        "installed_by": ["modules"]
                     },
                     "denoising/mppca": {
                         "branch": "main",
