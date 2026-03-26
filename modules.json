@@ -238,9 +238,8 @@
                     },
                     "segmentation/fastseg": {
                         "branch": "main",
-                        "git_sha": "cb567ddcd631be744545dbac139a8b0ff21e55e8",
-                        "installed_by": ["modules"],
-                        "patch": "modules/nf-neuro/segmentation/fastseg/segmentation-fastseg.diff"
+                        "git_sha": "6fcc3344bd0bc606f27097a4ba05a5d9242a3ed3",
+                        "installed_by": ["modules"]
                     },
                     "segmentation/fastsurfer": {
                         "branch": "main",

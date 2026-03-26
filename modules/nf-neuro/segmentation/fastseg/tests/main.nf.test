@@ -6,7 +6,7 @@ nextflow_process {
     config "./nextflow.config"
 
     tag "modules"
-    tag "modules_nfcore"
+    tag "modules_nfneuro"
     tag "segmentation"
     tag "segmentation/fastseg"
 
@@ -20,7 +20,7 @@ nextflow_process {
             script "../../../../../subworkflows/nf-neuro/load_test_data/main.nf"
             process {
                 """
-                input[0] = Channel.from( [ "T1w.zip" ] )
+                input[0] = channel.from( [ "T1w.zip" ] )
                 input[1] = "test.load-test-data"
                 """
             }
@@ -88,6 +88,7 @@ nextflow_process {
         }
     }
     test("segmentation - fastseg - stub-run") {
+        tag "stub"
         options "-stub-run"
         when {
             process {
