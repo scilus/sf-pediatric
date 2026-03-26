@@ -221,7 +221,7 @@
                     },
                     "registration/ants": {
                         "branch": "main",
-                        "git_sha": "8b713829fd96b11f3cee6c6f4d502848cbc392d1",
+                        "git_sha": "6fcc3344bd0bc606f27097a4ba05a5d9242a3ed3",
                         "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/ants/registration-ants.diff"
                     },

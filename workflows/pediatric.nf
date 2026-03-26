@@ -201,7 +201,7 @@ workflow PEDIATRIC {
         COREG ( ch_coreg_input )
         ch_versions = ch_versions.mix(COREG.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(COREG.out.zip.collect{it[1]})
-        reg_t1 = COREG.out.image ?: Channel.empty()
+        reg_t1 = COREG.out.image_warped ?: Channel.empty()
 
     }
 

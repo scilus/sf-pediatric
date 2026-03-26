@@ -150,41 +150,41 @@ workflow OUTPUT_TEMPLATE_SPACE {
     // ** [ tuple(meta, [ file1, file2, ... ]) ] ** //
     // ** Need to unpack the files and apply the transformation to each one ** //
     ch_files_to_transform = ch_nifti_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_warp)
+        | join(REGISTRATION_ANTS.out.forward_affine)
     WARPIMAGES ( ch_files_to_transform )
     ch_versions = ch_versions.mix(WARPIMAGES.out.versions)
 
     // ** Same process for the rgb files ** //
     ch_rgb_to_transform = ch_rgb_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_warp)
+        | join(REGISTRATION_ANTS.out.forward_affine)
     WARPRGB ( ch_rgb_to_transform )
     ch_versions = ch_versions.mix(WARPRGB.out.versions)
 
     // ** Same process for the masks ** //
     ch_masks_to_transform = ch_mask_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_warp)
+        | join(REGISTRATION_ANTS.out.forward_affine)
     WARPMASK ( ch_masks_to_transform )
     ch_versions = ch_versions.mix(WARPMASK.out.versions)
 
     // ** Same process for the labels ** //
     ch_labels_to_transform = ch_labels_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_warp)
+        | join(REGISTRATION_ANTS.out.forward_affine)
     WARPLABELS ( ch_labels_to_transform )
     ch_versions = ch_versions.mix(WARPLABELS.out.versions)
 
     // ** Apply the transformation to the tractograms ** //
     ch_tractograms_to_transform = ch_trk_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.inverse_warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.backward_warp)
+        | join(REGISTRATION_ANTS.out.forward_affine)
         | map{ meta, trk, image, warp, affine ->
             // Calculate memory based on tractogram files size
             def trk_files = [trk].flatten()
