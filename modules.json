@@ -142,9 +142,8 @@
                     },
                     "preproc/eddy": {
                         "branch": "main",
-                        "git_sha": "037e2526ea1446120f7a9ddf36740bbedab8dc9c",
-                        "installed_by": ["topup_eddy"],
-                        "patch": "modules/nf-neuro/preproc/eddy/preproc-eddy.diff"
+                        "git_sha": "2c6b000e9e4e1d882a6c2d3739c440596ca039dd",
+                        "installed_by": ["topup_eddy"]
                     },
                     "preproc/gibbs": {
                         "branch": "main",
