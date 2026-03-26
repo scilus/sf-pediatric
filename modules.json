@@ -70,9 +70,8 @@
                     },
                     "bundle/labelmap": {
                         "branch": "main",
-                        "git_sha": "4be831dfd161675151ede8cff851c58929a98a55",
-                        "installed_by": ["modules", "tractometry"],
-                        "patch": "modules/nf-neuro/bundle/labelmap/bundle-labelmap.diff"
+                        "git_sha": "ffb3edf0fdca5a8c1262224da72d088043de7949",
+                        "installed_by": ["modules", "tractometry"]
                     },
                     "bundle/recognize": {
                         "branch": "main",
