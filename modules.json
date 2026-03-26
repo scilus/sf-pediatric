@@ -81,7 +81,7 @@
                     },
                     "bundle/stats": {
                         "branch": "main",
-                        "git_sha": "6ba75286a86c1ec82a91040c626b4571e92578a3",
+                        "git_sha": "ffb3edf0fdca5a8c1262224da72d088043de7949",
                         "installed_by": ["modules", "tractometry"]
                     },
                     "bundle/uniformize": {
