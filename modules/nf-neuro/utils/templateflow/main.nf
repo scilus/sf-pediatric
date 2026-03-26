@@ -30,6 +30,7 @@ process UTILS_TEMPLATEFLOW {
     template 'templateflow.py'
 
     stub:
+    def stub_no_brain_mask = task.ext.stub_no_brain_mask ?: false
 
     """
     mkdir tpl-${template}
@@ -37,7 +38,7 @@ process UTILS_TEMPLATEFLOW {
     touch ${template}_citations.bib
     touch ${template}_T1w.nii.gz
     touch ${template}_T2w.nii.gz
-    touch ${template}_desc-brain_mask.nii.gz
+    ${ stub_no_brain_mask ? "" : "touch ${template}_desc-brain_mask.nii.gz" }
     touch ${template}_label-CSF_probseg.nii.gz
     touch ${template}_label-GM_probseg.nii.gz
     touch ${template}_label-WM_probseg.nii.gz
