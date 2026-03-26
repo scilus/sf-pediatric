@@ -92,9 +92,8 @@
                     },
                     "connectivity/afdfixel": {
                         "branch": "main",
-                        "git_sha": "e649a5f9ca0ebff4efdb7959c8a686eb203f4bf9",
-                        "installed_by": ["modules"],
-                        "patch": "modules/nf-neuro/connectivity/afdfixel/connectivity-afdfixel.diff"
+                        "git_sha": "0606cd86e04ccf5c61da8b1b705620477ece5edc",
+                        "installed_by": ["modules"]
                     },
                     "connectivity/decompose": {
                         "branch": "main",
