@@ -205,7 +205,7 @@
                     },
                     "reconst/meandiffusivitypriors": {
                         "branch": "main",
-                        "git_sha": "9a8aa0d8294f5b1e9047acb22be7b812ff5a759c",
+                        "git_sha": "2fd426c5ffa24bde82650f0b77d540dce84b0818",
                         "installed_by": ["reconst_fw_noddi"]
                     },
                     "reconst/noddi": {
