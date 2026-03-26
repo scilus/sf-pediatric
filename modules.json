@@ -174,7 +174,7 @@
                     },
                     "qc/tractogram": {
                         "branch": "main",
-                        "git_sha": "a06b4cd80dbbd56a2793974ff757249d4e8714dd",
+                        "git_sha": "c67c63eff91d7bddc8060071b755a29784c619cd",
                         "installed_by": ["modules"]
                     },
                     "reconst/diffusivitypriors": {
