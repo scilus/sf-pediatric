@@ -210,7 +210,7 @@
                     },
                     "reconst/noddi": {
                         "branch": "main",
-                        "git_sha": "4fb30bc14d52f5e0a36c10de60ff81e5c6343053",
+                        "git_sha": "1eb7cf1f066290c5b2679fcd5ded233c9f0e8873",
                         "installed_by": ["reconst_fw_noddi"]
                     },
                     "registration/anattodwi": {
