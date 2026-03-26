@@ -2,7 +2,7 @@ process UTILS_EXTRACTB0 {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container "scilus/scilpy:2.2.2_cpu"
 
     input:
     tuple val(meta), path(dwi), path(bval), path(bvec)
@@ -27,20 +27,19 @@ process UTILS_EXTRACTB0 {
     export OMP_NUM_THREADS=1
     export OPENBLAS_NUM_THREADS=1
 
-    scil_dwi_extract_b0.py $dwi $bval $bvec ${prefix}_b0.nii.gz \
+    scil_dwi_extract_b0 $dwi $bval $bvec ${prefix}_b0.nii.gz \
         $output_series $extraction_strategy $b0_threshold --skip_b0_check
 
-    mrthreshold ${prefix}_b0.nii.gz ${prefix}_b0_mask.nii.gz -abs 0.0001 \
-        -nthreads $task.cpus
+    scil_volume_math lower_threshold ${prefix}_b0.nii.gz 0.0001 ${prefix}_b0_mask.nii.gz \
+        --data_type uint8
 
-    # Simple copy to ensure filename is catched by Nextflow.
+    # Simple copy to ensure filename is catched by Nextflow since inputs are excluded.
     cp $bval final.bval
     cp $bvec final.bvec
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
-        mrtrix: \$(mrthreshold -version 2>&1 | sed -n 's/== mrthreshold \\([0-9.]\\+\\).*/\\1/p')
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -48,8 +47,8 @@ process UTILS_EXTRACTB0 {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    scil_dwi_extract_b0.py -h
-    mrthreshold -h
+    scil_dwi_extract_b0 -h
+    scil_volume_math -h
 
     touch ${prefix}_b0.nii.gz
     touch ${prefix}_b0_mask.nii.gz
@@ -58,8 +57,7 @@ process UTILS_EXTRACTB0 {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
-        mrtrix: \$(mrthreshold -version 2>&1 | sed -n 's/== mrthreshold \\([0-9.]\\+\\).*/\\1/p')
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }

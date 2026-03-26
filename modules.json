@@ -282,7 +282,7 @@
                     },
                     "utils/extractb0": {
                         "branch": "main",
-                        "git_sha": "baf69f6658ab3874264d2081aeb5a2388f861bb2",
+                        "git_sha": "feca233b6cd5a3c53f92573f94fddee34275e75b",
                         "installed_by": ["preproc_dwi", "topup_eddy"],
                         "patch": "modules/nf-neuro/utils/extractb0/utils-extractb0.diff"
                     },

@@ -4,16 +4,7 @@ Changes in component 'nf-neuro/utils/extractb0'
 Changes in 'utils/extractb0/main.nf':
 --- modules/nf-neuro/utils/extractb0/main.nf
 +++ modules/nf-neuro/utils/extractb0/main.nf
-@@ -2,16 +2,17 @@
-     tag "$meta.id"
-     label 'process_single'
- 
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:2.0.2' }"
-+    container 'scilus/scilus:2.0.2'
- 
-     input:
+@@ -8,8 +8,11 @@
      tuple val(meta), path(dwi), path(bval), path(bvec)
  
      output:
@@ -27,23 +18,21 @@ Changes in 'utils/extractb0/main.nf':
  
      when:
      task.ext.when == null || task.ext.when
-@@ -29,24 +30,36 @@
-     scil_dwi_extract_b0.py $dwi $bval $bvec ${prefix}_b0.nii.gz \
+@@ -27,6 +30,13 @@
+     scil_dwi_extract_b0 $dwi $bval $bvec ${prefix}_b0.nii.gz \
          $output_series $extraction_strategy $b0_threshold --skip_b0_check
  
-+    mrthreshold ${prefix}_b0.nii.gz ${prefix}_b0_mask.nii.gz -abs 0.0001 \
-+        -nthreads $task.cpus
++    scil_volume_math lower_threshold ${prefix}_b0.nii.gz 0.0001 ${prefix}_b0_mask.nii.gz \
++        --data_type uint8
 +
-+    # Simple copy to ensure filename is catched by Nextflow.
++    # Simple copy to ensure filename is catched by Nextflow since inputs are excluded.
 +    cp $bval final.bval
 +    cp $bvec final.bvec
 +
      cat <<-END_VERSIONS > versions.yml
      "${task.process}":
--        scilpy: 2.0.1
-+        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
-+        mrtrix: \$(mrthreshold -version 2>&1 | sed -n 's/== mrthreshold \\([0-9.]\\+\\).*/\\1/p')
-     END_VERSIONS
+         scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+@@ -34,13 +44,16 @@
      """
  
      stub:
@@ -51,9 +40,8 @@ Changes in 'utils/extractb0/main.nf':
      def prefix = task.ext.prefix ?: "${meta.id}"
  
      """
--    scil_dwi_extract_b0.py - h
-+    scil_dwi_extract_b0.py -h
-+    mrthreshold -h
+     scil_dwi_extract_b0 -h
++    scil_volume_math -h
  
      touch ${prefix}_b0.nii.gz
 +    touch ${prefix}_b0_mask.nii.gz
@@ -62,12 +50,6 @@ Changes in 'utils/extractb0/main.nf':
  
      cat <<-END_VERSIONS > versions.yml
      "${task.process}":
--        scilpy: 2.0.1
-+        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
-+        mrtrix: \$(mrthreshold -version 2>&1 | sed -n 's/== mrthreshold \\([0-9.]\\+\\).*/\\1/p')
-     END_VERSIONS
-     """
- }
 
 'modules/nf-neuro/utils/extractb0/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/utils/extractb0/tests/nextflow_clustermean.config' is unchanged
