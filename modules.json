@@ -232,7 +232,7 @@
                     },
                     "registration/tractogram": {
                         "branch": "main",
-                        "git_sha": "943e98e5c806aa5c463417cefa8c7039c318892c",
+                        "git_sha": "6fcc3344bd0bc606f27097a4ba05a5d9242a3ed3",
                         "installed_by": ["modules", "output_template_space"],
                         "patch": "modules/nf-neuro/registration/tractogram/registration-tractogram.diff"
                     },

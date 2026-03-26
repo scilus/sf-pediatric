@@ -192,7 +192,7 @@ workflow OUTPUT_TEMPLATE_SPACE {
             def mem = ((8L * 1024 * 1024 * 1024) + (total_size * 10.0))
 
             // Return with memory in meta
-            tuple(meta + [mem: mem as long], image, affine, trk, [], warp)
+            tuple(meta + [mem: mem as long], trk, [], image, [affine, warp])
         }
 
     REGISTRATION_TRACTOGRAM ( ch_tractograms_to_transform )

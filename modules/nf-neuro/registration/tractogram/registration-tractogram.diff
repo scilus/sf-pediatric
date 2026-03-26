@@ -4,18 +4,15 @@ Changes in component 'nf-neuro/registration/tractogram'
 Changes in 'registration/tractogram/main.nf':
 --- modules/nf-neuro/registration/tractogram/main.nf
 +++ modules/nf-neuro/registration/tractogram/main.nf
-@@ -1,8 +1,9 @@
+@@ -1,6 +1,7 @@
  process REGISTRATION_TRACTOGRAM {
      tag "$meta.id"
 -    label 'process_single'
 +    label 'process_dynamic'
 +    memory meta.mem ? "${Math.ceil(meta.mem / (1024 ** 3))} GB" : "2.GB"
  
--    container "scilus/scilus:2.2.1"
-+    container "scilus/scilpy:2.2.1_cpu"
+     container "scilus/scilus:2.2.2"
  
-     input:
-     tuple val(meta), path(anat), path(affine), path(tractogram), path(reference), path(deformation)
 
 'modules/nf-neuro/registration/tractogram/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/registration/tractogram/tests/suffix.config' is unchanged
