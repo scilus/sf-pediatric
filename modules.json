@@ -184,9 +184,8 @@
                     },
                     "reconst/dtimetrics": {
                         "branch": "main",
-                        "git_sha": "0fdd04fbe05e37bfe1273d23e1d49018297ea7de",
-                        "installed_by": ["modules", "reconst_fw_noddi"],
-                        "patch": "modules/nf-neuro/reconst/dtimetrics/reconst-dtimetrics.diff"
+                        "git_sha": "2fd426c5ffa24bde82650f0b77d540dce84b0818",
+                        "installed_by": ["modules", "reconst_fw_noddi"]
                     },
                     "reconst/fodf": {
                         "branch": "main",
