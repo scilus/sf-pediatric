@@ -227,9 +227,8 @@
                     },
                     "registration/antsapplytransforms": {
                         "branch": "main",
-                        "git_sha": "33ceec0aee17c292548d325cf645b3e4a77537b8",
-                        "installed_by": ["modules", "output_template_space"],
-                        "patch": "modules/nf-neuro/registration/antsapplytransforms/registration-antsapplytransforms.diff"
+                        "git_sha": "6fcc3344bd0bc606f27097a4ba05a5d9242a3ed3",
+                        "installed_by": ["modules", "output_template_space"]
                     },
                     "registration/tractogram": {
                         "branch": "main",

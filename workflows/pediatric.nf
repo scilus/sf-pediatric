@@ -448,15 +448,15 @@ workflow PEDIATRIC {
             .combine(ch_probseg24)
             .branch{
                 cohort0: it[0].age < 0.125 || it[0].age > 18 // age < 1.5 months
-                    return [it[0], it[4], it[1], it[2], it[3]]
+                    return [it[0], it[4], it[1], [it[2], it[3]]]
                 cohort3: it[0].age >= 0.125 && it[0].age < 0.375 // 1.5 months <= age < 4.5 months
-                    return [it[0], it[5], it[1], it[2], it[3]]
+                    return [it[0], it[5], it[1], [it[2], it[3]]]
                 cohort6: it[0].age >= 0.375 && it[0].age < 0.75 // 4.5 months <= age < 9 months
-                    return [it[0], it[6], it[1], it[2], it[3]]
+                    return [it[0], it[6], it[1], [it[2], it[3]]]
                 cohort12: it[0].age >= 0.75 && it[0].age < 1.5 // 9 months <= age < 18 months
-                    return [it[0], it[7], it[1], it[2], it[3]]
+                    return [it[0], it[7], it[1], [it[2], it[3]]]
                 cohort24: it[0].age >= 1.5 && it[0].age < 2.5 // 18 months <= age < 30 months
-                    return [it[0], it[8], it[1], it[2], it[3]]
+                    return [it[0], it[8], it[1], [it[2], it[3]]]
             }
         ch_warp_probseg = ch_warp_probseg.cohort0
             .mix(ch_warp_probseg.cohort3)
