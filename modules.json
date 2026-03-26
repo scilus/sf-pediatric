@@ -132,9 +132,8 @@
                     },
                     "image/powderaverage": {
                         "branch": "main",
-                        "git_sha": "9146c628d9a47e36deb507ae026c96877b9db436",
-                        "installed_by": ["preproc_dwi"],
-                        "patch": "modules/nf-neuro/image/powderaverage/image-powderaverage.diff"
+                        "git_sha": "c3a5dc48a6f49376557fecdd212d077946cf0c2e",
+                        "installed_by": ["preproc_dwi"]
                     },
                     "image/resample": {
                         "branch": "main",
