@@ -272,7 +272,7 @@
                     },
                     "tractogram/removeinvalid": {
                         "branch": "main",
-                        "git_sha": "d719b9b13ccad7709e749b0f113e906a9d0757d3",
+                        "git_sha": "5b7fe27aa76119851726a0135d78be78d296c4ad",
                         "installed_by": ["modules", "tractometry"]
                     },
                     "tractogram/resample": {
