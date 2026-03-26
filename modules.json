@@ -179,7 +179,7 @@
                     },
                     "reconst/diffusivitypriors": {
                         "branch": "main",
-                        "git_sha": "320e102f3847658279bd8eb9fe2c3d99699b16bf",
+                        "git_sha": "1cc9ba038097a6b5f8ea7a0bcb5f5f652471ff4e",
                         "installed_by": ["reconst_fw_noddi"]
                     },
                     "reconst/dtimetrics": {
