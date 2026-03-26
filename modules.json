@@ -199,7 +199,7 @@
                     },
                     "reconst/frf": {
                         "branch": "main",
-                        "git_sha": "452075a707a9769b0509fc33a1051e8ba80799bf",
+                        "git_sha": "2fd426c5ffa24bde82650f0b77d540dce84b0818",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/reconst/frf/reconst-frf.diff"
                     },
