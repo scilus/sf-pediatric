@@ -117,9 +117,8 @@
                     },
                     "image/applymask": {
                         "branch": "main",
-                        "git_sha": "384d444c001f9cfb23432cb03d94fa03cdc2c24a",
-                        "installed_by": ["output_template_space", "preproc_dwi"],
-                        "patch": "modules/nf-neuro/image/applymask/image-applymask.diff"
+                        "git_sha": "ca21922a7affe217f7391a98b5af1e50a79f094c",
+                        "installed_by": ["output_template_space", "preproc_dwi"]
                     },
                     "image/convert": {
                         "branch": "main",
