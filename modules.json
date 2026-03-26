@@ -267,7 +267,7 @@
                     },
                     "tractogram/math": {
                         "branch": "main",
-                        "git_sha": "5435f43bcda7f9a32d101137af36a9272d54f58e",
+                        "git_sha": "5b7fe27aa76119851726a0135d78be78d296c4ad",
                         "installed_by": ["modules"]
                     },
                     "tractogram/removeinvalid": {
