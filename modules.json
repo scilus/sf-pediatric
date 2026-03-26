@@ -75,7 +75,7 @@
                     },
                     "bundle/recognize": {
                         "branch": "main",
-                        "git_sha": "70ec5c35fbe3d0615c87497b02f7f289b24e4819",
+                        "git_sha": "c67c63eff91d7bddc8060071b755a29784c619cd",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/bundle/recognize/bundle-recognize.diff"
                     },
