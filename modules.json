@@ -112,9 +112,8 @@
                     },
                     "denoising/nlmeans": {
                         "branch": "main",
-                        "git_sha": "d514d1193937657d3eb3ab39bfe757215a348b01",
-                        "installed_by": ["preproc_t1"],
-                        "patch": "modules/nf-neuro/denoising/nlmeans/denoising-nlmeans.diff"
+                        "git_sha": "2c6b000e9e4e1d882a6c2d3739c440596ca039dd",
+                        "installed_by": ["preproc_t1"]
                     },
                     "image/applymask": {
                         "branch": "main",
