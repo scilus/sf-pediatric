@@ -4,134 +4,82 @@ Changes in component 'nf-neuro/registration/anattodwi'
 Changes in 'registration/anattodwi/main.nf':
 --- modules/nf-neuro/registration/anattodwi/main.nf
 +++ modules/nf-neuro/registration/anattodwi/main.nf
-@@ -2,20 +2,18 @@
-     tag "$meta.id"
-     label 'process_single'
+@@ -25,6 +25,8 @@
  
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:latest' }"
-+    container 'scilus/scilus:2.1.0'
- 
-     input:
-     tuple val(meta), path(t1), path(b0), path(metric)
- 
-     output:
--    tuple val(meta), path("*0GenericAffine.mat")                                , emit: affine
--    tuple val(meta), path("*1Warp.nii.gz")                                      , emit: warp
--    tuple val(meta), path("*1InverseWarp.nii.gz")                               , emit: inverse_warp
--    tuple val(meta), path("*t1_warped.nii.gz")                                  , emit: t1_warped
--    tuple val(meta), path("*_registration_anattodwi_mqc.gif")                   , emit: mqc, optional: true
--    path "versions.yml"                                                         , emit: versions
-+    tuple val(meta), path("*0GenericAffine.mat")        , emit: affine
-+    tuple val(meta), path("*1Warp.nii.gz")              , emit: warp
-+    tuple val(meta), path("*1InverseWarp.nii.gz")       , emit: inverse_warp
-+    tuple val(meta), path("*_warped.nii.gz")            , emit: t1_warped
-+    tuple val(meta), path("*_mqc.gif")                  , emit: mqc, optional: true
-+    path "versions.yml"                                 , emit: versions
- 
-     when:
-     task.ext.when == null || task.ext.when
-@@ -24,6 +22,8 @@
+     script:
      def prefix = task.ext.prefix ?: "${meta.id}"
- 
-     def run_qc = task.ext.run_qc ? task.ext.run_qc : false
-+    def suffix = t1.name.contains("T1w") ? "T1w" : "T2w"
++    def suffix = moving_anat.name.contains("T1w") ? "T1w" : "T2w"
 +    def suffix_qc = task.ext.suffix_qc ?: ""
+     def run_qc = task.ext.run_qc as Boolean || false
  
      """
-     export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$task.cpus
-@@ -50,16 +50,16 @@
+@@ -52,16 +54,16 @@
          --convergence [50x25x10,1e-6,10] --shrink-factors 4x2x1\
          --smoothing-sigmas 3x2x1
  
--    mv outputWarped.nii.gz ${prefix}__t1_warped.nii.gz
--    mv output0GenericAffine.mat ${prefix}__output0GenericAffine.mat
--    mv output1InverseWarp.nii.gz ${prefix}__output1InverseWarp.nii.gz
--    mv output1Warp.nii.gz ${prefix}__output1Warp.nii.gz
-+    mv outputWarped.nii.gz ${prefix}__${suffix}_warped.nii.gz
-+    mv output0GenericAffine.mat ${prefix}__${suffix}_output0GenericAffine.mat
-+    mv output1InverseWarp.nii.gz ${prefix}__${suffix}_output1InverseWarp.nii.gz
-+    mv output1Warp.nii.gz ${prefix}__${suffix}_output1Warp.nii.gz
+-    moving_id=\$(basename $moving_anat .nii.gz)
+-    moving_id=\${moving_id#${meta.id}_*}
++    moving_id=$suffix
++    #moving_id=\${moving_id#${meta.id}_*}
+ 
+     mv warped.nii.gz ${prefix}_\${moving_id}_warped.nii.gz
+-    mv forward0GenericAffine.mat ${prefix}_forward1_affine.mat
+-    mv forward1Warp.nii.gz ${prefix}_forward0_warp.nii.gz
+-    mv forward1InverseWarp.nii.gz ${prefix}_backward1_warp.nii.gz
++    mv forward0GenericAffine.mat ${prefix}_\${moving_id}_forward1_affine.mat
++    mv forward1Warp.nii.gz ${prefix}_\${moving_id}_forward0_warp.nii.gz
++    mv forward1InverseWarp.nii.gz ${prefix}_\${moving_id}_backward1_warp.nii.gz
+ 
+-    antsApplyTransforms -d 3 -t [${prefix}_forward1_affine.mat,1] \
+-        -o Linear[${prefix}_backward0_affine.mat]
++    antsApplyTransforms -d 3 -t [${prefix}_\${moving_id}_forward1_affine.mat,1] \
++        -o Linear[${prefix}_\${moving_id}_backward0_affine.mat]
  
      ### ** QC ** ###
-     if $run_qc;
-     then
-         # Extract dimensions.
--        dim=\$(mrinfo ${prefix}__t1_warped.nii.gz -size)
-+        dim=\$(mrinfo ${prefix}__${suffix}_warped.nii.gz -size)
-         read sagittal_dim coronal_dim axial_dim <<< "\${dim}"
- 
-         # Get middle slices.
-@@ -70,21 +70,23 @@
-         # Set viz params.
-         viz_params="--display_slice_number --display_lr --size 256 256"
- 
-+        mv $b0 reference.nii.gz
-         # Iterate over images.
--        for image in t1_warped b0;
-+        for image in ${suffix}_warped reference;
-         do
--            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
-+            mrconvert *\${image}.nii.gz *\${image}_viz.nii.gz -stride -1,2,3 -nthreads $task.cpus
-+            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_coronal.png \
-                 --slices \$coronal_mid --axis coronal \$viz_params
--            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_sagittal.png \
-+            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_sagittal.png \
-                 --slices \$sagittal_mid --axis sagittal \$viz_params
--            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
-+            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_axial.png \
-                 --slices \$axial_mid --axis axial \$viz_params
- 
--            if [ \$image != b0 ];
-+            if [ \$image != reference ];
-             then
--                title="Warped T1"
-+                title="Warped"
-             else
--                title="Reference B0"
-+                title="Reference"
-             fi
- 
-             convert +append \${image}_coronal*.png \${image}_axial*.png \
-@@ -98,11 +100,11 @@
- 
+     if $run_qc; then
+@@ -109,7 +111,7 @@
          # Create GIF.
          convert -delay 10 -loop 0 -morph 10 \
--            t1_warped_mosaic.png b0_mosaic.png t1_warped_mosaic.png \
+             \${moving_id}_warped_mosaic.png \${fixed_id}_mosaic.png \${moving_id}_warped_mosaic.png \
 -            ${prefix}_registration_anattodwi_mqc.gif
-+            ${suffix}_warped_mosaic.png reference_mosaic.png ${suffix}_warped_mosaic.png \
-+            ${prefix}_${suffix_qc}_mqc.gif
++            ${prefix}_\${moving_id}_registration_anattodwi_mqc.gif
  
          # Clean up.
--        rm t1_warped_mosaic.png b0_mosaic.png
-+        rm ${suffix}_warped_mosaic.png reference_mosaic.png
-     fi
- 
-     cat <<-END_VERSIONS > versions.yml
-@@ -115,15 +117,17 @@
+         rm \${moving_id}_warped_mosaic.png \${fixed_id}_mosaic.png
+@@ -126,6 +128,8 @@
  
      stub:
      def prefix = task.ext.prefix ?: "${meta.id}"
-+    def suffix = t1.name.contains("T1w") ? "T1w" : "T2w"
++    def suffix = moving_anat.name.contains("T1w") ? "T1w" : "T2w"
 +    def suffix_qc = task.ext.suffix_qc ?: ""
+     def run_qc = task.ext.run_qc as Boolean || false
  
      """
-     antsRegistration -h
+@@ -135,17 +139,17 @@
+     scil_viz_volume_screenshot -h
+     convert -help .
  
--    touch ${prefix}__t1_warped.nii.gz
--    touch ${prefix}__output0GenericAffine.mat
--    touch ${prefix}__output1InverseWarp.nii.gz
--    touch ${prefix}__output1Warp.nii.gz
--    touch ${prefix}__registration_anattodwi_mqc.gif
-+    touch ${prefix}__${suffix}_warped.nii.gz
-+    touch ${prefix}__${suffix}_output0GenericAffine.mat
-+    touch ${prefix}__${suffix}_output1InverseWarp.nii.gz
-+    touch ${prefix}__${suffix}_output1Warp.nii.gz
-+    touch ${prefix}__${suffix_qc}_mqc.gif
+-    moving_id=\$(basename $moving_anat .nii.gz)
+-    moving_id=\${moving_id#${meta.id}_*}
++    moving_id=$suffix
++    #moving_id=\${moving_id#${meta.id}_*}
+ 
+     touch ${prefix}_\${moving_id}_warped.nii.gz
+-    touch ${prefix}_forward1_affine.mat
+-    touch ${prefix}_forward0_warp.nii.gz
+-    touch ${prefix}_backward1_warp.nii.gz
+-    touch ${prefix}_backward0_affine.mat
++    touch ${prefix}_\${moving_id}_forward1_affine.mat
++    touch ${prefix}_\${moving_id}_forward0_warp.nii.gz
++    touch ${prefix}_\${moving_id}_backward1_warp.nii.gz
++    touch ${prefix}_\${moving_id}_backward0_affine.mat
+ 
+     if $run_qc; then
+-        touch ${prefix}_registration_anattodwi_mqc.gif
++        touch ${prefix}_\${moving_id}_registration_anattodwi_mqc.gif
+     fi
  
      cat <<-END_VERSIONS > versions.yml
-     "${task.process}":
 
 'modules/nf-neuro/registration/anattodwi/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/registration/anattodwi/tests/tags.yml' is unchanged

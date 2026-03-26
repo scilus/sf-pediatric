@@ -351,13 +351,13 @@ workflow PEDIATRIC {
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch{
                 infant_t2: (it[0].age < 0.5 || it[0].age > 18) && it[4] != null
-                    return [it[0], it[4], it[1], it[3]]
+                    return [it[0], it[1], it[4], it[3]]
                 infant_t1: (it[0].age < 0.5 || it[0].age > 18) && it[5] != null
-                    return [it[0], it[5], it[1], it[2]]
+                    return [it[0], it[1], it[5], it[2]]
                 child_t1: (it[0].age >= 0.5 && it[0].age <= 18) && it[5] != null
-                    return [it[0], it[5], it[1], it[2]]
+                    return [it[0], it[1], it[5], it[2]]
                 child_t2: (it[0].age >= 0.5 && it[0].age <= 18) && it[4] != null
-                    return [it[0], it[4], it[1], it[3]]
+                    return [it[0], it[1], it[4], it[3]]
             }
 
         ch_anat_reg = ch_for_reg.infant_t1
@@ -379,7 +379,7 @@ workflow PEDIATRIC {
         ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ it[1..3] }
         ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ it[1..3] }
 
-        ch_reg_template = ANATTODWI.out.t1_warped
+        ch_reg_template = ANATTODWI.out.anat_warped
             .join(RECONST_DTIMETRICS.out.fa)
             .combine(ch_tpl0)
             .combine(ch_tpl3)
@@ -438,7 +438,7 @@ workflow PEDIATRIC {
         ch_probseg12 = TEMPLATES.out.UNCBCPInfant12.map{ [it[3..5]] }
         ch_probseg24 = TEMPLATES.out.UNCBCPInfant24.map{ [it[3..5]] }
 
-        ch_warp_probseg = ANATTODWI.out.t1_warped
+        ch_warp_probseg = ANATTODWI.out.anat_warped
             .join(TEMPLATETODWI.out.warp)
             .join(TEMPLATETODWI.out.affine)
             .combine(ch_probseg0)
@@ -485,7 +485,7 @@ workflow PEDIATRIC {
             .mix(TRACKINGMASKS.out.csf)
 
         // ** FAST segmentation for child data. ** //
-        ch_fastseg = ANATTODWI.out.t1_warped
+        ch_fastseg = ANATTODWI.out.anat_warped
             .map { it + [[]] }
             .branch {
                 child: it[0].age >= 2.5 && it[0].age <= 18
@@ -656,13 +656,13 @@ workflow PEDIATRIC {
         ch_fa = RECONST_DTIMETRICS.out.fa
         ch_fodf = RECONST_FODF.out.fodf
         ch_peaks = RECONST_FODF.out.peaks
-        ch_transforms = ANATTODWI.out.warp
-            .join(ANATTODWI.out.affine)
+        ch_transforms = ANATTODWI.out.forward_warp
+            .join(ANATTODWI.out.forward_affine)
         ch_dwi_bval_bvec = PREPROC_DWI.out.dwi
             .join(PREPROC_DWI.out.bval)
             .join(PREPROC_DWI.out.bvec)
         ch_brain_mask = PREPROC_DWI.out.b0_mask
-        ch_anat = ANATTODWI.out.t1_warped
+        ch_anat = ANATTODWI.out.anat_warped
 
         if ( params.segmentation ) {
             ch_labels = SEGMENTATION.out.labels
@@ -944,7 +944,7 @@ workflow PEDIATRIC {
             }
 
         OUTPUT_TEMPLATE_SPACE(
-            params.tracking ? ANATTODWI.out.t1_warped : ch_anat,
+            params.tracking ? ANATTODWI.out.anat_warped : ch_anat,
             ch_nifti_files_to_transform,
             ch_rgb_files_to_transform,
             ch_mask_files_to_transform,
@@ -980,7 +980,7 @@ workflow PEDIATRIC {
     }
 
     if ( params.tracking ) {
-        ch_anat_qc = ANATTODWI.out.t1_warped
+        ch_anat_qc = ANATTODWI.out.anat_warped
     } else if ( params.segmentation && !params.connectomics ) {
         // ** Fetching the T1w and T2w images for QC ** //
         // ** If both are provided, use T1w, else, use T2w. ** //
