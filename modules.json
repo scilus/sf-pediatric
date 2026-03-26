@@ -261,7 +261,7 @@
                     },
                     "tracking/pfttracking": {
                         "branch": "main",
-                        "git_sha": "98bb319320eccd276f009fe53db70b493e1b22d6",
+                        "git_sha": "aab75dcdb4c1171688acb08e8e196c85b71a39df",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/tracking/pfttracking/tracking-pfttracking.diff"
                     },
