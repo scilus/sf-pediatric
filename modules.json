@@ -243,7 +243,7 @@
                     },
                     "segmentation/fastsurfer": {
                         "branch": "main",
-                        "git_sha": "b7ba4922bd9adab1fb8af7b31900894eca85c8ee",
+                        "git_sha": "ca21922a7affe217f7391a98b5af1e50a79f094c",
                         "installed_by": ["modules"],
                         "patch": "modules/nf-neuro/segmentation/fastsurfer/segmentation-fastsurfer.diff"
                     },
