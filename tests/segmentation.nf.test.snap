@@ -12,12 +12,13 @@
                     "pandas": "2.2.3"
                 },
                 "COREG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
@@ -173,6 +174,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-12-18T12:49:40.78129"
+        "timestamp": "2026-03-27T15:12:32.980592"
     }
 }
