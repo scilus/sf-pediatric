@@ -127,8 +127,8 @@ workflow PEDIATRIC {
         .map { meta, t2 -> [meta, t2] }
 
     // Create specific channel for infant subjects, useful for segmentation subworkflow
-    ch_infant_t1 = ch_t1.filter { meta, _t1 -> meta.age < 2.5 || meta.age > 18 }
-    ch_infant_t2 = ch_t2.filter { meta, _t2 -> meta.age < 2.5 || meta.age > 18 }
+    ch_infant_t1 = ch_t1.filter { meta, _t1 -> meta.age < 0.25 || meta.age > 18 }
+    ch_infant_t2 = ch_t2.filter { meta, _t2 -> meta.age < 0.25 || meta.age > 18 }
 
     // Fetch infant synthstrip weights
     ch_synthstrip_weights_infant = channel.fromPath(
