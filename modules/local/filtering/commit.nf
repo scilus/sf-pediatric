@@ -37,6 +37,7 @@ process FILTERING_COMMIT {
 
     """
     export DIPY_HOME="./"
+    export MPLCONFIGDIR="./"
 
     echo "Parameters used: ${args_priors}"
 
@@ -73,6 +74,8 @@ process FILTERING_COMMIT {
     def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : "--perp_diff ${perp}"
 
     """
+    export MPLCONFIGDIR="./"
+
     touch ${prefix}__commit.h5
     touch ${prefix}__essential.trk
     mkdir ${prefix}__results_bzs
