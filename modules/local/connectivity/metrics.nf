@@ -2,7 +2,7 @@ process CONNECTIVITY_METRICS {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container 'scilus/scilpy:2.2.2_cpu'
 
     input:
     tuple val(meta), path(h5), path(labels), path(labels_list), path(metrics)
@@ -42,7 +42,7 @@ process CONNECTIVITY_METRICS {
             metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_seg-${atlas}_\${stat}.npy"
         done
 
-        scil_connectivity_compute_matrices.py $h5 $labels \
+        scil_connectivity_compute_matrices $h5 $labels \
             --processes $task.cpus \
             --volume "${prefix}_seg-${atlas}_stat-vol.npy" \
             --streamline_count "${prefix}_seg-${atlas}_stat-sc.npy" \
@@ -83,12 +83,12 @@ process CONNECTIVITY_METRICS {
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+            scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         END_VERSIONS
         """
     } else {
         """
-        scil_connectivity_compute_matrices.py $h5 $labels \
+        scil_connectivity_compute_matrices $h5 $labels \
             --processes $task.cpus \
             --volume "${prefix}_seg-${atlas}_stat-vol.npy" \
             --streamline_count "${prefix}_seg-${atlas}_stat-sc.npy" \
@@ -113,7 +113,7 @@ process CONNECTIVITY_METRICS {
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+            scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         END_VERSIONS
         """
     }
@@ -159,11 +159,11 @@ process CONNECTIVITY_METRICS {
             fi
         done
 
-        scil_connectivity_compute_matrices.py -h
+        scil_connectivity_compute_matrices -h
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+            scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         END_VERSIONS
         """
     } else {
@@ -172,11 +172,11 @@ process CONNECTIVITY_METRICS {
         touch ${prefix}_seg-${atlas}_stat-sc.npy
         touch ${prefix}_seg-${atlas}_stat-len.npy
 
-        scil_connectivity_compute_matrices.py -h
+        scil_connectivity_compute_matrices -h
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+            scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         END_VERSIONS
         """
     }
