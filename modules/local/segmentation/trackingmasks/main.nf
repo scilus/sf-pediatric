@@ -3,7 +3,7 @@ process SEGMENTATION_TRACKINGMASKS {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container 'scilus/scilus:2.1.0'
+    container 'scilus/scilus:2.2.2'
 
     input:
     tuple val(meta), path(wm), path(gm), path(csf), path(fa), path(md), path(mask)
@@ -27,11 +27,11 @@ process SEGMENTATION_TRACKINGMASKS {
     mrthreshold $csf ${prefix}__csf_mask.nii.gz -abs 0.3 -nthreads 1 -force
 
     # Erode the brain mask.
-    scil_volume_math.py erosion $mask 8 ${prefix}__mask_eroded.nii.gz --data_type uint8
+    scil_volume_math erosion $mask 8 ${prefix}__mask_eroded.nii.gz --data_type uint8
     mrthreshold $fa ${prefix}__fa_thresholded.nii.gz -abs 0.2 -nthreads 1
     mrcalc ${prefix}__fa_thresholded.nii.gz ${prefix}__mask_eroded.nii.gz \
         -mult ${prefix}__fa_thresholded.nii.gz -nthreads 1 -force -datatype uint8
-    scil_volume_math.py dilation ${prefix}__fa_thresholded.nii.gz 1 \
+    scil_volume_math dilation ${prefix}__fa_thresholded.nii.gz 1 \
         ${prefix}__fa_thresholded.nii.gz --data_type uint8 -f
 
     # Identify the ventricles by thresholding the md. (more robust than the CSF map)
@@ -40,14 +40,14 @@ process SEGMENTATION_TRACKINGMASKS {
         -mult ventricles.nii.gz -nthreads 1 -force -datatype uint8
 
     # Union between FA thresholded and WM mask from template.
-    scil_volume_math.py union ${prefix}__fa_thresholded.nii.gz \
+    scil_volume_math union ${prefix}__fa_thresholded.nii.gz \
         ${prefix}__wm_mask.nii.gz \
         ${prefix}__wm_mask.nii.gz \
         --data_type uint8 \
         -f
 
     # Remove the ventricles to prevent tracking through them.
-    scil_volume_math.py difference ${prefix}__wm_mask.nii.gz \
+    scil_volume_math difference ${prefix}__wm_mask.nii.gz \
         ventricles.nii.gz \
         ${prefix}__wm_mask.nii.gz \
         --data_type uint8 \
@@ -56,6 +56,7 @@ process SEGMENTATION_TRACKINGMASKS {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         mrtrix: \$(mrcalc -version 2>&1 | sed -n 's/== mrcalc \\([0-9.]\\+\\).*/\\1/p')
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -70,6 +71,7 @@ process SEGMENTATION_TRACKINGMASKS {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         mrtrix: \$(mrcalc -version 2>&1 | sed -n 's/== mrcalc \\([0-9.]\\+\\).*/\\1/p')
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
 
     function handle_code () {
