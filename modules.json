@@ -317,14 +317,14 @@
                     },
                     "tractometry": {
                         "branch": "main",
-                        "git_sha": "0451030c38cb4b7b1eec3d48695627be2df367b2",
+                        "git_sha": "5b7fe27aa76119851726a0135d78be78d296c4ad",
                         "installed_by": ["subworkflows"],
                         "patch": "subworkflows/nf-neuro/tractometry/tractometry.diff"
                     },
                     "utils_options": {
                         "branch": "main",
                         "git_sha": "302587949514d7aad468928e3bd247d0342853d1",
-                        "installed_by": ["preproc_dwi", "topup_eddy", "preproc_t1"]
+                        "installed_by": ["preproc_dwi", "topup_eddy", "preproc_t1", "reconst_fw_noddi"]
                     }
                 }
             }
