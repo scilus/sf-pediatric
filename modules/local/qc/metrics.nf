@@ -2,7 +2,7 @@ process QC_METRICS {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.1.0'
+    container 'scilus/scilpy:2.2.2_cpu'
 
     input:
     tuple val(meta), path(fa), path(md), path(nufo), path(rgb)
@@ -22,19 +22,19 @@ process QC_METRICS {
     size=\$(mrinfo $fa -size)
     mid_slice=\$(echo \$size | awk '{print int((\$3 + 1) / 2)}')
 
-    scil_viz_volume_screenshot.py $fa ${prefix}_fa.png \
+    scil_viz_volume_screenshot $fa ${prefix}_fa.png \
         --slices \$mid_slice --axis axial \
         --display_lr
 
-    scil_viz_volume_screenshot.py $md ${prefix}_md.png \
+    scil_viz_volume_screenshot $md ${prefix}_md.png \
         --slices \$mid_slice --axis axial \
         --display_lr
 
-    scil_viz_volume_screenshot.py $nufo ${prefix}_nufo.png \
+    scil_viz_volume_screenshot $nufo ${prefix}_nufo.png \
         --slices \$mid_slice --axis axial \
         --display_lr
 
-    scil_viz_volume_screenshot.py $rgb ${prefix}_rgb.png \
+    scil_viz_volume_screenshot $rgb ${prefix}_rgb.png \
         --slices \$mid_slice --axis axial \
         --display_lr
 
@@ -43,7 +43,7 @@ process QC_METRICS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -53,11 +53,11 @@ process QC_METRICS {
     """
     touch ${prefix}_metrics_mqc.png
 
-    scil_viz_volume_screenshot.py -h
+    scil_viz_volume_screenshot -h
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }
