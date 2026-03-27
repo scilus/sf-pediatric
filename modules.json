@@ -46,16 +46,10 @@
                         "git_sha": "6fcc3344bd0bc606f27097a4ba05a5d9242a3ed3",
                         "installed_by": ["output_template_space", "preproc_dwi", "topup_eddy"]
                     },
-                    "betcrop/synthbet": {
-                        "branch": "main",
-                        "git_sha": "57eb8378c0b28baf4e11aca7c1eaca6b6ec8798c",
-                        "installed_by": ["preproc_dwi", "preproc_t1"],
-                        "patch": "modules/nf-neuro/betcrop/synthbet/betcrop-synthbet.diff"
-                    },
                     "betcrop/synthstrip": {
                         "branch": "main",
                         "git_sha": "77e61a22e4ef0934df7bb733c26836e6627911a3",
-                        "installed_by": ["modules"]
+                        "installed_by": ["preproc_dwi", "preproc_t1"]
                     },
                     "bundle/centroid": {
                         "branch": "main",
@@ -303,15 +297,13 @@
                     },
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "80751519b607890333a2305a3060eb97f0f10055",
-                        "installed_by": ["subworkflows"],
-                        "patch": "subworkflows/nf-neuro/preproc_dwi/preproc_dwi.diff"
+                        "git_sha": "7f8c953cdbf66d7a76ca0df56df948798b44f6ec",
+                        "installed_by": ["subworkflows"]
                     },
                     "preproc_t1": {
                         "branch": "main",
-                        "git_sha": "7fa716a34d765bd9b31b55fcaf8d379739d1e091",
-                        "installed_by": ["subworkflows"],
-                        "patch": "subworkflows/nf-neuro/preproc_t1/preproc_t1.diff"
+                        "git_sha": "e1bb71b853b2eeea456e2897240bf51251afad6b",
+                        "installed_by": ["subworkflows"]
                     },
                     "reconst_fw_noddi": {
                         "branch": "main",
@@ -321,9 +313,8 @@
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "cf3c47a430239aab4371da03399ebf99499a85bf",
-                        "installed_by": ["preproc_dwi"],
-                        "patch": "subworkflows/nf-neuro/topup_eddy/topup_eddy.diff"
+                        "git_sha": "2c6b000e9e4e1d882a6c2d3739c440596ca039dd",
+                        "installed_by": ["preproc_dwi"]
                     },
                     "tractometry": {
                         "branch": "main",
@@ -334,7 +325,7 @@
                     "utils_options": {
                         "branch": "main",
                         "git_sha": "302587949514d7aad468928e3bd247d0342853d1",
-                        "installed_by": ["subworkflows"]
+                        "installed_by": ["preproc_dwi", "topup_eddy", "preproc_t1"]
                     }
                 }
             }

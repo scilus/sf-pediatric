@@ -2,7 +2,7 @@ process UTILS_BIDSLAYOUT {
     tag "BIDS"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container 'scilus/scilpy:2.2.2_cpu'
 
     input:
     path(folder)

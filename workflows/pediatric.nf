@@ -117,33 +117,58 @@ workflow PEDIATRIC {
             rev_dwi_bval_bvec: [meta, rev_dwi, rev_bval, rev_bvec]
         }
 
-    // ** Check if T1 is provided ** //
+    // Check if any T1w or T2w images are provided
     ch_t1 = ch_inputs.t1
-        .branch {
-            witht1: it.size() > 1 && it[1] != []
-                return [ it[0], it[1] ]
-        }
-    ch_infant_t1 = ch_t1.witht1
-        .branch {
-            infant: it[0].age < 0.25 || it[0].age > 18
-                return it
-        }
+        .filter { _meta, t1 -> t1 != null && (!(t1 instanceof List) || !t1.isEmpty()) }
+        .map { meta, t1 -> [meta, t1] }
 
-    // ** Check if T2 is provided ** //
     ch_t2 = ch_inputs.t2
-        .branch {
-            witht2: it.size() > 1 && it[1] != []
-                return [ it[0], it[1] ]
-        }
-    ch_infant_t2 = ch_t2.witht2
-        .branch {
-            infant: it[0].age < 0.25 || it[0].age > 18
-                return it
+        .filter { _meta, t2 -> t2 != null && (!(t2 instanceof List) || !t2.isEmpty()) }
+        .map { meta, t2 -> [meta, t2] }
+
+    // Create specific channel for infant subjects, useful for segmentation subworkflow
+    ch_infant_t1 = ch_t1.filter { meta, _t1 -> meta.age < 2.5 || meta.age > 18 }
+    ch_infant_t2 = ch_t2.filter { meta, _t2 -> meta.age < 2.5 || meta.age > 18 }
+
+    // Fetch infant synthstrip weights
+    ch_synthstrip_weights_infant = channel.fromPath(
+        "$projectDir/assets/synthstrip.infant.1.pt",
+        checkIfExists: true
+    )
+
+    // Condition representing which channel to pass to PREPROC T1w/T2w depending
+    // on selected profiles
+    ch_t1_input = !params.tracking ? ch_infant_t1 : ch_t1
+    ch_t2_input = !params.tracking ? ch_infant_t2 : ch_t2
+
+    // Create per subject channels for synthstrip weights to ensure infant weights
+    // are matched with infant subjects, else, use default weights (automatically handled in module)
+    ch_t1_sample_weights = ch_t1_input
+        .combine(ch_synthstrip_weights_infant)
+        .map { item ->
+            def tuple = (item instanceof List) ? item : [item]
+            def meta = (tuple[0] instanceof List) ? tuple[0][0] : tuple[0]
+            def weight = tuple[-1]
+            [meta, (meta.age < 2.5 || meta.age > 18) ? weight : []]
         }
 
-    // ** Loading synthstrip alternative weights if provided ** //
-    ch_synthstrip_weights = Channel.fromPath("$projectDir/assets/synthstrip.infant.1.pt",
-        checkIfExists: true)
+    ch_t2_sample_weights = ch_t2_input
+        .combine(ch_synthstrip_weights_infant)
+        .map { item ->
+            def tuple = (item instanceof List) ? item : [item]
+            def meta = (tuple[0] instanceof List) ? tuple[0][0] : tuple[0]
+            def weight = tuple[-1]
+            [meta, (meta.age < 2.5 || meta.age > 18) ? weight : []]
+        }
+
+    ch_dwi_sample_weights = ch_inputs.dwi_bval_bvec
+        .combine(ch_synthstrip_weights_infant)
+        .map { item ->
+            def tuple = (item instanceof List) ? item : [item]
+            def meta = (tuple[0] instanceof List) ? tuple[0][0] : tuple[0]
+            def weight = tuple[-1]
+            [meta, (meta.age < 2.5 || meta.age > 18) ? weight : []]
+        }
 
     //
     // SUBWORKFLOW: Run preprocessing on anatomical images.
@@ -154,28 +179,44 @@ workflow PEDIATRIC {
 
         // ** Run T1 preprocessing ** //
         PREPROC_T1W (
-            !params.tracking ? ch_infant_t1.infant : ch_t1.witht1,
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            ch_synthstrip_weights
+            ch_t1_input,
+            channel.empty(),
+            channel.empty(),
+            channel.empty(),
+            channel.empty(),
+            channel.empty(),
+            channel.empty(),
+            ch_t1_sample_weights,
+            [
+                "preproc_t1_run_denoising": params.run_t1_denoising,
+                "preproc_t1_run_N4": params.run_t1_n4,
+                "preproc_t1_run_resampling": params.run_t1_resampling,
+                "preproc_t1_run_synthstrip": true,
+                "preproc_t1_run_ants_bet": false,
+                "preproc_t1_run_crop": params.run_t1_crop
+            ]
         )
         ch_versions = ch_versions.mix(PREPROC_T1W.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(PREPROC_T1.out.zip.collect{it[1]})
 
         // ** T2 Preprocessing ** //
         PREPROC_T2W (
-            !params.tracking ? ch_infant_t2.infant : ch_t2.witht2,
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            Channel.empty(),
-            ch_synthstrip_weights
+            ch_t2_input,
+            channel.empty(),
+            channel.empty(),
+            channel.empty(),
+            channel.empty(),
+            channel.empty(),
+            channel.empty(),
+            ch_t2_sample_weights,
+            [
+                "preproc_t2_run_denoising": params.run_t2_denoising,
+                "preproc_t2_run_N4": params.run_t2_n4,
+                "preproc_t2_run_resampling": params.run_t2_resampling,
+                "preproc_t2_run_synthstrip": true,
+                "preproc_t2_run_ants_bet": false,
+                "preproc_t2_run_crop": params.run_t2_crop
+            ]
         )
         ch_versions = ch_versions.mix(PREPROC_T2W.out.versions.first())
         // ch_multiqc_files = ch_multiqc_files.mix(PREPROC_T2.out.zip.collect{it[1]})
@@ -221,7 +262,7 @@ workflow PEDIATRIC {
 
         // ** Assemble T1w/T2w channels using derivatives for < 0.25 years, ** //
         // ** otherwise, raw images.                                        ** //
-        ch_t1_seg = ch_t1.witht1
+        ch_t1_seg = ch_t1
             .branch {
                 fs: it[0].age >= 0.25 && it[0].age <= 18
                     return it
@@ -233,7 +274,7 @@ workflow PEDIATRIC {
             }
         ch_t1_seg = ch_t1_seg.fs.mix(ch_t1_seg_proc.mcribs)
 
-        ch_t2_seg = ch_t2.witht2
+        ch_t2_seg = ch_t2
             .branch {
                 fs: it[0].age >= 0.25 && it[0].age <= 18
                     return it
@@ -273,15 +314,26 @@ workflow PEDIATRIC {
             }
         }
 
-        /* Run DWI preprocessing if the data isn't already preprocessed */
-        /* else, just resample and crop the data                        */
         PREPROC_DWI(
             ch_inputs.dwi_bval_bvec,
-            ch_inputs.rev_dwi_bval_bvec,
-            Channel.empty(),
+            ch_inputs.rev_dwi_bval_bvec.filter {
+                _meta, dwi, _bval, _bvec -> dwi != []
+             },
+            channel.empty(),
             ch_inputs.rev_b0,
+            ch_dwi_sample_weights,
             ch_topup_config,
-            ch_synthstrip_weights
+            [
+                "preproc_dwi_run_denoising": params.run_dwi_denoising,
+                "preproc_dwi_run_degibbs": params.run_dwi_degibbs,
+                "topup_eddy_run_topup": params.run_dwi_topup,
+                "topup_eddy_run_eddy": params.run_dwi_eddy,
+                "preproc_dwi_run_synthstrip": true,
+                "preproc_dwi_keep_dwi_with_skull": false,
+                "preproc_dwi_run_N4": params.run_dwi_n4,
+                "preproc_dwi_run_normalize": params.run_dwi_normalize,
+                "preproc_dwi_run_resampling": params.run_dwi_resampling
+            ]
         )
         ch_versions = ch_versions.mix(PREPROC_DWI.out.versions)
         ch_multiqc_files_sub = ch_multiqc_files_sub.mix(PREPROC_DWI.out.mqc)
