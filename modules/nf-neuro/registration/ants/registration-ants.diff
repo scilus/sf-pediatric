@@ -42,6 +42,31 @@ Changes in 'registration/ants/main.nf':
  
      ### ** QC ** ###
      if $run_qc; then
+@@ -132,6 +133,7 @@
+ 
+     stub:
+     def prefix = task.ext.prefix ?: "${meta.id}"
++    def suffix = moving_image.name.contains("T1w") ? "T1w" : "T2w"
+     def suffix_qc = task.ext.suffix_qc ?: ""
+     def run_qc = task.ext.run_qc as Boolean || false
+ 
+@@ -153,11 +155,11 @@
+     convert -help .
+     scil_viz_volume_screenshot -h
+ 
+-    touch ${prefix}_t1_warped.nii.gz
+-    touch ${prefix}_forward1_affine.mat
+-    touch ${prefix}_forward0_warp.nii.gz
+-    touch ${prefix}_backward1_warp.nii.gz
+-    touch ${prefix}_backward0_affine.mat
++    touch ${prefix}_${suffix}_warped.nii.gz
++    touch ${prefix}_${suffix}_forward1_affine.mat
++    touch ${prefix}_${suffix}_forward0_warp.nii.gz
++    touch ${prefix}_${suffix}_backward1_warp.nii.gz
++    touch ${prefix}_${suffix}_backward0_affine.mat
+ 
+     if $run_qc; then
+         touch ${prefix}_${suffix_qc}_registration_ants_mqc.gif
 
 'modules/nf-neuro/registration/ants/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/registration/ants/tests/nextflow_quick.config' is unchanged

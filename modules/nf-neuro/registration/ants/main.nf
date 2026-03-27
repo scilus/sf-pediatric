@@ -133,6 +133,7 @@ process REGISTRATION_ANTS {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def suffix = moving_image.name.contains("T1w") ? "T1w" : "T2w"
     def suffix_qc = task.ext.suffix_qc ?: ""
     def run_qc = task.ext.run_qc as Boolean || false
 
@@ -154,11 +155,11 @@ process REGISTRATION_ANTS {
     convert -help .
     scil_viz_volume_screenshot -h
 
-    touch ${prefix}_t1_warped.nii.gz
-    touch ${prefix}_forward1_affine.mat
-    touch ${prefix}_forward0_warp.nii.gz
-    touch ${prefix}_backward1_warp.nii.gz
-    touch ${prefix}_backward0_affine.mat
+    touch ${prefix}_${suffix}_warped.nii.gz
+    touch ${prefix}_${suffix}_forward1_affine.mat
+    touch ${prefix}_${suffix}_forward0_warp.nii.gz
+    touch ${prefix}_${suffix}_backward1_warp.nii.gz
+    touch ${prefix}_${suffix}_backward0_affine.mat
 
     if $run_qc; then
         touch ${prefix}_${suffix_qc}_registration_ants_mqc.gif

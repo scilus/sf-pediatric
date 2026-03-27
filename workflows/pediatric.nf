@@ -86,14 +86,14 @@ workflow PEDIATRIC {
     main:
 
     // Empty channels to collect data during runtime
-    ch_versions = Channel.empty()
-    ch_multiqc_files_sub = Channel.empty()
-    ch_multiqc_files_global = Channel.empty()
-    ch_nifti_files_to_transform = Channel.empty()
-    ch_rgb_files_to_transform = Channel.empty()
-    ch_mask_files_to_transform = Channel.empty()
-    ch_labels_files_to_transform = Channel.empty()
-    ch_trk_files_to_transform = Channel.empty()
+    ch_versions = channel.empty()
+    ch_multiqc_files_sub = channel.empty()
+    ch_multiqc_files_global = channel.empty()
+    ch_nifti_files_to_transform = channel.empty()
+    ch_rgb_files_to_transform = channel.empty()
+    ch_mask_files_to_transform = channel.empty()
+    ch_labels_files_to_transform = channel.empty()
+    ch_trk_files_to_transform = channel.empty()
 
     // ** BIDS dataset_description file. ** //
     generateDatasetJson ()
@@ -173,7 +173,7 @@ workflow PEDIATRIC {
     //
     // SUBWORKFLOW: Run preprocessing on anatomical images.
     //
-    reg_t1 = Channel.empty()
+    reg_t1 = channel.empty()
 
     if ( params.tracking || params.segmentation ) {
 
@@ -224,25 +224,25 @@ workflow PEDIATRIC {
         // ** Register T1 to T2 if T1 is provided ** //
         ch_reg = PREPROC_T2W.out.t1_final
             .join(PREPROC_T1W.out.t1_final, remainder: true)
-            .branch {
-                witht1: (it[0].age < 2.5 || it[0].age > 18) && it.size() > 2 && it[2] != null
-                witht2: (it[0].age >= 2.5 && it[0].age <= 18) && it.size() > 2 && it[1] != null
+            .branch { tuple ->
+                witht1: (tuple[0].age < 2.5 || tuple[0].age > 18) && tuple.size() > 2 && tuple[2] != null
+                witht2: (tuple[0].age >= 2.5 && tuple[0].age <= 18) && tuple.size() > 2 && tuple[1] != null
                 other: true // Catch-all for any other cases
             }
 
         ch_coreg_input = ch_reg.witht1
-            .filter { it.size() > 2 && it[1] != null && it[2] != null }
-            .map { it -> [ it[0], it[1], it[2], [] ] }
+            .filter { tuple -> tuple.size() > 2 && tuple[1] != null && tuple[2] != null }
+            .map { tuple -> [ tuple[0], tuple[1], tuple[2], [] ] }
             .mix(
                 ch_reg.witht2
-                    .filter { it.size() > 2 && it[1] != null && it[2] != null }
-                    .map { it -> [ it[0], it[2], it[1], [] ] }
+                    .filter { tuple -> tuple.size() > 2 && tuple[1] != null && tuple[2] != null }
+                    .map { tuple -> [ tuple[0], tuple[2], tuple[1], [] ] }
             )
 
         COREG ( ch_coreg_input )
         ch_versions = ch_versions.mix(COREG.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(COREG.out.zip.collect{it[1]})
-        reg_t1 = COREG.out.image_warped ?: Channel.empty()
+        reg_t1 = COREG.out.image_warped ?: channel.empty()
 
     }
 
@@ -254,35 +254,35 @@ workflow PEDIATRIC {
 
         // ** Fetch license file ** //
         ch_fs_license = params.fs_license
-            ? Channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
-            : Channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
+            ? channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
+            : channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
 
         // ** Fetch utils folder ** //
-        ch_utils_folder = Channel.fromPath(params.utils_folder, checkIfExists: true)
+        ch_utils_folder = channel.fromPath(params.utils_folder, checkIfExists: true)
 
         // ** Assemble T1w/T2w channels using derivatives for < 0.25 years, ** //
         // ** otherwise, raw images.                                        ** //
         ch_t1_seg = ch_t1
-            .branch {
-                fs: it[0].age >= 0.25 && it[0].age <= 18
-                    return it
+            .branch { tuple ->
+                fs: tuple[0].age >= 0.25 && tuple[0].age <= 18
+                    return tuple
             }
         ch_t1_seg_proc = PREPROC_T1W.out.t1_final
-            .branch {
-                mcribs: it[0].age < 0.25 || it[0].age > 18
-                    return it
+            .branch { tuple ->
+                mcribs: tuple[0].age < 0.25 || tuple[0].age > 18
+                    return tuple
             }
         ch_t1_seg = ch_t1_seg.fs.mix(ch_t1_seg_proc.mcribs)
 
         ch_t2_seg = ch_t2
-            .branch {
-                fs: it[0].age >= 0.25 && it[0].age <= 18
-                    return it
+            .branch { tuple ->
+                fs: tuple[0].age >= 0.25 && tuple[0].age <= 18
+                    return tuple
             }
         ch_t2_seg_proc = PREPROC_T2W.out.t1_final
-            .branch {
-                mcribs: it[0].age < 0.25 || it[0].age > 18
-                    return it
+            .branch { tuple ->
+                mcribs: tuple[0].age < 0.25 || tuple[0].age > 18
+                    return tuple
             }
         ch_t2_seg = ch_t2_seg.fs.mix(ch_t2_seg_proc.mcribs)
 
@@ -307,10 +307,10 @@ workflow PEDIATRIC {
         /* Load topup config if provided */
         if ( params.dwi_susceptibility_config_file ) {
             if ( file(params.dwi_susceptibility_config_file).exists() ) {
-                ch_topup_config = Channel.fromPath(params.dwi_susceptibility_config_file, checkIfExists: true)
+                ch_topup_config = channel.fromPath(params.dwi_susceptibility_config_file, checkIfExists: true)
             }
             else {
-                ch_topup_config = Channel.value( params.dwi_susceptibility_config_file )
+                ch_topup_config = channel.value( params.dwi_susceptibility_config_file )
             }
         }
 
@@ -366,7 +366,7 @@ workflow PEDIATRIC {
             .join(PREPROC_DWI.out.bval)
             .join(PREPROC_DWI.out.bvec)
             .join(PREPROC_DWI.out.b0_mask)
-            .map{ it + [[], [], []] }
+            .map{ tuple -> tuple + [[], [], []] }
 
         RECONST_FRF ( ch_reconst_frf )
         ch_versions = ch_versions.mix(RECONST_FRF.out.versions.first())
@@ -382,7 +382,7 @@ workflow PEDIATRIC {
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
             .join(RECONST_FRF.out.frf)
-            .map{ it + [[], []]}
+            .map{ tuple -> tuple + [[], []]}
 
         RECONST_FODF ( ch_reconst_fodf )
         ch_versions = ch_versions.mix(RECONST_FODF.out.versions.first())
@@ -401,15 +401,15 @@ workflow PEDIATRIC {
             .join(RECONST_DTIMETRICS.out.md)
             .join(PREPROC_T2W.out.t1_final, remainder: true)
             .join(PREPROC_T1W.out.t1_final, remainder: true)
-            .branch{
-                infant_t2: (it[0].age < 0.5 || it[0].age > 18) && it[4] != null
-                    return [it[0], it[1], it[4], it[3]]
-                infant_t1: (it[0].age < 0.5 || it[0].age > 18) && it[5] != null
-                    return [it[0], it[1], it[5], it[2]]
-                child_t1: (it[0].age >= 0.5 && it[0].age <= 18) && it[5] != null
-                    return [it[0], it[1], it[5], it[2]]
-                child_t2: (it[0].age >= 0.5 && it[0].age <= 18) && it[4] != null
-                    return [it[0], it[1], it[4], it[3]]
+            .branch{ tuple ->
+                infant_t2: (tuple[0].age < 0.5 || tuple[0].age > 18) && tuple[4] != null
+                    return [tuple[0], tuple[1], tuple[4], tuple[3]]
+                infant_t1: (tuple[0].age < 0.5 || tuple[0].age > 18) && tuple[5] != null
+                    return [tuple[0], tuple[1], tuple[5], tuple[2]]
+                child_t1: (tuple[0].age >= 0.5 && tuple[0].age <= 18) && tuple[5] != null
+                    return [tuple[0], tuple[1], tuple[5], tuple[2]]
+                child_t2: (tuple[0].age >= 0.5 && tuple[0].age <= 18) && tuple[4] != null
+                    return [tuple[0], tuple[1], tuple[4], tuple[3]]
             }
 
         ch_anat_reg = ch_for_reg.infant_t1
@@ -425,11 +425,11 @@ workflow PEDIATRIC {
         // ** For infant data (<2.5y), register the template in diff space using warped anat **
         // ** Matching the available anat with the same modality in the template **
         //
-        ch_tpl0 = TEMPLATES.out.UNCBCPInfant0.map{ it[1..3] }
-        ch_tpl3 = TEMPLATES.out.UNCBCPInfant3.map{ it[1..3] }
-        ch_tpl6 = TEMPLATES.out.UNCBCPInfant6.map{ it[1..3] }
-        ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ it[1..3] }
-        ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ it[1..3] }
+        ch_tpl0 = TEMPLATES.out.UNCBCPInfant0.map{ tuple -> tuple[1..3] }
+        ch_tpl3 = TEMPLATES.out.UNCBCPInfant3.map{ tuple -> tuple[1..3] }
+        ch_tpl6 = TEMPLATES.out.UNCBCPInfant6.map{ tuple -> tuple[1..3] }
+        ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ tuple -> tuple[1..3] }
+        ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ tuple -> tuple[1..3] }
 
         ch_reg_template = ANATTODWI.out.anat_warped
             .join(RECONST_DTIMETRICS.out.fa)
@@ -438,36 +438,36 @@ workflow PEDIATRIC {
             .combine(ch_tpl6)
             .combine(ch_tpl12)
             .combine(ch_tpl24)
-            .branch{
-                cohort0: it[0].age < 0.125 || it[0].age > 18 // age < 1.5 months
-                    if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[2], it[3], it[5]]
+            .branch{ tuple ->
+                cohort0: tuple[0].age < 0.125 || tuple[0].age > 18 // age < 1.5 months
+                    if (tuple[1].name.contains("T1w")) {
+                        return [tuple[0], tuple[1], tuple[2], tuple[3], tuple[5]]
                     } else {
-                        return [it[0], it[1], it[2], it[4], it[5]]
+                        return [tuple[0], tuple[1], tuple[2], tuple[4], tuple[5]]
                     }
-                cohort3: it[0].age >= 0.125 && it[0].age < 0.375 // 1.5 months <= age < 4.5 months
-                    if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[2], it[6], it[8]]
+                cohort3: tuple[0].age >= 0.125 && tuple[0].age < 0.375 // 1.5 months <= age < 4.5 months
+                    if (tuple[1].name.contains("T1w")) {
+                        return [tuple[0], tuple[1], tuple[2], tuple[6], tuple[8]]
                     } else {
-                        return [it[0], it[1], it[2], it[7], it[8]]
+                        return [tuple[0], tuple[1], tuple[2], tuple[7], tuple[8]]
                     }
-                cohort6: it[0].age >= 0.375 && it[0].age < 0.75 // 4.5 months <= age < 9 months
-                    if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[2], it[9], it[11]]
+                cohort6: tuple[0].age >= 0.375 && tuple[0].age < 0.75 // 4.5 months <= age < 9 months
+                    if (tuple[1].name.contains("T1w")) {
+                        return [tuple[0], tuple[1], tuple[2], tuple[9], tuple[11]]
                     } else {
-                        return [it[0], it[1], it[2], it[10], it[11]]
+                        return [tuple[0], tuple[1], tuple[2], tuple[10], tuple[11]]
                     }
-                cohort12: it[0].age >= 0.75 && it[0].age < 1.5 // 9 months <= age < 18 months
-                    if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[2], it[12], it[14]]
+                cohort12: tuple[0].age >= 0.75 && tuple[0].age < 1.5 // 9 months <= age < 18 months
+                    if (tuple[1].name.contains("T1w")) {
+                        return [tuple[0], tuple[1], tuple[2], tuple[12], tuple[14]]
                     } else {
-                        return [it[0], it[1], it[2], it[13], it[14]]
+                        return [tuple[0], tuple[1], tuple[2], tuple[13], tuple[14]]
                     }
-                cohort24: it[0].age >= 1.5 && it[0].age < 2.5 // 18 months <= age < 30 months
-                    if (it[1].name.contains("T1w")) {
-                        return [it[0], it[1], it[2], it[15], it[17]]
+                cohort24: tuple[0].age >= 1.5 && tuple[0].age < 2.5 // 18 months <= age < 30 months
+                    if (tuple[1].name.contains("T1w")) {
+                        return [tuple[0], tuple[1], tuple[2], tuple[15], tuple[17]]
                     } else {
-                        return [it[0], it[1], it[2], it[16], it[17]]
+                        return [tuple[0], tuple[1], tuple[2], tuple[16], tuple[17]]
                     }
             }
 
@@ -484,11 +484,11 @@ workflow PEDIATRIC {
         //
         // ** Then, transform the probseg maps for WM, GM, and CSF. **
         //
-        ch_probseg0 = TEMPLATES.out.UNCBCPInfant0.map{ [it[3..5]] }
-        ch_probseg3 = TEMPLATES.out.UNCBCPInfant3.map{ [it[3..5]] }
-        ch_probseg6 = TEMPLATES.out.UNCBCPInfant6.map{ [it[3..5]] }
-        ch_probseg12 = TEMPLATES.out.UNCBCPInfant12.map{ [it[3..5]] }
-        ch_probseg24 = TEMPLATES.out.UNCBCPInfant24.map{ [it[3..5]] }
+        ch_probseg0 = TEMPLATES.out.UNCBCPInfant0.map{ tuple -> [tuple[3..5]] }
+        ch_probseg3 = TEMPLATES.out.UNCBCPInfant3.map{ tuple -> [tuple[3..5]] }
+        ch_probseg6 = TEMPLATES.out.UNCBCPInfant6.map{ tuple -> [tuple[3..5]] }
+        ch_probseg12 = TEMPLATES.out.UNCBCPInfant12.map{ tuple -> [tuple[3..5]] }
+        ch_probseg24 = TEMPLATES.out.UNCBCPInfant24.map{ tuple -> [tuple[3..5]] }
 
         ch_warp_probseg = ANATTODWI.out.anat_warped
             .join(TEMPLATETODWI.out.warp)
@@ -498,17 +498,17 @@ workflow PEDIATRIC {
             .combine(ch_probseg6)
             .combine(ch_probseg12)
             .combine(ch_probseg24)
-            .branch{
-                cohort0: it[0].age < 0.125 || it[0].age > 18 // age < 1.5 months
-                    return [it[0], it[4], it[1], [it[2], it[3]]]
-                cohort3: it[0].age >= 0.125 && it[0].age < 0.375 // 1.5 months <= age < 4.5 months
-                    return [it[0], it[5], it[1], [it[2], it[3]]]
-                cohort6: it[0].age >= 0.375 && it[0].age < 0.75 // 4.5 months <= age < 9 months
-                    return [it[0], it[6], it[1], [it[2], it[3]]]
-                cohort12: it[0].age >= 0.75 && it[0].age < 1.5 // 9 months <= age < 18 months
-                    return [it[0], it[7], it[1], [it[2], it[3]]]
-                cohort24: it[0].age >= 1.5 && it[0].age < 2.5 // 18 months <= age < 30 months
-                    return [it[0], it[8], it[1], [it[2], it[3]]]
+            .branch{ tuple ->
+                cohort0: tuple[0].age < 0.125 || tuple[0].age > 18 // age < 1.5 months
+                    return [tuple[0], tuple[4], tuple[1], [tuple[2], tuple[3]]]
+                cohort3: tuple[0].age >= 0.125 && tuple[0].age < 0.375 // 1.5 months <= age < 4.5 months
+                    return [tuple[0], tuple[5], tuple[1], [tuple[2], tuple[3]]]
+                cohort6: tuple[0].age >= 0.375 && tuple[0].age < 0.75 // 4.5 months <= age < 9 months
+                    return [tuple[0], tuple[6], tuple[1], [tuple[2], tuple[3]]]
+                cohort12: tuple[0].age >= 0.75 && tuple[0].age < 1.5 // 9 months <= age < 18 months
+                    return [tuple[0], tuple[7], tuple[1], [tuple[2], tuple[3]]]
+                cohort24: tuple[0].age >= 1.5 && tuple[0].age < 2.5 // 18 months <= age < 30 months
+                    return [tuple[0], tuple[8], tuple[1], [tuple[2], tuple[3]]]
             }
         ch_warp_probseg = ch_warp_probseg.cohort0
             .mix(ch_warp_probseg.cohort3)
@@ -520,10 +520,10 @@ workflow PEDIATRIC {
         WARPPROBSEG ( ch_warp_probseg )
         ch_versions = ch_versions.mix(WARPPROBSEG.out.versions)
         ch_nifti_files_to_transform = ch_nifti_files_to_transform
-            .mix(WARPPROBSEG.out.warped_image.map{ [it[0], it[1][2], it[1][1], it[1][0]] })
+            .mix(WARPPROBSEG.out.warped_image.map{ tuple -> [tuple[0], tuple[1][2], tuple[1][1], tuple[1][0]] })
 
         ch_tracking_masks = WARPPROBSEG.out.warped_image
-            .map{ [it[0], it[1][2], it[1][1], it[1][0]] }
+            .map{ tuple -> [tuple[0], tuple[1][2], tuple[1][1], tuple[1][0]] }
             .join(RECONST_DTIMETRICS.out.fa)
             .join(RECONST_DTIMETRICS.out.md)
             .join(PREPROC_DWI.out.b0_mask)
@@ -538,9 +538,9 @@ workflow PEDIATRIC {
 
         // ** FAST segmentation for child data. ** //
         ch_fastseg = ANATTODWI.out.anat_warped
-            .map { it + [[]] }
-            .branch {
-                child: it[0].age >= 2.5 && it[0].age <= 18
+            .map { tuple -> tuple + [[]] }
+            .branch { tuple ->
+                child: tuple[0].age >= 2.5 && tuple[0].age <= 18
             }
 
         FASTSEG ( ch_fastseg.child )
@@ -562,11 +562,11 @@ workflow PEDIATRIC {
             .join(FASTSEG.out.gm_map, remainder: true)
             .join(FASTSEG.out.csf_map, remainder: true)
             .join(WARPPROBSEG.out.warped_image, remainder: true)
-            .branch{
-                infant: it[0].age < 2.5 || it[0].age > 18
-                    return [it[0], it[6][2], it[6][1], it[6][0], it[1], it[2]]
-                child: it[0].age >= 2.5 && it[0].age <= 18
-                    return [it[0], it[3], it[4], it[5], it[1], it[2]]
+            .branch{ tuple ->
+                infant: tuple[0].age < 2.5 || tuple[0].age > 18
+                    return [tuple[0], tuple[6][2], tuple[6][1], tuple[6][0], tuple[1], tuple[2]]
+                child: tuple[0].age >= 2.5 && tuple[0].age <= 18
+                    return [tuple[0], tuple[3], tuple[4], tuple[5], tuple[1], tuple[2]]
             }
         ch_pft_tracking = ch_pft_tracking.infant.mix(ch_pft_tracking.child)
 
@@ -574,18 +574,18 @@ workflow PEDIATRIC {
             .join(RECONST_DTIMETRICS.out.fa)
             .join(FASTSEG.out.wm_mask, remainder: true)
             .join(TRACKINGMASKS.out.wm, remainder: true)
-            .branch{
-                infant: it[0].age < 2.5 || it[0].age > 18
-                    return [it[0], it[4], it[1], it[2]]
-                child: it[0].age >= 2.5 && it[0].age <= 18
-                    return [it[0], it[3], it[1], it[2]]
+            .branch{ tuple ->
+                infant: tuple[0].age < 2.5 || tuple[0].age > 18
+                    return [tuple[0], tuple[4], tuple[1], tuple[2]]
+                child: tuple[0].age >= 2.5 && tuple[0].age <= 18
+                    return [tuple[0], tuple[3], tuple[1], tuple[2]]
             }
         ch_local_tracking = ch_local_tracking.infant.mix(ch_local_tracking.child)
 
         //
         // MODULE: Run PFT_TRACKING
         //
-        ch_trk_pft = Channel.empty()
+        ch_trk_pft = channel.empty()
         if ( params.run_pft_tracking ) {
 
             TRACKING_PFTTRACKING ( ch_pft_tracking )
@@ -599,7 +599,7 @@ workflow PEDIATRIC {
         //
         // MODULE: Run LOCAL_TRACKING
         //
-        ch_trk_local = Channel.empty()
+        ch_trk_local = channel.empty()
         if ( params.run_local_tracking ) {
 
             TRACKING_LOCALTRACKING ( ch_local_tracking )
@@ -625,12 +625,12 @@ workflow PEDIATRIC {
                 local = local.flatten()
                 [meta, pft + local, []]
             }
-            .branch {
-                both: it[1].size() > 1
-                    return it
+            .branch { tuple ->
+                both: tuple[1].size() > 1
+                    return tuple
             }
 
-        ch_merged = Channel.empty()
+        ch_merged = channel.empty()
         TRACTOGRAM_MATH ( ch_concatenate.both )
         ch_versions = ch_versions.mix(TRACTOGRAM_MATH.out.versions.first())
         ch_trk_files_to_transform = ch_trk_files_to_transform
@@ -643,8 +643,8 @@ workflow PEDIATRIC {
             .mix(ch_trk_pft)
             .groupTuple(by: 0)
             .map { meta, trks ->
-                def concat = trks.find { it.name?.contains('concatenated') }
-                def individual = trks.find { ! it.name?.contains('concatenated') }
+                def concat = trks.find { trk -> trk.name?.contains('concatenated') }
+                def individual = trks.find { trk -> !trk.name?.contains('concatenated') }
                 [meta, concat ?: individual ]
             }
     }
@@ -657,10 +657,10 @@ workflow PEDIATRIC {
         ch_metrics = FETCH_DERIVATIVES.out.metrics
         ch_fa_ad_rd_md = FETCH_DERIVATIVES.out.metrics
             .map { meta, files ->
-                def fa = files.findAll { it.name.contains('param-fa_dwimap.nii.gz') }
-                def ad = files.findAll { it.name.contains('param-ad_dwimap.nii.gz') }
-                def rd = files.findAll { it.name.contains('param-rd_dwimap.nii.gz') }
-                def md = files.findAll { it.name.contains('param-md_dwimap.nii.gz') }
+                def fa = files.findAll { file -> file.name.contains('param-fa_dwimap.nii.gz') }
+                def ad = files.findAll { file -> file.name.contains('param-ad_dwimap.nii.gz') }
+                def rd = files.findAll { file -> file.name.contains('param-rd_dwimap.nii.gz') }
+                def md = files.findAll { file -> file.name.contains('param-md_dwimap.nii.gz') }
 
                 // ** Some logging if no files exists ** //
                 if ( fa.size() == 0 || ad.size() == 0 || rd.size() == 0 || md.size() == 0 ) {
@@ -671,7 +671,7 @@ workflow PEDIATRIC {
             }
         ch_fa = FETCH_DERIVATIVES.out.metrics
             .map { meta, files ->
-                def fa = files.findAll { it.name.contains('param-fa_dwimap.nii.gz') }
+                def fa = files.findAll { file -> file.name.contains('param-fa_dwimap.nii.gz') }
 
                 // ** Some logging if no files exists ** //
                 if ( fa.size() == 0 ) {
@@ -812,7 +812,7 @@ workflow PEDIATRIC {
             BUNDLE_SEG.out.bundles,
             BUNDLE_SEG.out.centroids,
             ch_metrics_tractometry,
-            Channel.empty(),
+            channel.empty(),
             ch_fodf
         )
         ch_trk_files_to_transform = ch_trk_files_to_transform
@@ -846,11 +846,11 @@ workflow PEDIATRIC {
         //
         // MODULE : Run AntsApplyTransforms.
         //
-        ch_labels = ch_labels.branch {
-            reg: it.size() > 2 && !params.segmentation
-                return [it[0], it[2]]
-            notreg: it.size() < 3
-                return [it[0], it[1]]
+        ch_labels = ch_labels.branch { label_tuple ->
+            reg: label_tuple.size() > 2 && !params.segmentation
+                return [label_tuple[0], label_tuple[2]]
+            notreg: label_tuple.size() < 3
+                return [label_tuple[0], label_tuple[1]]
         }
 
         ch_antsapply = ch_labels.notreg
@@ -876,7 +876,7 @@ workflow PEDIATRIC {
                 def label = reg_label ?: warped_label
                 [id, trk, label]
             }
-            .filter { it[2] != null }
+            .filter { _meta, _trk, label -> label != null }
 
         CONNECTIVITY_DECOMPOSE ( ch_decompose )
         ch_versions = ch_versions.mix(CONNECTIVITY_DECOMPOSE.out.versions.first())
@@ -961,7 +961,7 @@ workflow PEDIATRIC {
             .map { tuple_elements ->
                 def meta = tuple_elements[0]
                 def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
-                def all_files = file_lists.flatten().findAll { it != null }
+                def all_files = file_lists.flatten().findAll { file -> file != null }
                 return tuple(meta, all_files)
             }
 
@@ -970,7 +970,7 @@ workflow PEDIATRIC {
             .map { tuple_elements ->
                 def meta = tuple_elements[0]
                 def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
-                def all_files = file_lists.flatten().findAll { it != null }
+                def all_files = file_lists.flatten().findAll { file -> file != null }
                 return tuple(meta, all_files)
             }
 
@@ -979,7 +979,7 @@ workflow PEDIATRIC {
             .map { tuple_elements ->
                 def meta = tuple_elements[0]
                 def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
-                def all_files = file_lists.flatten().findAll { it != null }
+                def all_files = file_lists.flatten().findAll { file -> file != null }
                 return tuple(meta, all_files)
             }
 
@@ -988,7 +988,7 @@ workflow PEDIATRIC {
             .map { tuple_elements ->
                 def meta = tuple_elements[0]
                 def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
-                def all_files = file_lists.flatten().findAll { it != null }
+                def all_files = file_lists.flatten().findAll { file -> file != null }
                 return tuple(meta, all_files)
             }
 
@@ -997,7 +997,7 @@ workflow PEDIATRIC {
             .map { tuple_elements ->
                 def meta = tuple_elements[0]
                 def file_lists = tuple_elements[1..-1] // Get all elements except the first (meta)
-                def all_files = file_lists.flatten().findAll { it != null }
+                def all_files = file_lists.flatten().findAll { file -> file != null }
                 return tuple(meta, all_files)
             }
 
@@ -1016,7 +1016,7 @@ workflow PEDIATRIC {
     // SUBWORKFLOW: RUN QC
     //
     if ( params.tracking ) {
-    ch_tissueseg = Channel.empty()
+    ch_tissueseg = channel.empty()
         .mix(FASTSEG.out.wm_mask)
         .mix(FASTSEG.out.gm_mask)
         .mix(FASTSEG.out.csf_mask)
@@ -1025,7 +1025,7 @@ workflow PEDIATRIC {
         .mix(TRACKINGMASKS.out.csf)
         .groupTuple()
         .map { meta, files ->
-            def sortedFiles = files.flatten().findAll { it != null }.sort { file ->
+            def sortedFiles = files.flatten().findAll { file -> file != null }.sort { file ->
                 if (file.name.contains('wm')) return 0
                 else if (file.name.contains('gm')) return 1
                 else if (file.name.contains('csf')) return 2
@@ -1034,7 +1034,7 @@ workflow PEDIATRIC {
             return [meta] + sortedFiles
         }
     } else {
-        ch_tissueseg = Channel.empty()
+        ch_tissueseg = channel.empty()
     }
 
     if ( params.tracking ) {
@@ -1042,24 +1042,24 @@ workflow PEDIATRIC {
     } else if ( params.segmentation && !params.connectomics ) {
         // ** Fetching the T1w and T2w images for QC ** //
         // ** If both are provided, use T1w, else, use T2w. ** //
-        ch_anat_qc = Channel.empty()
+        ch_anat_qc = channel.empty()
             .mix(SEGMENTATION.out.t1)
             .mix(SEGMENTATION.out.t2)
             .groupTuple()
             .map { meta, files ->
-                return [meta] + files.flatten().findAll { it != null }.sort { file ->
+                return [meta] + files.flatten().findAll { file -> file != null }.sort { file ->
                     if (file.name.contains("T2w")) return 0
                     else return 1}
             }
-            .branch{
-                T1w: it.size() > 3 && it[0].age >= 0.25 && it[0].age <= 18
-                    return [it[0], it[2]]
+            .branch{ tuple ->
+                T1w: tuple.size() > 3 && tuple[0].age >= 0.25 && tuple[0].age <= 18
+                    return [tuple[0], tuple[2]]
                 T2w: true // Catch-all for only T2w.
-                    return [it[0], it[1]]
+                    return [tuple[0], tuple[1]]
             }
         ch_anat_qc = ch_anat_qc.T1w.mix(ch_anat_qc.T2w)
     } else if ( params.bundling ) {
-        ch_anat_qc = Channel.empty()
+        ch_anat_qc = channel.empty()
     } else {
         ch_anat_qc = ch_anat
     }
@@ -1067,13 +1067,13 @@ workflow PEDIATRIC {
     QC (
         ch_anat_qc,
         ch_tissueseg,
-        params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : Channel.empty(),
-        params.connectomics ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : Channel.empty(),
-        params.tracking ? ch_inputs.dwi_bval_bvec : params.connectomics ? ch_dwi_bval_bvec : Channel.empty(),
-        params.tracking ? RECONST_DTIMETRICS.out.fa : Channel.empty(),
-        params.tracking ? RECONST_DTIMETRICS.out.md : Channel.empty(),
-        params.tracking ? RECONST_FODF.out.nufo : Channel.empty(),
-        params.tracking ? RECONST_DTIMETRICS.out.rgb : Channel.empty()
+        params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : channel.empty(),
+        params.connectomics ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : channel.empty(),
+        params.tracking ? ch_inputs.dwi_bval_bvec : params.connectomics ? ch_dwi_bval_bvec : channel.empty(),
+        params.tracking ? RECONST_DTIMETRICS.out.fa : channel.empty(),
+        params.tracking ? RECONST_DTIMETRICS.out.md : channel.empty(),
+        params.tracking ? RECONST_FODF.out.nufo : channel.empty(),
+        params.tracking ? RECONST_DTIMETRICS.out.rgb : channel.empty()
     )
 
     qc_files = ch_multiqc_files_sub
@@ -1084,7 +1084,7 @@ workflow PEDIATRIC {
         .mix(QC.out.labels_png)
         .groupTuple()
         .map { meta, png_list ->
-            def images = png_list.flatten().findAll { it != null }
+            def images = png_list.flatten().findAll { png -> png != null }
             return tuple(meta, images)
         }
 
@@ -1102,29 +1102,29 @@ workflow PEDIATRIC {
     //
     // MODULE: MultiQC
     //
-    ch_multiqc_files = Channel.empty()  // To store versions, methods description, etc.
+    ch_multiqc_files = channel.empty()  // To store versions, methods description, etc.
                                         // Otherwise, stored in either subject or global level channel.
 
-    ch_multiqc_config_subject = Channel.fromPath(
+    ch_multiqc_config_subject = channel.fromPath(
         "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_config_global = Channel.fromPath(
+    ch_multiqc_config_global = channel.fromPath(
         "$projectDir/assets/multiqc_config_global.yml", checkIfExists: true)
     ch_multiqc_custom_config = params.multiqc_config ?
-        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
-        Channel.empty()
+        channel.fromPath(params.multiqc_config, checkIfExists: true) :
+        channel.empty()
     ch_multiqc_logo          = params.multiqc_logo ?
-        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.fromPath("$projectDir/assets/sf-pediatric-light-logo.png", checkIfExists: true)
+        channel.fromPath(params.multiqc_logo, checkIfExists: true) :
+        channel.fromPath("$projectDir/assets/sf-pediatric-light-logo.png", checkIfExists: true)
 
     summary_params      = paramsSummaryMap(
         workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_workflow_summary = channel.value(paramsSummaryMultiqc(summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(
         ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
         file(params.multiqc_methods_description, checkIfExists: true) :
         file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-    ch_methods_description                = Channel.value(
+    ch_methods_description                = channel.value(
         methodsDescriptionText(ch_multiqc_custom_methods_description))
 
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
@@ -1146,9 +1146,9 @@ workflow PEDIATRIC {
     )
 
     ch_multiqc_files_global = ch_multiqc_files_global.mix(
-        ch_multiqc_files.mix(QC.out.dice_stats.map{ it[1] }.flatten())
+        ch_multiqc_files.mix(QC.out.dice_stats.map{ _meta, dice -> dice }.flatten())
     )
-    ch_multiqc_files_global = ch_multiqc_files_global.mix(QC.out.sc_values.map{ it[1] }.flatten())
+    ch_multiqc_files_global = ch_multiqc_files_global.mix(QC.out.sc_values.map{ _meta, sc -> sc }.flatten())
     if ( params.segmentation ) {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.volume_lh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.volume_rh)
@@ -1162,13 +1162,13 @@ workflow PEDIATRIC {
     // Collect the framewise displacement files from the ch_multiqc_files_sub channel
     ch_fd_files = ch_multiqc_files_sub
         .filter { _meta, files ->
-            files.any { it.name.contains("dwi_eddy_restricted_movement_rms") }
+            files.any { file -> file.name.contains("dwi_eddy_restricted_movement_rms") }
         }
-        .map { it[1] }
+        .map { _meta, files -> files }
     ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_fd_files.flatten())
 
     MULTIQC_GLOBAL (
-        Channel.of([meta:[id:"global"], qc_images:[]]),
+        channel.of([meta:[id:"global"], qc_images:[]]),
         ch_multiqc_files_global.collect(),
         ch_multiqc_config_global.toList(),
         ch_multiqc_custom_config.toList(),

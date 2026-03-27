@@ -201,7 +201,7 @@ workflow OUTPUT_TEMPLATE_SPACE {
     emit:
         ch_t1w_tpl                  = ch_t1w_tpl                                        // channel: [ tpl-T1w ]
         ch_t2w_tpl                  = ch_t2w_tpl                                        // channel: [ tpl-T2w ]
-        ch_registered_anat          = REGISTRATION_ANTS.out.image                       // channel: [ val(meta), [ image ] ]
+        ch_registered_anat          = REGISTRATION_ANTS.out.image_warped                // channel: [ val(meta), [ image ] ]
         ch_warped_nifti_files       = WARPIMAGES.out.warped_image                       // channel: [ val(meta), [ warped_image ] ]
         ch_rgb_nifti_files          = WARPRGB.out.warped_image                          // channel: [ val(meta), [ warped_rgb ] ]
         ch_warped_mask_files        = WARPMASK.out.warped_image                         // channel: [ val(meta), [ warped_mask ] ]
