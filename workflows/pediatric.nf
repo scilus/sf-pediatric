@@ -748,6 +748,12 @@ workflow PEDIATRIC {
                     iso_diff: ch_normative_diff.iso_diff,
                     perp_diff_min: ch_normative_diff.perp_diff_min,
                     perp_diff_max: ch_normative_diff.perp_diff_max
+                ],
+                [
+                    "run_noddi": params.run_noddi,
+                    "run_freewater": params.run_freewater,
+                    "average_diff_priors": params.average_diff_priors,
+                    "silence_single_shell_warnings": false
                 ]
             )
             ch_versions = ch_versions.mix(RECONST_FW_NODDI.out.versions)
