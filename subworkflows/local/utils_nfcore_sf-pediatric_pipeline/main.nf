@@ -727,49 +727,57 @@ def buildMethodsDescription() {
             def parts = []
             parts << """<h5>DWI preprocessing</h5>"""
             parts << "Diffusion weighting imaging (DWI) files were extracted from the input BIDS folder and associated with their corresponding reverse phase-encoded images when available."
-            if ( enabled('preproc_dwi_run_denoising') && !enabled('skip_dwi_preprocessing') ) {
+            if ( enabled('run_dwi_denoising') ) {
                 parts << "DWI volumes were denoised using the MP-PCA algorithm (Veraart et al., 2016) implemented in the MRtrix3 toolbox (Tournier et al., 2019)."
             }
-            if ( enabled('preproc_dwi_run_degibbs') && !enabled('skip_dwi_preprocessing') ) {
+            if ( enabled('run_dwi_degibbs') ) {
                 parts << "Correction for Gibbs ringing artifacts was applied using the method of Kellner et al. (2016) as implemented in MRtrix3 (Tournier et al., 2019)."
             }
-            if ( enabled('topup_eddy_run_topup') && !enabled('skip_dwi_preprocessing') ) {
+            if ( enabled('run_dwi_topup') ) {
                 parts << "Susceptibility-induced distortions were corrected using FSL's TOPUP (Andersson et al., 2003; Jenkinson et al., 2012) when reverse phase-encoded images were available."
             }
-            if ( enabled('topup_eddy_run_eddy') && !enabled('skip_dwi_preprocessing') ) {
+            if ( enabled('run_dwi_eddy') ) {
                 parts << "Eddy current and motion correction were performed using FSL's EDDY (Andersson & Sotiropoulos, 2016; Jenkinson et al., 2012); maximum framewise displacement was recorded for quality control purposes."
             }
-            if ( enabled('dwi_run_synthstrip') && !enabled('skip_dwi_preprocessing') ) {
-                parts << "Brain extraction was performed by applying the deep learning model SynthStrip (Hoopes et al., 2022) on powdered average images. Pediatric-tailored weights were used for very young subjects where applicable (Kelley et al., 2024). The resulting mask was applied to the DWI volumes."
-            } else if ( !enabled('dwi_run_synthstrip') ) {
-                parts << "Brain extraction was performed using FSL BET on the B0 image; the resulting mask was applied to the DWI volumes."
-            }
-            if ( enabled('preproc_dwi_run_N4') && !enabled('skip_dwi_preprocessing') ) {
+            parts << "Brain extraction was performed by applying the deep learning model SynthStrip (Hoopes et al., 2022) on powdered average images. Pediatric-tailored weights were used for very young subjects where applicable (Kelley et al., 2024). The resulting mask was applied to the DWI volumes."
+            if ( enabled('run_dwi_n4') ) {
                 parts << "Bias field correction was applied using the N4 algorithm (Tustison et al., 2010) from the ANTs toolbox (Tustison et al., 2021) using a b-spline knot per voxel of ${params.dwi_bias_bspline_knot_per_voxel} and a shrink factor of ${params.dwi_bias_shrink_factor}."
             }
-            parts << "DWI volumes were normalized using the mean B0 intensity within white matter (FA > ${params.dwi_normalize_fa_mask_threshold}) using MRtrix3 (Tournier et al., 2019)."
-            parts << "Preprocessed DWI volumes were resampled to an isotropic voxel size of ${params.dwi_resample_voxel_size} mm."
+            if ( enabled('run_dwi_normalize') ) {
+                parts << "DWI volumes were normalized using the mean B0 intensity within white matter (FA > ${params.dwi_normalize_fa_mask_threshold}) using MRtrix3 (Tournier et al., 2019)."
+            }
+            if ( enabled('run_dwi_resampling') ) {
+                parts << "Preprocessed DWI volumes were resampled to an isotropic voxel size of ${params.dwi_resample_voxel_size} mm."
+            }
 
             return parts.findAll{ it }.join(' ')
         },
         anat_preproc: { ->
             if ( !enabled('tracking') ) return ""
             def parts = []
-            parts << """<h5>Anatomical preprocessing</h5>"""
-            if ( enabled('preproc_run_denoising') ) {
-                parts << "Anatomical T1w and/or T2w images were denoised using the Non-Local Means algorithm (Coupe et al., 2008) as implemented in the DIPY toolbox (Garyfallidis et al., 2014)."
+            parts << """<h5>T1w preprocessing</h5>"""
+            if ( enabled('run_t1_denoising') ) {
+                parts << "Anatomical T1w images were denoised using the Non-Local Means algorithm (Coupe et al., 2008) as implemented in the DIPY toolbox (Garyfallidis et al., 2014)."
             }
-            if ( enabled('preproc_run_N4') ) {
-                parts << "Bias field correction was applied using the N4 algorithm (Tustison et al., 2010) from the ANTs toolbox (Tustison et al., 2021) using a b-spline knot per voxel of ${params.t1_bias_bspline_knot_per_voxel} and a shrink factor of ${params.t1_bias_shrink_factor} for the T1w and a b-spline knot per voxel of ${params.t2_bias_bspline_knot_per_voxel} and a shrink factor of ${params.t2_bias_shrink_factor} for the T2w image."
+            if ( enabled('run_t1_n4') ) {
+                parts << "Bias field correction was applied using the N4 algorithm (Tustison et al., 2010) from the ANTs toolbox (Tustison et al., 2021) using a b-spline knot per voxel of ${params.t1_bias_bspline_knot_per_voxel} and a shrink factor of ${params.t1_bias_shrink_factor}."
             }
-            if ( enabled('preproc_run_resampling') ) {
-                parts << "Anatomical images were resampled to an isotropic voxel size of ${params.t1_resample_voxel_size} mm for the T1w and ${params.t2_resample_voxel_size} mm for the T2w image."
+            if ( enabled('run_t1_resampling') ) {
+                parts << "T1w images were resampled to an isotropic voxel size of ${params.t1_resample_voxel_size} mm."
             }
-            if ( enabled('preproc_run_synthstrip') ) {
-                parts << "Brain extraction was performed using SynthStrip (Hoopes et al., 2022); pediatric-tailored weights were used for very young subjects where applicable (Kelley et al., 2024)."
-            } else {
-                parts << "Brain extraction was performed using ANTs brain extraction (Tustison et al., 2021) with the OASIS template."
+            parts << "Brain extraction was performed using SynthStrip (Hoopes et al., 2022); pediatric-tailored weights were used for very young subjects where applicable (Kelley et al., 2024)."
+
+            parts << "<h5>T2w preprocessing</h5>"
+            if ( enabled('run_t2_denoising') ) {
+                parts << "Anatomical T2w images were denoised using the Non-Local Means algorithm (Coupe et al., 2008) as implemented in the DIPY toolbox (Garyfallidis et al., 2014)."
             }
+            if ( enabled('run_t2_n4') ) {
+                parts << "Bias field correction was applied using the N4 algorithm (Tustison et al., 2010) from the ANTs toolbox (Tustison et al., 2021) using a b-spline knot per voxel of ${params.t2_bias_bspline_knot_per_voxel} and a shrink factor of ${params.t2_bias_shrink_factor}."
+            }
+            if ( enabled('run_t2_resampling') ) {
+                parts << "T2w images were resampled to an isotropic voxel size of ${params.t2_resample_voxel_size} mm."
+            }
+            parts << "Brain extraction was performed using SynthStrip (Hoopes et al., 2022); pediatric-tailored weights were used for very young subjects where applicable (Kelley et al., 2024)."
             parts << "If both T1w and T2w images were available, they were registered using ANTs (Tustison et al., 2021) using ${params.coreg_transform == "a" ? "an affine" : params.coreg_transform == "r" || params.coreg_transform == "t" ? "a rigid" : "a non-linear"} transform."
 
             return parts.findAll{ it }.join(' ')
