@@ -1,15 +1,16 @@
 {
     "Tracking profile - should run successfully": {
         "content": [
-            214,
+            204,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
-                "BETCROP_SYNTHBET": {
-                    "synthstrip": 1.5
+                "BETCROP_SYNTHSTRIP": {
+                    "synthstrip": 1.8
                 },
                 "BET_DWI": {
                     "mrtrix": "3.0.5"
@@ -18,18 +19,16 @@
                     "mrconvert": "3.0.5"
                 },
                 "COREG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
-                },
-                "CROPB0": {
-                    "scilpy": "2.0.2"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "CROPDWI": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CROPMASK": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.5"
@@ -38,83 +37,82 @@
                     "mrtrix": "3.0.5"
                 },
                 "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
-                "EXTRACTB0_RESAMPLE": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                "EXTRACT_B0": {
+                    "scilpy": "2.2.2"
                 },
                 "FASTSEG": {
-                    "scilpy": "2.0.0",
+                    "scilpy": "2.2.2",
                     "fsl": 6.0
                 },
                 "FW_CORRECTED_DTIMETRICS": {
-                    "scilpy": "2.2.0",
+                    "scilpy": "2.2.2",
                     "mrtrix": "3.0.7",
                     "imagemagick": "6.9.12"
                 },
                 "IMAGE_POWDERAVERAGE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "N4_DWI": {
                     "ants": null,
                     "mrtrix": "3.0.5"
                 },
                 "NORMALIZE_DWI": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7"
                 },
                 "PREPROC_TOPUP": {
-                    "scilpy": "2.1.0",
-                    "antsRegistration": null,
+                    "scilpy": "2.2.2",
+                    "ants": "2.6.2",
                     "fsl": 6.0,
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.2.0",
+                    "scilpy": "2.2.2",
                     "mrtrix": "3.0.7",
                     "imagemagick": "6.9.12"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_FREEWATER": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.1.0"
-                },
-                "RECONST_NODDI": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TEMPLATETODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKINGMASKS": {
-                    "mrtrix": "3.0.4"
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_LOCALTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_PFTTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "WARPPROBSEG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
                     "scilus/sf-pediatric": "v0.2.2"
@@ -189,16 +187,6 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fwf_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fwf_dwimap.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-direction_dwimap.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-ecvf_dwimap.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-ecvf_dwimap.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-icvf_dwimap.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-icvf_dwimap.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-isovf_dwimap.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-isovf_dwimap.nii.gz",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-odi_dwimap.json",
-                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-noddi_param-odi_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-ad_dwimap.json",
@@ -258,6 +246,7 @@
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/anat",
@@ -318,16 +307,6 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fwf_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fwf_dwimap.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-direction_dwimap.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-ecvf_dwimap.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-ecvf_dwimap.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-icvf_dwimap.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-icvf_dwimap.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-isovf_dwimap.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-isovf_dwimap.nii.gz",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-odi_dwimap.json",
-                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-noddi_param-odi_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-ad_dwimap.json",
@@ -387,6 +366,7 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T1w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T1w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
+                "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test2",
                 "sub-test2/anat",
@@ -441,16 +421,6 @@
                 "sub-test2/dwi/sub-test2_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test2/dwi/sub-test2_model-fw_param-fwf_dwimap.json",
                 "sub-test2/dwi/sub-test2_model-fw_param-fwf_dwimap.nii.gz",
-                "sub-test2/dwi/sub-test2_model-noddi_param-direction_dwimap.json",
-                "sub-test2/dwi/sub-test2_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test2/dwi/sub-test2_model-noddi_param-ecvf_dwimap.json",
-                "sub-test2/dwi/sub-test2_model-noddi_param-ecvf_dwimap.nii.gz",
-                "sub-test2/dwi/sub-test2_model-noddi_param-icvf_dwimap.json",
-                "sub-test2/dwi/sub-test2_model-noddi_param-icvf_dwimap.nii.gz",
-                "sub-test2/dwi/sub-test2_model-noddi_param-isovf_dwimap.json",
-                "sub-test2/dwi/sub-test2_model-noddi_param-isovf_dwimap.nii.gz",
-                "sub-test2/dwi/sub-test2_model-noddi_param-odi_dwimap.json",
-                "sub-test2/dwi/sub-test2_model-noddi_param-odi_dwimap.nii.gz",
                 "sub-test2/dwi/sub-test2_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test2/dwi/sub-test2_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test2/dwi/sub-test2_model-tensor_param-ad_dwimap.json",
@@ -508,6 +478,7 @@
                 "sub-test2/xfm",
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test3",
                 "sub-test3/anat",
@@ -562,16 +533,6 @@
                 "sub-test3/dwi/sub-test3_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-fw_param-fwf_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-fw_param-fwf_dwimap.nii.gz",
-                "sub-test3/dwi/sub-test3_model-noddi_param-direction_dwimap.json",
-                "sub-test3/dwi/sub-test3_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test3/dwi/sub-test3_model-noddi_param-ecvf_dwimap.json",
-                "sub-test3/dwi/sub-test3_model-noddi_param-ecvf_dwimap.nii.gz",
-                "sub-test3/dwi/sub-test3_model-noddi_param-icvf_dwimap.json",
-                "sub-test3/dwi/sub-test3_model-noddi_param-icvf_dwimap.nii.gz",
-                "sub-test3/dwi/sub-test3_model-noddi_param-isovf_dwimap.json",
-                "sub-test3/dwi/sub-test3_model-noddi_param-isovf_dwimap.nii.gz",
-                "sub-test3/dwi/sub-test3_model-noddi_param-odi_dwimap.json",
-                "sub-test3/dwi/sub-test3_model-noddi_param-odi_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-tensor_param-ad_dwimap.json",
@@ -629,6 +590,7 @@
                 "sub-test3/xfm",
                 "sub-test3/xfm/sub-test3_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test3/xfm/sub-test3_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test3/xfm/sub-test3_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test3/xfm/sub-test3_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test4",
                 "sub-test4/anat",
@@ -683,16 +645,6 @@
                 "sub-test4/dwi/sub-test4_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-fw_param-fwf_dwimap.json",
                 "sub-test4/dwi/sub-test4_model-fw_param-fwf_dwimap.nii.gz",
-                "sub-test4/dwi/sub-test4_model-noddi_param-direction_dwimap.json",
-                "sub-test4/dwi/sub-test4_model-noddi_param-direction_dwimap.nii.gz",
-                "sub-test4/dwi/sub-test4_model-noddi_param-ecvf_dwimap.json",
-                "sub-test4/dwi/sub-test4_model-noddi_param-ecvf_dwimap.nii.gz",
-                "sub-test4/dwi/sub-test4_model-noddi_param-icvf_dwimap.json",
-                "sub-test4/dwi/sub-test4_model-noddi_param-icvf_dwimap.nii.gz",
-                "sub-test4/dwi/sub-test4_model-noddi_param-isovf_dwimap.json",
-                "sub-test4/dwi/sub-test4_model-noddi_param-isovf_dwimap.nii.gz",
-                "sub-test4/dwi/sub-test4_model-noddi_param-odi_dwimap.json",
-                "sub-test4/dwi/sub-test4_model-noddi_param-odi_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test4/dwi/sub-test4_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-tensor_param-ad_dwimap.json",
@@ -750,6 +702,7 @@
                 "sub-test4/xfm",
                 "sub-test4/xfm/sub-test4_from-T1w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-T1w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
@@ -757,87 +710,97 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-07T17:31:40.670805"
+        "timestamp": "2026-03-27T16:18:59.211115"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
-            152,
+            167,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
-                "BETCROP_FSLBETCROP": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4",
-                    "fsl": 6.0
+                "BETCROP_SYNTHSTRIP": {
+                    "synthstrip": 1.8
+                },
+                "BET_DWI": {
+                    "mrtrix": "3.0.5"
+                },
+                "CONVERT": {
+                    "mrconvert": "3.0.5"
                 },
                 "COREG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
-                "CROPB0": {
-                    "scilpy": "2.0.2"
+                "CROPDWI": {
+                    "scilpy": "2.2.2"
+                },
+                "CROPMASK": {
+                    "scilpy": "2.2.2"
                 },
                 "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
-                "EXTRACTB0_RESAMPLE": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                "EXTRACT_B0": {
+                    "scilpy": "2.2.2"
                 },
                 "FASTSEG": {
-                    "scilpy": "2.0.0",
+                    "scilpy": "2.2.2",
                     "fsl": 6.0
                 },
+                "IMAGE_POWDERAVERAGE": {
+                    "scilpy": "2.2.2"
+                },
                 "NORMALIZE_DWI": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.2.0",
+                    "scilpy": "2.2.2",
                     "mrtrix": "3.0.7",
                     "imagemagick": "6.9.12"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.1.0"
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TEMPLATETODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKINGMASKS": {
-                    "mrtrix": "3.0.4"
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_LOCALTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_PFTTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.2.0"
-                },
-                "UTILS_EXTRACTB0": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.2"
                 },
                 "WARPPROBSEG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
                     "scilus/sf-pediatric": "v0.2.2"
@@ -947,6 +910,7 @@
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/anat",
@@ -1042,6 +1006,7 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T1w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T1w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
+                "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test2",
                 "sub-test2/anat",
@@ -1129,6 +1094,7 @@
                 "sub-test2/xfm",
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test3",
                 "sub-test3/anat",
@@ -1216,6 +1182,7 @@
                 "sub-test3/xfm",
                 "sub-test3/xfm/sub-test3_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test3/xfm/sub-test3_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test3/xfm/sub-test3_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test3/xfm/sub-test3_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test4",
                 "sub-test4/anat",
@@ -1303,6 +1270,7 @@
                 "sub-test4/xfm",
                 "sub-test4/xfm/sub-test4_from-T1w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-T1w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
@@ -1310,6 +1278,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-07T17:38:45.350626"
+        "timestamp": "2026-03-27T21:57:24.683701"
     }
 }
