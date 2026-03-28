@@ -28,7 +28,7 @@ process REGISTRATION_ANTS {
     def initialization_types = ["geometric center": 0, "intensities": 1, "origin": 2]
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def suffix = moving_image.name.contains("T1w") ? "T1w" : "T2w"
+    def suffix = moving_image.name.contains("T1w") ? "T1w_" : "T2w_"
     def suffix_qc = task.ext.suffix_qc ?: ""
     def ants = task.ext.quick ? "antsRegistrationSyNQuick.sh" : "antsRegistrationSyN.sh"
     def dimension = "-d ${task.ext.dimension ?: 3}"
@@ -133,7 +133,7 @@ process REGISTRATION_ANTS {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def suffix = moving_image.name.contains("T1w") ? "T1w" : "T2w"
+    def suffix = moving_image.name.contains("T1w") ? "T1w_" : "T2w_"
     def suffix_qc = task.ext.suffix_qc ?: ""
     def run_qc = task.ext.run_qc as Boolean || false
 
