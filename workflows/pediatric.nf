@@ -210,12 +210,12 @@ workflow PEDIATRIC {
             channel.empty(),
             ch_t2_sample_weights,
             [
-                "preproc_t2_run_denoising": params.run_t2_denoising,
-                "preproc_t2_run_N4": params.run_t2_n4,
-                "preproc_t2_run_resampling": params.run_t2_resampling,
-                "preproc_t2_run_synthstrip": true,
-                "preproc_t2_run_ants_bet": false,
-                "preproc_t2_run_crop": params.run_t2_crop
+                "preproc_t1_run_denoising": params.run_t2_denoising,
+                "preproc_t1_run_N4": params.run_t2_n4,
+                "preproc_t1_run_resampling": params.run_t2_resampling,
+                "preproc_t1_run_synthstrip": true,
+                "preproc_t1_run_ants_bet": false,
+                "preproc_t1_run_crop": params.run_t2_crop
             ]
         )
         ch_versions = ch_versions.mix(PREPROC_T2W.out.versions.first())
