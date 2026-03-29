@@ -856,6 +856,9 @@ workflow PEDIATRIC {
         ch_antsapply = ch_labels.notreg
             .join(ch_anat)
             .join(ch_transforms)
+            .map{ meta, labels, anat, warp, affine ->
+                return [ meta, labels, anat, [warp, affine] ]
+            }
 
         TRANSFORM_LABELS ( ch_antsapply )
         ch_versions = ch_versions.mix(TRANSFORM_LABELS.out.versions.first())
