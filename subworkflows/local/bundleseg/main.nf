@@ -207,7 +207,6 @@ workflow BUNDLE_SEG {
                 .mix(ch_transform_centroids.infant12)
                 .mix(ch_transform_centroids.infant24)
                 .mix(ch_transform_centroids.child)
-                .view()
         }
 
         // ** Apply the transform to the centroids ** //
