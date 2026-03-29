@@ -2,7 +2,7 @@ process QC_METRICS {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilpy:2.2.2_cpu'
+    container 'scilus/scilus:2.2.2'
 
     input:
     tuple val(meta), path(fa), path(md), path(nufo), path(rgb)
