@@ -37,7 +37,7 @@ Changes in 'output_template_space/main.nf':
  
      REGISTRATION_ANTS ( ch_registration )
      ch_versions = ch_versions.mix(REGISTRATION_ANTS.out.versions)
-@@ -148,36 +157,49 @@
+@@ -148,36 +157,44 @@
      // ** [ tuple(meta, [ file1, file2, ... ]) ] ** //
      // ** Need to unpack the files and apply the transformation to each one ** //
      ch_files_to_transform = ch_nifti_files
@@ -46,16 +46,14 @@ Changes in 'output_template_space/main.nf':
 -        | join(REGISTRATION_ANTS.out.affine)
 -
 +        | join(REGISTRATION_ANTS.out.image_warped)
-+        | join(REGISTRATION_ANTS.out.forward_warp)
-+        | join(REGISTRATION_ANTS.out.forward_affine)
++        | join(REGISTRATION_ANTS.out.forward_image_transform)
      WARPIMAGES ( ch_files_to_transform )
      ch_versions = ch_versions.mix(WARPIMAGES.out.versions)
  
 +    // ** Same process for the rgb files ** //
 +    ch_rgb_to_transform = ch_rgb_files
 +        | join(REGISTRATION_ANTS.out.image_warped)
-+        | join(REGISTRATION_ANTS.out.forward_warp)
-+        | join(REGISTRATION_ANTS.out.forward_affine)
++        | join(REGISTRATION_ANTS.out.forward_image_transform)
 +    WARPRGB ( ch_rgb_to_transform )
 +    ch_versions = ch_versions.mix(WARPRGB.out.versions)
 +
@@ -65,8 +63,7 @@ Changes in 'output_template_space/main.nf':
 -        | join(REGISTRATION_ANTS.out.warp)
 -        | join(REGISTRATION_ANTS.out.affine)
 +        | join(REGISTRATION_ANTS.out.image_warped)
-+        | join(REGISTRATION_ANTS.out.forward_warp)
-+        | join(REGISTRATION_ANTS.out.forward_affine)
++        | join(REGISTRATION_ANTS.out.forward_image_transform)
      WARPMASK ( ch_masks_to_transform )
      ch_versions = ch_versions.mix(WARPMASK.out.versions)
  
@@ -76,8 +73,7 @@ Changes in 'output_template_space/main.nf':
 -        | join(REGISTRATION_ANTS.out.warp)
 -        | join(REGISTRATION_ANTS.out.affine)
 +        | join(REGISTRATION_ANTS.out.image_warped)
-+        | join(REGISTRATION_ANTS.out.forward_warp)
-+        | join(REGISTRATION_ANTS.out.forward_affine)
++        | join(REGISTRATION_ANTS.out.forward_image_transform)
      WARPLABELS ( ch_labels_to_transform )
      ch_versions = ch_versions.mix(WARPLABELS.out.versions)
  
@@ -86,22 +82,22 @@ Changes in 'output_template_space/main.nf':
 -        | join(REGISTRATION_ANTS.out.image)
 -        | join(REGISTRATION_ANTS.out.inverse_warp)
 -        | join(REGISTRATION_ANTS.out.affine)
-+        | join(REGISTRATION_ANTS.out.image_warped)
-+        | join(REGISTRATION_ANTS.out.backward_warp)
-+        | join(REGISTRATION_ANTS.out.forward_affine)
-         | map{ meta, trk, image, warp, affine ->
+-        | map{ meta, trk, image, warp, affine ->
 -            tuple(meta, image, affine, trk, [], warp)
++        | join(REGISTRATION_ANTS.out.image_warped)
++        | join(REGISTRATION_ANTS.out.forward_tractogram_transform)
++        | map{ meta, trk, image, transforms ->
 +            // Calculate memory based on tractogram files size
 +            def trk_files = [trk].flatten()
 +            def total_size = trk_files.collect { it.size() }.sum()
 +            def mem = ((8L * 1024 * 1024 * 1024) + (total_size * 10.0))
 +
 +            // Return with memory in meta
-+            tuple(meta + [mem: mem as long], trk, [], image, [affine, warp])
++            tuple(meta + [mem: mem as long], trk, [], image, transforms)
          }
  
      REGISTRATION_TRACTOGRAM ( ch_tractograms_to_transform )
-@@ -186,11 +208,11 @@
+@@ -186,11 +203,11 @@
      emit:
          ch_t1w_tpl                  = ch_t1w_tpl                                        // channel: [ tpl-T1w ]
          ch_t2w_tpl                  = ch_t2w_tpl                                        // channel: [ tpl-T2w ]

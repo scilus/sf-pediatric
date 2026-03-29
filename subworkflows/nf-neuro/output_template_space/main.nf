@@ -158,48 +158,43 @@ workflow OUTPUT_TEMPLATE_SPACE {
     // ** Need to unpack the files and apply the transformation to each one ** //
     ch_files_to_transform = ch_nifti_files
         | join(REGISTRATION_ANTS.out.image_warped)
-        | join(REGISTRATION_ANTS.out.forward_warp)
-        | join(REGISTRATION_ANTS.out.forward_affine)
+        | join(REGISTRATION_ANTS.out.forward_image_transform)
     WARPIMAGES ( ch_files_to_transform )
     ch_versions = ch_versions.mix(WARPIMAGES.out.versions)
 
     // ** Same process for the rgb files ** //
     ch_rgb_to_transform = ch_rgb_files
         | join(REGISTRATION_ANTS.out.image_warped)
-        | join(REGISTRATION_ANTS.out.forward_warp)
-        | join(REGISTRATION_ANTS.out.forward_affine)
+        | join(REGISTRATION_ANTS.out.forward_image_transform)
     WARPRGB ( ch_rgb_to_transform )
     ch_versions = ch_versions.mix(WARPRGB.out.versions)
 
     // ** Same process for the masks ** //
     ch_masks_to_transform = ch_mask_files
         | join(REGISTRATION_ANTS.out.image_warped)
-        | join(REGISTRATION_ANTS.out.forward_warp)
-        | join(REGISTRATION_ANTS.out.forward_affine)
+        | join(REGISTRATION_ANTS.out.forward_image_transform)
     WARPMASK ( ch_masks_to_transform )
     ch_versions = ch_versions.mix(WARPMASK.out.versions)
 
     // ** Same process for the labels ** //
     ch_labels_to_transform = ch_labels_files
         | join(REGISTRATION_ANTS.out.image_warped)
-        | join(REGISTRATION_ANTS.out.forward_warp)
-        | join(REGISTRATION_ANTS.out.forward_affine)
+        | join(REGISTRATION_ANTS.out.forward_image_transform)
     WARPLABELS ( ch_labels_to_transform )
     ch_versions = ch_versions.mix(WARPLABELS.out.versions)
 
     // ** Apply the transformation to the tractograms ** //
     ch_tractograms_to_transform = ch_trk_files
         | join(REGISTRATION_ANTS.out.image_warped)
-        | join(REGISTRATION_ANTS.out.backward_warp)
-        | join(REGISTRATION_ANTS.out.forward_affine)
-        | map{ meta, trk, image, warp, affine ->
+        | join(REGISTRATION_ANTS.out.forward_tractogram_transform)
+        | map{ meta, trk, image, transforms ->
             // Calculate memory based on tractogram files size
             def trk_files = [trk].flatten()
             def total_size = trk_files.collect { it.size() }.sum()
             def mem = ((8L * 1024 * 1024 * 1024) + (total_size * 10.0))
 
             // Return with memory in meta
-            tuple(meta + [mem: mem as long], trk, [], image, [affine, warp])
+            tuple(meta + [mem: mem as long], trk, [], image, transforms)
         }
 
     REGISTRATION_TRACTOGRAM ( ch_tractograms_to_transform )
