@@ -1158,13 +1158,19 @@
             [
                 "",
                 "sub-test1_ses-baseline"
+            ],
+            [
+                "",
+                "tpl-MNIInfant",
+                "tpl-MNIInfant_citations.bib",
+                "tpl-MNIInfant_metadata.json"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T22:24:16.396341"
+        "timestamp": "2026-03-30T13:33:09.185511"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [

@@ -291,12 +291,18 @@
                 "sub-test4/xfm/sub-test4_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test4/xfm/sub-test4_from-dwi_to-MNIInfant_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz"
+            ],
+            [
+                "",
+                "tpl-MNIInfant",
+                "tpl-MNIInfant_citations.bib",
+                "tpl-MNIInfant_metadata.json"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T13:50:58.821321"
+        "timestamp": "2026-03-30T11:38:25.642094"
     }
 }
