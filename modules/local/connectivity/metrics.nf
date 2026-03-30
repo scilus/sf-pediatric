@@ -50,20 +50,20 @@ process CONNECTIVITY_METRICS {
             \$metrics_args \
             --density_weighting \
             --no_self_connection \
-            --include_dps ./ \
+            --include_dps ./temp/ \
             --force_labels_list $labels_list
 
         # Rename commit or afd_fixel files if they exist.
-        if [ -f afd_fixel.npy ]; then
-            mv afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
+        if [ -f ./temp/afd_fixel.npy ]; then
+            mv ./temp/afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
         fi
 
-        if [ -f commit*.npy ]; then
-            mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+        if [ -f ./temp/commit*.npy ]; then
+            mv ./temp/commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
         fi
 
-        if [ -f tot_commit*.npy ]; then
-            mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
+        if [ -f ./temp/tot_commit*.npy ]; then
+            mv ./temp/tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
         fi
 
         # Remove "fit_" from filenames if present (only for .npy files)
@@ -95,20 +95,20 @@ process CONNECTIVITY_METRICS {
             --length "${prefix}_seg-${atlas}_stat-len.npy" \
             --density_weighting \
             --no_self_connection \
-            --include_dps ./ \
+            --include_dps ./temp/ \
             --force_labels_list $labels_list
 
         # Rename commit or afd_fixel files if they exist.
-        if [ -f afd_fixel.npy ]; then
-            mv afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
+        if [ -f ./temp/afd_fixel.npy ]; then
+            mv ./temp/afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
         fi
 
-        if [ -f commit*.npy ]; then
-            mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+        if [ -f ./temp/commit*.npy ]; then
+            mv ./temp/commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
         fi
 
-        if [ -f tot_commit*.npy ]; then
-            mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
+        if [ -f ./temp/tot_commit*.npy ]; then
+            mv ./temp/tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
         fi
 
         cat <<-END_VERSIONS > versions.yml
