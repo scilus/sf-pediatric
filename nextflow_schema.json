@@ -177,49 +177,6 @@
             "description": "Processing steps to apply on anatomical images. (NOTE: the same steps will be applied on both T1w/T2w if both are available).",
             "help_text": "These options are used to configure the processing steps to apply on anatomical images. You can use these options to customise the behaviour of the processing steps.",
             "properties": {
-                "preproc_run_denoising": {
-                    "type": "boolean",
-                    "description": "Run denoising on the anatomical images.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
-                "preproc_run_N4": {
-                    "type": "boolean",
-                    "description": "Run N4 bias correction on the anatomical images.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
-                "preproc_run_resampling": {
-                    "type": "boolean",
-                    "description": "Run resampling on the anatomical images.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
-                "preproc_run_synthstrip": {
-                    "type": "boolean",
-                    "description": "Run SynthStrip for brain extraction.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
-                "preproc_run_ants_bet": {
-                    "type": "boolean",
-                    "description": "Run AntsBet for brain extraction",
-                    "fa_icon": "fas fa-brain",
-                    "help_text": "This step will require the use of a template image which does not match all ages and is much slower than the default synthstrip method. Not recommended.",
-                    "default": false,
-                    "hidden": false
-                },
-                "preproc_run_crop": {
-                    "type": "boolean",
-                    "description": "Run cropping on the anatomical images.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
                 "synthstrip_weights": {
                     "type": "string",
                     "description": "Path to alternative weights for SynthStrip brain extraction.",
@@ -237,6 +194,34 @@
             "description": "Options for T1w processing. In the case where you do not have a T1w image, you can ignore those options.",
             "help_text": "These options are used to configure the T1w processing steps in the pipeline. You can use these options to customise the behaviour of the T1w processing steps.",
             "properties": {
+                "run_t1_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_n4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_crop": {
+                    "type": "boolean",
+                    "description": "Run cropping on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
                 "t1_denoise_number_of_coils": {
                     "type": "integer",
                     "description": "Number of coils used in the T1w denoising step.",
@@ -295,6 +280,34 @@
             "description": "Options for T2w preprocessing. In the case where you do not have a T2w image, you can ignore those options.",
             "help_text": "These options are used to configure the T2w preprocessing steps in the pipeline. You can use these options to customise the behaviour of the T2w preprocessing steps.",
             "properties": {
+                "run_t2_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_n4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_crop": {
+                    "type": "boolean",
+                    "description": "Run cropping on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
                 "t2_denoise_number_of_coils": {
                     "type": "integer",
                     "description": "Number of coils used in the T2w denoising step.",
@@ -385,13 +398,6 @@
             "description": "Options for DWI preprocessing. You can use these options to customise the behaviour of the DWI preprocessing steps.",
             "help_text": "These options are used to configure the DWI preprocessing steps in the pipeline. You can use these options to customise the behaviour of the DWI preprocessing steps.",
             "properties": {
-                "skip_dwi_preprocessing": {
-                    "type": "boolean",
-                    "description": "Skip the DWI preprocessing steps.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": false
-                },
                 "dwi_b0_threshold": {
                     "type": "integer",
                     "description": "B0 threshold used in the DWI preprocessing steps.",
@@ -406,7 +412,7 @@
                     "default": 50,
                     "hidden": false
                 },
-                "preproc_dwi_run_denoising": {
+                "run_dwi_denoising": {
                     "type": "boolean",
                     "description": "Run denoising on the DWI images.",
                     "fa_icon": "fas fa-brain",
@@ -420,14 +426,14 @@
                     "default": 7,
                     "hidden": true
                 },
-                "preproc_dwi_run_degibbs": {
+                "run_dwi_degibbs": {
                     "type": "boolean",
                     "description": "Run Gibbs ringing correction on the DWI images.",
                     "fa_icon": "fas fa-brain",
                     "default": false,
                     "hidden": false
                 },
-                "topup_eddy_run_topup": {
+                "run_dwi_topup": {
                     "type": "boolean",
                     "description": "Run topup in the susceptibility distortion correction step.",
                     "fa_icon": "fas fa-brain",
@@ -462,7 +468,7 @@
                     "default": "y",
                     "hidden": true
                 },
-                "topup_eddy_run_eddy": {
+                "run_dwi_eddy": {
                     "type": "boolean",
                     "description": "Run eddy in the eddy current correction step.",
                     "fa_icon": "fas fa-brain",
@@ -496,13 +502,6 @@
                     "fa_icon": "fas fa-brain",
                     "hidden": false
                 },
-                "dwi_run_synthstrip": {
-                    "type": "boolean",
-                    "description": "Run SynthStrip for brain extraction",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
                 "dwi_synthstrip_border": {
                     "type": "integer",
                     "description": "Brain border used in the SynthStrip brain extraction step.",
@@ -531,7 +530,7 @@
                     "default": 0.16,
                     "hidden": true
                 },
-                "preproc_dwi_run_N4": {
+                "run_dwi_n4": {
                     "type": "boolean",
                     "description": "Run N4 bias correction on the DWI images.",
                     "fa_icon": "fas fa-brain",
@@ -552,6 +551,13 @@
                     "default": 4,
                     "hidden": true
                 },
+                "run_dwi_normalize": {
+                    "type": "boolean",
+                    "description": "Run normalization on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
                 "dwi_normalize_fa_mask_threshold": {
                     "type": "number",
                     "description": "FA mask threshold used in the normalization step.",
@@ -559,7 +565,7 @@
                     "default": 0.4,
                     "hidden": false
                 },
-                "preproc_dwi_run_resampling": {
+                "run_dwi_resampling": {
                     "type": "boolean",
                     "description": "Run resampling on the DWI images.",
                     "fa_icon": "fas fa-brain",

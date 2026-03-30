@@ -2,14 +2,14 @@
     "qc - tractogram - stub-run": {
         "content": [
             [
-                "versions.yml:md5,54c57ab17954f1f7f7c7b98ba8c1f5a9"
+                "versions.yml:md5,9cc02a45546b3a87dd1a11dec877ca02"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.10.0"
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-21T21:06:06.644825844"
+        "timestamp": "2026-02-26T15:43:18.422594415"
     },
     "qc - tractogram": {
         "content": [
@@ -19,7 +19,7 @@
                         "id": "test",
                         "single_end": false
                     },
-                    "test__tractogram_mask.nii.gz:md5,4ce57fee196997a972d5c33202eeb74f"
+                    "test__tractogram_mask.nii.gz:md5,b8a4981e90917125c0fa23133b39576f"
                 ]
             ],
             [
@@ -28,7 +28,7 @@
                         "id": "test",
                         "single_end": false
                     },
-                    "test__TDI.nii.gz:md5,f4d9df11957de7b4b77314e07e08afa2"
+                    "test__TDI.nii.gz:md5,f9f526aaa889c064e395db7daaa6dab3"
                 ]
             ],
             [
@@ -37,7 +37,7 @@
                         "id": "test",
                         "single_end": false
                     },
-                    "test__dice.txt:md5,e6ee3e6eb91feb775fa0cec3a3715c75"
+                    "test__dice.txt:md5,f11e1be9f54609a1b875551c23aae742"
                 ]
             ],
             [
@@ -51,13 +51,13 @@
             ],
             "test__coverage_overlay_mqc.png",
             [
-                "versions.yml:md5,54c57ab17954f1f7f7c7b98ba8c1f5a9"
+                "versions.yml:md5,9cc02a45546b3a87dd1a11dec877ca02"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
-            "nextflow": "25.04.4"
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-11-28T10:35:36.493818054"
+        "timestamp": "2026-03-17T11:29:03.649515425"
     }
 }

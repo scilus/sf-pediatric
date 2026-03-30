@@ -2,7 +2,7 @@ process CONNECTIVITY_METRICS {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container 'scilus/scilpy:2.2.2_cpu'
 
     input:
     tuple val(meta), path(h5), path(labels), path(labels_list), path(metrics)
@@ -42,7 +42,7 @@ process CONNECTIVITY_METRICS {
             metrics_args="\${metrics_args} --metrics \${metric} ${prefix}_seg-${atlas}_\${stat}.npy"
         done
 
-        scil_connectivity_compute_matrices.py $h5 $labels \
+        scil_connectivity_compute_matrices $h5 $labels \
             --processes $task.cpus \
             --volume "${prefix}_seg-${atlas}_stat-vol.npy" \
             --streamline_count "${prefix}_seg-${atlas}_stat-sc.npy" \
@@ -50,20 +50,20 @@ process CONNECTIVITY_METRICS {
             \$metrics_args \
             --density_weighting \
             --no_self_connection \
-            --include_dps ./ \
+            --include_dps ./temp/ \
             --force_labels_list $labels_list
 
         # Rename commit or afd_fixel files if they exist.
-        if [ -f afd_fixel.npy ]; then
-            mv afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
+        if [ -f ./temp/afd_fixel.npy ]; then
+            mv ./temp/afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
         fi
 
-        if [ -f commit*.npy ]; then
-            mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+        if [ -f ./temp/commit*.npy ]; then
+            mv ./temp/commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
         fi
 
-        if [ -f tot_commit*.npy ]; then
-            mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
+        if [ -f ./temp/tot_commit*.npy ]; then
+            mv ./temp/tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
         fi
 
         # Remove "fit_" from filenames if present (only for .npy files)
@@ -83,37 +83,37 @@ process CONNECTIVITY_METRICS {
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+            scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         END_VERSIONS
         """
     } else {
         """
-        scil_connectivity_compute_matrices.py $h5 $labels \
+        scil_connectivity_compute_matrices $h5 $labels \
             --processes $task.cpus \
             --volume "${prefix}_seg-${atlas}_stat-vol.npy" \
             --streamline_count "${prefix}_seg-${atlas}_stat-sc.npy" \
             --length "${prefix}_seg-${atlas}_stat-len.npy" \
             --density_weighting \
             --no_self_connection \
-            --include_dps ./ \
+            --include_dps ./temp/ \
             --force_labels_list $labels_list
 
         # Rename commit or afd_fixel files if they exist.
-        if [ -f afd_fixel.npy ]; then
-            mv afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
+        if [ -f ./temp/afd_fixel.npy ]; then
+            mv ./temp/afd_fixel.npy ${prefix}_seg-${atlas}_stat-afd_fixel.npy
         fi
 
-        if [ -f commit*.npy ]; then
-            mv commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
+        if [ -f ./temp/commit*.npy ]; then
+            mv ./temp/commit*.npy ${prefix}_seg-${atlas}_stat-commit_weights.npy
         fi
 
-        if [ -f tot_commit*.npy ]; then
-            mv tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
+        if [ -f ./temp/tot_commit*.npy ]; then
+            mv ./temp/tot_commit*.npy ${prefix}_seg-${atlas}_stat-tot_commit_weights.npy
         fi
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+            scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         END_VERSIONS
         """
     }
@@ -159,11 +159,11 @@ process CONNECTIVITY_METRICS {
             fi
         done
 
-        scil_connectivity_compute_matrices.py -h
+        scil_connectivity_compute_matrices -h
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+            scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         END_VERSIONS
         """
     } else {
@@ -172,11 +172,11 @@ process CONNECTIVITY_METRICS {
         touch ${prefix}_seg-${atlas}_stat-sc.npy
         touch ${prefix}_seg-${atlas}_stat-len.npy
 
-        scil_connectivity_compute_matrices.py -h
+        scil_connectivity_compute_matrices -h
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+            scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
         END_VERSIONS
         """
     }

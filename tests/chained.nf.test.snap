@@ -1,27 +1,28 @@
 {
     "Connectomics + tracking + segmentation profiles - should run successfully": {
         "content": [
-            241,
+            215,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
-                "BETCROP_SYNTHBET": {
-                    "synthstrip": 1.5
+                "BETCROP_SYNTHSTRIP": {
+                    "synthstrip": 1.8
                 },
                 "BET_DWI": {
                     "mrtrix": "3.0.5"
                 },
                 "BET_T1W": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4",
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7",
                     "fsl": 6.0
                 },
                 "BET_T2W": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4",
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7",
                     "fsl": 6.0
                 },
                 "BRAINNETOMECHILD": {
@@ -33,65 +34,56 @@
                     "pandas": "2.2.3"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONVERT": {
                     "mrconvert": "3.0.5"
                 },
                 "COREG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
-                },
-                "CROPB0": {
-                    "scilpy": "2.0.2"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "CROPDWI": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CROPMASK": {
-                    "scilpy": "2.0.2"
-                },
-                "DENOISE_DWI": {
-                    "mrtrix": "3.0.5"
-                },
-                "DENOISE_REVDWI": {
-                    "mrtrix": "3.0.5"
+                    "scilpy": "2.2.2"
                 },
                 "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
-                "EXTRACTB0_RESAMPLE": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                "EXTRACT_B0": {
+                    "scilpy": "2.2.2"
                 },
                 "FASTSEG": {
-                    "scilpy": "2.0.0",
+                    "scilpy": "2.2.2",
                     "fsl": 6.0
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
                     "freesurfer": "7.4.1"
                 },
                 "FW_CORRECTED_DTIMETRICS": {
-                    "scilpy": "2.2.0",
+                    "scilpy": "2.2.2",
                     "mrtrix": "3.0.7",
                     "imagemagick": "6.9.12"
                 },
                 "IMAGE_POWDERAVERAGE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "MCRIBS": {
                     "mcribs": "2.1.0",
@@ -99,106 +91,104 @@
                     "fsl": 6.0,
                     "freesurfer": "7.1.1"
                 },
-                "N4_DWI": {
-                    "ants": null,
-                    "mrtrix": "3.0.5"
-                },
                 "NORMALIZE_DWI": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
-                },
-                "PREPROC_TOPUP": {
-                    "scilpy": "2.1.0",
-                    "antsRegistration": null,
-                    "fsl": 6.0,
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7"
                 },
                 "RECONALLCLINICAL": {
                     "freesurfer": "8.0.0"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.2.0",
+                    "scilpy": "2.2.2",
                     "mrtrix": "3.0.7",
                     "imagemagick": "6.9.12"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_FREEWATER": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.1.0"
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_NODDI": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "REGISTRATION_ANTS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "REGISTRATION_TRACTOGRAM": {
-                    "ants": null,
-                    "scilpy": "2.2.1"
+                    "ants": "2.6.2",
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TEMPLATETODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKINGMASKS": {
-                    "mrtrix": "3.0.4"
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_LOCALTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_PFTTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TRANSFORM_LABELS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "UTILS_TEMPLATEFLOW": {
                     "templateflow": "24.2.2",
                     "python": "3.13.2"
                 },
                 "WARPIMAGES": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "WARPLABELS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "WARPMASK": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "WARPPROBSEG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "WARPRGB": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
                     "scilus/sf-pediatric": "v0.2.2"
@@ -255,8 +245,8 @@
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-DWI_label-WM_probseg.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-DWI_seg-DK_dseg.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-DWI_seg-DK_dseg.nii.gz",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T1w.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T1w.nii.gz",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T2w.json",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T2w.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_label-CSF_mask.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_label-CSF_mask.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_label-CSF_probseg.json",
@@ -450,6 +440,7 @@
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-MNIInfant_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/anat",
@@ -676,6 +667,7 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-MNIInfant_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test2",
                 "sub-test2/anat",
@@ -707,8 +699,8 @@
                 "sub-test2/anat/sub-test2_space-DWI_label-WM_probseg.nii.gz",
                 "sub-test2/anat/sub-test2_space-DWI_seg-BrainnetomeChild_dseg.json",
                 "sub-test2/anat/sub-test2_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
-                "sub-test2/anat/sub-test2_space-MNIInfant_desc-preproc_T1w.json",
-                "sub-test2/anat/sub-test2_space-MNIInfant_desc-preproc_T1w.nii.gz",
+                "sub-test2/anat/sub-test2_space-MNIInfant_desc-preproc_T2w.json",
+                "sub-test2/anat/sub-test2_space-MNIInfant_desc-preproc_T2w.nii.gz",
                 "sub-test2/anat/sub-test2_space-MNIInfant_label-CSF_mask.json",
                 "sub-test2/anat/sub-test2_space-MNIInfant_label-CSF_mask.nii.gz",
                 "sub-test2/anat/sub-test2_space-MNIInfant_label-CSF_probseg.json",
@@ -894,6 +886,7 @@
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test2/xfm/sub-test2_from-dwi_to-MNIInfant_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test3",
                 "sub-test3/anat",
@@ -925,8 +918,8 @@
                 "sub-test3/anat/sub-test3_space-DWI_label-WM_probseg.nii.gz",
                 "sub-test3/anat/sub-test3_space-DWI_seg-BrainnetomeChild_dseg.json",
                 "sub-test3/anat/sub-test3_space-DWI_seg-BrainnetomeChild_dseg.nii.gz",
-                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T1w.json",
-                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T1w.nii.gz",
+                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T2w.json",
+                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T2w.nii.gz",
                 "sub-test3/anat/sub-test3_space-MNIInfant_label-CSF_mask.json",
                 "sub-test3/anat/sub-test3_space-MNIInfant_label-CSF_mask.nii.gz",
                 "sub-test3/anat/sub-test3_space-MNIInfant_label-CSF_probseg.json",
@@ -1112,6 +1105,7 @@
                 "sub-test3/xfm/sub-test3_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test3/xfm/sub-test3_from-dwi_to-MNIInfant_mode-image_desc-affine_xfm.mat",
                 "sub-test3/xfm/sub-test3_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test3/xfm/sub-test3_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test3/xfm/sub-test3_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "subcortical_Child_volumes.tsv",
                 "subcortical_Infant_volumes.tsv"
@@ -1164,60 +1158,65 @@
             [
                 "",
                 "sub-test1_ses-baseline"
+            ],
+            [
+                "",
+                "tpl-MNIInfant",
+                "tpl-MNIInfant_citations.bib",
+                "tpl-MNIInfant_metadata.json"
             ]
         ],
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-02-05T17:47:45.597263"
+        "timestamp": "2026-03-30T13:33:09.185511"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
-            198,
+            194,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
-                "BETCROP_SYNTHBET": {
-                    "synthstrip": 1.5
+                "BETCROP_SYNTHSTRIP": {
+                    "synthstrip": 1.8
                 },
                 "BET_DWI": {
                     "mrtrix": "3.0.5"
                 },
                 "BUNDLE_FIXELAFD": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "BUNDLE_LABELMAP": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "BUNDLE_RECOGNIZE": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "BUNDLE_STATS": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "BUNDLE_UNIFORMIZE": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "CONVERT": {
                     "mrconvert": "3.0.5"
                 },
                 "COREG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
-                },
-                "CROPB0": {
-                    "scilpy": "2.0.2"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "CROPDWI": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CROPMASK": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.5"
@@ -1226,87 +1225,90 @@
                     "mrtrix": "3.0.5"
                 },
                 "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
-                "EXTRACTB0_RESAMPLE": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                "EXTRACT_B0": {
+                    "scilpy": "2.2.2"
                 },
                 "FASTSEG": {
-                    "scilpy": "2.0.0",
+                    "scilpy": "2.2.2",
                     "fsl": 6.0
                 },
                 "IMAGE_POWDERAVERAGE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "N4_DWI": {
                     "ants": null,
                     "mrtrix": "3.0.5"
                 },
                 "NORMALIZE_DWI": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7"
                 },
                 "PREPROC_TOPUP": {
-                    "scilpy": "2.1.0",
-                    "antsRegistration": null,
+                    "scilpy": "2.2.2",
+                    "ants": "2.6.2",
                     "fsl": 6.0,
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.2.0",
+                    "scilpy": "2.2.2",
                     "mrtrix": "3.0.7",
                     "imagemagick": "6.9.12"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.1.0"
+                    "scilpy": "2.2.2"
                 },
                 "REGISTRATION_ANTS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TEMPLATETODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKINGMASKS": {
-                    "mrtrix": "3.0.4"
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_LOCALTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_PFTTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_REMOVEINVALID": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_RESAMPLE": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "TRANSFORM_CENTROIDS": {
-                    "ants": null,
-                    "scilpy": "2.2.1"
+                    "ants": "2.6.2",
+                    "scilpy": "2.2.2"
                 },
                 "WARPPROBSEG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
                     "scilus/sf-pediatric": "v0.2.2"
@@ -1423,6 +1425,7 @@
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/anat",
@@ -1523,6 +1526,7 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T1w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T1w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
+                "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test2",
                 "sub-test2/anat",
@@ -1615,6 +1619,7 @@
                 "sub-test2/xfm",
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test4",
                 "sub-test4/anat",
@@ -1707,6 +1712,7 @@
                 "sub-test4/xfm",
                 "sub-test4/xfm/sub-test4_from-T1w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-T1w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
@@ -1714,7 +1720,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-07T18:17:56.775363"
+        "timestamp": "2026-03-27T21:31:07.651248"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -1729,27 +1735,28 @@
                     "pandas": "2.2.3"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "COREG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
@@ -1765,9 +1772,10 @@
                     "freesurfer": "8.0.0"
                 },
                 "TRANSFORM_LABELS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
                     "scilus/sf-pediatric": "v0.2.2"
@@ -1982,51 +1990,50 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-05T12:25:38.087154"
+        "timestamp": "2026-03-27T19:58:02.144527"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
-            188,
+            184,
             {
                 "ANATTODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
-                "BETCROP_SYNTHBET": {
-                    "synthstrip": 1.5
+                "BETCROP_SYNTHSTRIP": {
+                    "synthstrip": 1.8
                 },
                 "BET_DWI": {
                     "mrtrix": "3.0.5"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONVERT": {
                     "mrconvert": "3.0.5"
                 },
                 "COREG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
-                },
-                "CROPB0": {
-                    "scilpy": "2.0.2"
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "CROPDWI": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CROPMASK": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "DENOISE_DWI": {
                     "mrtrix": "3.0.5"
@@ -2035,80 +2042,83 @@
                     "mrtrix": "3.0.5"
                 },
                 "DENOISING_NLMEANS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
-                "EXTRACTB0_RESAMPLE": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                "EXTRACT_B0": {
+                    "scilpy": "2.2.2"
                 },
                 "FASTSEG": {
-                    "scilpy": "2.0.0",
+                    "scilpy": "2.2.2",
                     "fsl": 6.0
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "IMAGE_POWDERAVERAGE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "N4_DWI": {
                     "ants": null,
                     "mrtrix": "3.0.5"
                 },
                 "NORMALIZE_DWI": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4"
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7"
                 },
                 "PREPROC_TOPUP": {
-                    "scilpy": "2.1.0",
-                    "antsRegistration": null,
+                    "scilpy": "2.2.2",
+                    "ants": "2.6.2",
                     "fsl": 6.0,
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12"
                 },
                 "RECONST_DTIMETRICS": {
-                    "scilpy": "2.2.0",
+                    "scilpy": "2.2.2",
                     "mrtrix": "3.0.7",
                     "imagemagick": "6.9.12"
                 },
                 "RECONST_FODF": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_FRF": {
-                    "scilpy": "2.1.0"
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_DWI": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "RESAMPLE_MASK": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TEMPLATETODWI": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": "6.9.11"
+                    "ants": "2.6.2",
+                    "mrtrix": "3.0.7",
+                    "imagemagick": "6.9.12",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKINGMASKS": {
-                    "mrtrix": "3.0.4"
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_LOCALTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACKING_PFTTRACKING": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_MATH": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TRANSFORM_LABELS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "WARPPROBSEG": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
                     "scilus/sf-pediatric": "v0.2.2"
@@ -2237,6 +2247,7 @@
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/anat",
@@ -2351,6 +2362,7 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T1w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T1w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
+                "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test2",
                 "sub-test2/anat",
@@ -2455,6 +2467,7 @@
                 "sub-test2/xfm",
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-T2w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-affine_xfm.mat",
                 "sub-test2/xfm/sub-test2_from-dwi_to-T2w_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test4",
                 "sub-test4/anat",
@@ -2559,6 +2572,7 @@
                 "sub-test4/xfm",
                 "sub-test4/xfm/sub-test4_from-T1w_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-T1w_to-dwi_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
@@ -2566,6 +2580,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-07T17:59:06.348381"
+        "timestamp": "2026-03-27T20:07:27.429694"
     }
 }

@@ -1,6 +1,4 @@
 Changes in component 'nf-neuro/segmentation/fastsurfer'
-'modules/nf-neuro/segmentation/fastsurfer/environment.yml' is unchanged
-'modules/nf-neuro/segmentation/fastsurfer/meta.yml' is unchanged
 Changes in 'segmentation/fastsurfer/main.nf':
 --- modules/nf-neuro/segmentation/fastsurfer/main.nf
 +++ modules/nf-neuro/segmentation/fastsurfer/main.nf
@@ -58,7 +56,7 @@ Changes in 'segmentation/fastsurfer/main.nf':
  
      cat <<-END_VERSIONS > versions.yml
      "${task.process}":
-@@ -60,6 +72,7 @@
+@@ -70,6 +82,7 @@
          ${prefix}__fastsurfer/${prefix}/scripts/ \
          ${prefix}__fastsurfer/${prefix}/tmp/ \
          ${prefix}__fastsurfer/${prefix}/touch/
@@ -67,8 +65,10 @@ Changes in 'segmentation/fastsurfer/main.nf':
      cat <<-END_VERSIONS > versions.yml
      "${task.process}":
 
-'modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test.snap' is unchanged
-'modules/nf-neuro/segmentation/fastsurfer/tests/tags.yml' is unchanged
-'modules/nf-neuro/segmentation/fastsurfer/tests/nextflow.config' is unchanged
+'modules/nf-neuro/segmentation/fastsurfer/environment.yml' is unchanged
+'modules/nf-neuro/segmentation/fastsurfer/meta.yml' is unchanged
 'modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test' is unchanged
+'modules/nf-neuro/segmentation/fastsurfer/tests/nextflow.config' is unchanged
+'modules/nf-neuro/segmentation/fastsurfer/tests/tags.yml' is unchanged
+'modules/nf-neuro/segmentation/fastsurfer/tests/main.nf.test.snap' is unchanged
 ************************************************************

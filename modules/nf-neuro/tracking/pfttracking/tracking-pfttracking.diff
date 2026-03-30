@@ -4,20 +4,15 @@ Changes in component 'nf-neuro/tracking/pfttracking'
 Changes in 'tracking/pfttracking/main.nf':
 --- modules/nf-neuro/tracking/pfttracking/main.nf
 +++ modules/nf-neuro/tracking/pfttracking/main.nf
-@@ -1,11 +1,9 @@
+@@ -1,7 +1,7 @@
  
  process TRACKING_PFTTRACKING {
      tag "$meta.id"
 -    label 'process_high_memory'
 +    label 'process_tracking'
  
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:2.0.2' }"
-+    container 'scilus/scilus:2.0.2'
+     container "scilus/scilpy:2.2.2_cpu"
  
-     input:
-         tuple val(meta), path(wm), path(gm), path(csf), path(fodf), path(fa)
 
 'modules/nf-neuro/tracking/pfttracking/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/tracking/pfttracking/tests/nextflow_fa.config' is unchanged

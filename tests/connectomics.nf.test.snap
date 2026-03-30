@@ -4,24 +4,25 @@
             44,
             {
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "TRANSFORM_LABELS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
                     "scilus/sf-pediatric": "v0.2.2"
@@ -132,34 +133,35 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-05T10:45:51.10708"
+        "timestamp": "2026-03-27T14:33:04.191798"
     },
     "Connectomics profile with derivatives - should run successfully": {
         "content": [
             49,
             {
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_METRICS": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "CONNECTIVITY_VISUALIZE": {
-                    "scilpy": "2.0.2"
+                    "scilpy": "2.2.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": 1.6
+                    "scilpy": "2.2.2"
                 },
                 "RECONST_NODDI": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.2.2"
                 },
                 "TRANSFORM_LABELS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
                     "scilus/sf-pediatric": "v0.2.2"
@@ -358,6 +360,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-01-07T15:21:11.6048"
+        "timestamp": "2026-03-27T14:49:13.735051"
     }
 }

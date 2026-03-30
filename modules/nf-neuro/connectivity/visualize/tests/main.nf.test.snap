@@ -9,41 +9,41 @@
                             "single_end": false
                         },
                         [
-                            "afd_max_histogram.png:md5,43912780c2ac709b631fc39d95d464e8",
-                            "afd_max_matrix.png:md5,89adc0462e5f6ee412110994e6e6b3eb",
-                            "len_histogram.png:md5,117651740e19ee3c536c9a4bea6babfb",
-                            "len_matrix.png:md5,e2098003d452ce2ba9db2c265d8516e9",
-                            "mask_histogram.png:md5,073e208a8a327baa5bbf721e66e337d4",
-                            "mask_matrix.png:md5,ec19ecce53d485ca983bf17bc87b56c7",
-                            "pval_histogram.png:md5,892ebc7b367db2ac1bd970f638043904",
-                            "pval_matrix.png:md5,2b8e9a9f8833110d7a2f9d612ae6f2be",
-                            "sc_add_10_histogram.png:md5,265a9399387c856977eae1ea3f83516a",
-                            "sc_add_10_matrix.png:md5,07e322fd583f9b8235c50363d7aba9e0",
-                            "sc_histogram.png:md5,7baccf0dc5a650bea2aecd19d3867653",
-                            "sc_lower_threshold_histogram.png:md5,cd4368e81ef4f9f128a444a7897d0c1e",
-                            "sc_lower_threshold_matrix.png:md5,748d5a2a15159896775ebb7aa71a3fd5",
-                            "sc_masked_histogram.png:md5,2a0163a153ee2b3174138ba4505ec6fb",
-                            "sc_masked_matrix.png:md5,1b52240fc505e2e002c65b9e4f0ce777",
-                            "sc_matrix.png:md5,db388963daf62fae2ef1d8be58c9cad8",
-                            "sc_norm_histogram.png:md5,bfc9fa64063f6a8797f3bb49d2bfcbfd",
-                            "sc_norm_matrix.png:md5,67ef585c7559edb6e7c88ca50304db4f",
-                            "sc_norm_vol_histogram.png:md5,1eb857ea304f82fe73bc3a6416ade1d1",
-                            "sc_norm_vol_matrix.png:md5,572daf7d844699f96cc1519458491f3b",
-                            "sc_normalize_histogram.png:md5,dbc8741adf4dd3a597199c36a9ed197d",
-                            "sc_normalize_matrix.png:md5,2bc762a0e4861d726bbec1372b124763",
-                            "sc_reo_fake_histogram.png:md5,1f2efba6ff6a949f6bdc9b07e3d0952b",
-                            "sc_reo_fake_matrix.png:md5,2d8e4abada02b7d096e38888a2ea2a09",
-                            "sc_thr_histogram.png:md5,cd4368e81ef4f9f128a444a7897d0c1e",
-                            "sc_thr_matrix.png:md5,748d5a2a15159896775ebb7aa71a3fd5",
-                            "sim_histogram.png:md5,e82b14b3fbb8184e53265a05fe247fd0",
-                            "sim_matrix.png:md5,e42c85fbd2211738bb38882305122c9a",
-                            "vol_histogram.png:md5,5b60e61f931294416a22ad3a7d8848ca",
-                            "vol_matrix.png:md5,85ddd42c1562adaf38aee0cc32334039"
+                            "afd_max_histogram.png:md5,04c57abad19dea2df86fb598789c3d9b",
+                            "afd_max_matrix.png:md5,9a66e87ea6da9b314f080536b8260236",
+                            "len_histogram.png:md5,508c88e9902b135178067952ab8c6c60",
+                            "len_matrix.png:md5,1faaed422ace49a4c0537a803c615f42",
+                            "mask_histogram.png:md5,d7303e94881c075ef000e86819eecc8a",
+                            "mask_matrix.png:md5,a0929c646a6d69500c5661867509839f",
+                            "pval_histogram.png:md5,632a273d5b1d066c7f5b7805ffe7b4fa",
+                            "pval_matrix.png:md5,50893fd68961d7d93fc7033d298aa8cf",
+                            "sc_add_10_histogram.png:md5,b2fef378d94f92590e958e31e3065e7a",
+                            "sc_add_10_matrix.png:md5,5f761e98b6b77a3ed70720c8a5576f8d",
+                            "sc_histogram.png:md5,5a85cb802712de2f90db5f9d5c60e78d",
+                            "sc_lower_threshold_histogram.png:md5,7faf50f285cfd6f35f4e685bf26f23fc",
+                            "sc_lower_threshold_matrix.png:md5,d1be3b1d63615ce9c6967714108588ae",
+                            "sc_masked_histogram.png:md5,ffc44e63dee31d7617c7b2ee8a01bf2b",
+                            "sc_masked_matrix.png:md5,536e23bf20443ad18ea95691c77f2ede",
+                            "sc_matrix.png:md5,f8e44e3a1d3e6e1f3cd4835b4ca3daab",
+                            "sc_norm_histogram.png:md5,7f206b51463fb253c0aa144eb621c5d6",
+                            "sc_norm_matrix.png:md5,f6c16f5eb6d815637b75a4e97d3e59aa",
+                            "sc_norm_vol_histogram.png:md5,2e87785ae97199ad6c0dc90a4abed372",
+                            "sc_norm_vol_matrix.png:md5,641b0931b83c8ab4ecef95d65ead536e",
+                            "sc_normalize_histogram.png:md5,fcc6037522c2e42246b848dafc91089e",
+                            "sc_normalize_matrix.png:md5,66e5b3b4b6a16298b1dcbb8c7c2d9895",
+                            "sc_reo_fake_histogram.png:md5,cb396803de8f63a7810c1eeebbf1207b",
+                            "sc_reo_fake_matrix.png:md5,c99ec5973609efb99299031b218b11e2",
+                            "sc_thr_histogram.png:md5,7faf50f285cfd6f35f4e685bf26f23fc",
+                            "sc_thr_matrix.png:md5,d1be3b1d63615ce9c6967714108588ae",
+                            "sim_histogram.png:md5,bc096134299a15ebcc4865f87b27793a",
+                            "sim_matrix.png:md5,4259b7d3ce9ce93191b759bbe570a52a",
+                            "vol_histogram.png:md5,b9447aff5439d7f1295aa0ecebf798a9",
+                            "vol_matrix.png:md5,f4f036e1dcb76d02fbc90cbb4cf14335"
                         ]
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,3114f700c3813ee15388713fe8a539f1"
+                    "versions.yml:md5,b69d16024ae8d4a8657d1cf1eabc8e77"
                 ],
                 "figure": [
                     [
@@ -52,60 +52,60 @@
                             "single_end": false
                         },
                         [
-                            "afd_max_histogram.png:md5,43912780c2ac709b631fc39d95d464e8",
-                            "afd_max_matrix.png:md5,89adc0462e5f6ee412110994e6e6b3eb",
-                            "len_histogram.png:md5,117651740e19ee3c536c9a4bea6babfb",
-                            "len_matrix.png:md5,e2098003d452ce2ba9db2c265d8516e9",
-                            "mask_histogram.png:md5,073e208a8a327baa5bbf721e66e337d4",
-                            "mask_matrix.png:md5,ec19ecce53d485ca983bf17bc87b56c7",
-                            "pval_histogram.png:md5,892ebc7b367db2ac1bd970f638043904",
-                            "pval_matrix.png:md5,2b8e9a9f8833110d7a2f9d612ae6f2be",
-                            "sc_add_10_histogram.png:md5,265a9399387c856977eae1ea3f83516a",
-                            "sc_add_10_matrix.png:md5,07e322fd583f9b8235c50363d7aba9e0",
-                            "sc_histogram.png:md5,7baccf0dc5a650bea2aecd19d3867653",
-                            "sc_lower_threshold_histogram.png:md5,cd4368e81ef4f9f128a444a7897d0c1e",
-                            "sc_lower_threshold_matrix.png:md5,748d5a2a15159896775ebb7aa71a3fd5",
-                            "sc_masked_histogram.png:md5,2a0163a153ee2b3174138ba4505ec6fb",
-                            "sc_masked_matrix.png:md5,1b52240fc505e2e002c65b9e4f0ce777",
-                            "sc_matrix.png:md5,db388963daf62fae2ef1d8be58c9cad8",
-                            "sc_norm_histogram.png:md5,bfc9fa64063f6a8797f3bb49d2bfcbfd",
-                            "sc_norm_matrix.png:md5,67ef585c7559edb6e7c88ca50304db4f",
-                            "sc_norm_vol_histogram.png:md5,1eb857ea304f82fe73bc3a6416ade1d1",
-                            "sc_norm_vol_matrix.png:md5,572daf7d844699f96cc1519458491f3b",
-                            "sc_normalize_histogram.png:md5,dbc8741adf4dd3a597199c36a9ed197d",
-                            "sc_normalize_matrix.png:md5,2bc762a0e4861d726bbec1372b124763",
-                            "sc_reo_fake_histogram.png:md5,1f2efba6ff6a949f6bdc9b07e3d0952b",
-                            "sc_reo_fake_matrix.png:md5,2d8e4abada02b7d096e38888a2ea2a09",
-                            "sc_thr_histogram.png:md5,cd4368e81ef4f9f128a444a7897d0c1e",
-                            "sc_thr_matrix.png:md5,748d5a2a15159896775ebb7aa71a3fd5",
-                            "sim_histogram.png:md5,e82b14b3fbb8184e53265a05fe247fd0",
-                            "sim_matrix.png:md5,e42c85fbd2211738bb38882305122c9a",
-                            "vol_histogram.png:md5,5b60e61f931294416a22ad3a7d8848ca",
-                            "vol_matrix.png:md5,85ddd42c1562adaf38aee0cc32334039"
+                            "afd_max_histogram.png:md5,04c57abad19dea2df86fb598789c3d9b",
+                            "afd_max_matrix.png:md5,9a66e87ea6da9b314f080536b8260236",
+                            "len_histogram.png:md5,508c88e9902b135178067952ab8c6c60",
+                            "len_matrix.png:md5,1faaed422ace49a4c0537a803c615f42",
+                            "mask_histogram.png:md5,d7303e94881c075ef000e86819eecc8a",
+                            "mask_matrix.png:md5,a0929c646a6d69500c5661867509839f",
+                            "pval_histogram.png:md5,632a273d5b1d066c7f5b7805ffe7b4fa",
+                            "pval_matrix.png:md5,50893fd68961d7d93fc7033d298aa8cf",
+                            "sc_add_10_histogram.png:md5,b2fef378d94f92590e958e31e3065e7a",
+                            "sc_add_10_matrix.png:md5,5f761e98b6b77a3ed70720c8a5576f8d",
+                            "sc_histogram.png:md5,5a85cb802712de2f90db5f9d5c60e78d",
+                            "sc_lower_threshold_histogram.png:md5,7faf50f285cfd6f35f4e685bf26f23fc",
+                            "sc_lower_threshold_matrix.png:md5,d1be3b1d63615ce9c6967714108588ae",
+                            "sc_masked_histogram.png:md5,ffc44e63dee31d7617c7b2ee8a01bf2b",
+                            "sc_masked_matrix.png:md5,536e23bf20443ad18ea95691c77f2ede",
+                            "sc_matrix.png:md5,f8e44e3a1d3e6e1f3cd4835b4ca3daab",
+                            "sc_norm_histogram.png:md5,7f206b51463fb253c0aa144eb621c5d6",
+                            "sc_norm_matrix.png:md5,f6c16f5eb6d815637b75a4e97d3e59aa",
+                            "sc_norm_vol_histogram.png:md5,2e87785ae97199ad6c0dc90a4abed372",
+                            "sc_norm_vol_matrix.png:md5,641b0931b83c8ab4ecef95d65ead536e",
+                            "sc_normalize_histogram.png:md5,fcc6037522c2e42246b848dafc91089e",
+                            "sc_normalize_matrix.png:md5,66e5b3b4b6a16298b1dcbb8c7c2d9895",
+                            "sc_reo_fake_histogram.png:md5,cb396803de8f63a7810c1eeebbf1207b",
+                            "sc_reo_fake_matrix.png:md5,c99ec5973609efb99299031b218b11e2",
+                            "sc_thr_histogram.png:md5,7faf50f285cfd6f35f4e685bf26f23fc",
+                            "sc_thr_matrix.png:md5,d1be3b1d63615ce9c6967714108588ae",
+                            "sim_histogram.png:md5,bc096134299a15ebcc4865f87b27793a",
+                            "sim_matrix.png:md5,4259b7d3ce9ce93191b759bbe570a52a",
+                            "vol_histogram.png:md5,b9447aff5439d7f1295aa0ecebf798a9",
+                            "vol_matrix.png:md5,f4f036e1dcb76d02fbc90cbb4cf14335"
                         ]
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,3114f700c3813ee15388713fe8a539f1"
+                    "versions.yml:md5,b69d16024ae8d4a8657d1cf1eabc8e77"
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.10.3"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-01-16T10:54:29.917241635"
+        "timestamp": "2026-02-26T21:57:05.881394714"
     },
     "connectivity - visualisation - stub-run": {
         "content": [
             [
-                "versions.yml:md5,3114f700c3813ee15388713fe8a539f1"
+                "versions.yml:md5,b69d16024ae8d4a8657d1cf1eabc8e77"
             ]
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.10.3"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-01-16T10:55:34.856253711"
+        "timestamp": "2026-02-26T21:57:11.212669081"
     }
 }

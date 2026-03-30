@@ -4,18 +4,7 @@ Changes in component 'nf-neuro/preproc/normalize'
 Changes in 'preproc/normalize/main.nf':
 --- modules/nf-neuro/preproc/normalize/main.nf
 +++ modules/nf-neuro/preproc/normalize/main.nf
-@@ -2,9 +2,7 @@
-     tag "$meta.id"
-     label 'process_single'
- 
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:2.0.2' }"
-+    container 'scilus/scilus:2.0.2'
- 
-     input:
-     tuple val(meta), path(dwi), path(bval), path(bvec), path(mask)
-@@ -18,8 +16,9 @@
+@@ -16,8 +16,9 @@
      task.ext.when == null || task.ext.when
  
      script:
@@ -26,7 +15,7 @@ Changes in 'preproc/normalize/main.nf':
      def max_dti_shell_value = task.ext.max_dti_shell_value ?: "1600"
      def prefix = task.ext.prefix ?: "${meta.id}"
      def dti_info = task.ext.dti_shells ?: "\$(cut -d ' ' --output-delimiter=\$'\\n' -f 1- $bval | awk -F' ' '{v=int(\$1)}{if(v<=$max_dti_shell_value)print v}' | sort | uniq)"
-@@ -28,6 +27,9 @@
+@@ -26,6 +27,9 @@
      export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$task.cpus
      export OMP_NUM_THREADS=$task.cpus
      export OPENBLAS_NUM_THREADS=1
@@ -34,16 +23,8 @@ Changes in 'preproc/normalize/main.nf':
 +    echo "BZeroThreshold: $b0threshold" > ".mrtrix.conf"
 +    export MRTRIX_CONFIGFILE="\$PWD/.mrtrix.conf"
  
-     scil_dwi_extract_shell.py $dwi $bval $bvec $dti_info dwi_dti.nii.gz \
+     scil_dwi_extract_shell $dwi $bval $bvec $dti_info dwi_dti.nii.gz \
          bval_dti bvec_dti $dwi_shell_tolerance
-@@ -49,7 +51,6 @@
-     """
- 
-     stub:
--    def args = task.ext.args ?: ''
-     def prefix = task.ext.prefix ?: "${meta.id}"
- 
-     """
 
 'modules/nf-neuro/preproc/normalize/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/preproc/normalize/tests/nextflow_with_dti_shells.config' is unchanged

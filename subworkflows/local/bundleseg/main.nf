@@ -12,7 +12,7 @@ def fetchAtlases(channel, cohort) {
             file("${folder}/atlas-${cohort}/atlas/"),
             file("${folder}/atlas-${cohort}/centroids/")
         ]
-        def flattenedFiles = f.flatten().findAll { it.exists() }
+        def flattenedFiles = f.flatten().findAll { file -> file.exists() }
         [meta] + flattenedFiles
     }
 }
@@ -25,17 +25,17 @@ workflow BUNDLE_SEG {
 
     main:
 
-        ch_versions = Channel.empty()
+        ch_versions = channel.empty()
 
         // ** Setting up Atlas reference channels. ** //
         if ( params.atlas_directory ) {
-            atlas_anat = Channel.fromPath("$params.atlas_directory/atlas/mni_masked.nii.gz", checkIfExists: true, relative: true)
-            atlas_config = Channel.fromPath("$params.atlas_directory/config/config_fss_1.json", checkIfExists: true, relative: true)
-            atlas_average = Channel.fromPath("$params.atlas_directory/atlas/atlas/", checkIfExists: true, relative: true)
+            atlas_anat = channel.fromPath("$params.atlas_directory/atlas/mni_masked.nii.gz", checkIfExists: true, relative: true)
+            atlas_config = channel.fromPath("$params.atlas_directory/config/config_fss_1.json", checkIfExists: true, relative: true)
+            atlas_average = channel.fromPath("$params.atlas_directory/atlas/atlas/", checkIfExists: true, relative: true)
 
             ch_register = ch_fa
                 .combine(atlas_anat)
-                .map { it + [[]] }
+                .map { tuple -> tuple + [[]] }
         }
         else {
             ch_atlases_path = channel.fromPath("${projectDir}/assets/")
@@ -49,25 +49,25 @@ workflow BUNDLE_SEG {
             // ** Register the atlas to subject's space. Set up atlas file as moving image ** //
             // ** and subject anat as fixed image.                                         ** //
             ch_register =  ch_fa
-                .combine(ch_atlas_infant00.map { it[1] })
-                .combine(ch_atlas_infant03.map { it[1] })
-                .combine(ch_atlas_infant06.map { it[1] })
-                .combine(ch_atlas_infant12.map { it[1] })
-                .combine(ch_atlas_infant24.map { it[1] })
-                .combine(ch_atlas_children.map { it[1] })
-                .branch{
-                    infant00: it[0].age < 0.125 || it[0].age > 18
-                        return [ it[0], it[1], it[2], [] ]
-                    infant03: (it[0].age >= 0.125 && it[0].age < 0.375)
-                        return [ it[0], it[1], it[3], [] ]
-                    infant06: (it[0].age >= 0.375 && it[0].age < 0.75)
-                        return [ it[0], it[1], it[4], [] ]
-                    infant12: (it[0].age >= 0.75 && it[0].age < 1.5)
-                        return [ it[0], it[1], it[5], [] ]
-                    infant24: (it[0].age >= 1.5 && it[0].age < 3)
-                        return [ it[0], it[1], it[6], [] ]
+                .combine(ch_atlas_infant00.map { tuple -> tuple[1] })
+                .combine(ch_atlas_infant03.map { tuple -> tuple[1] })
+                .combine(ch_atlas_infant06.map { tuple -> tuple[1] })
+                .combine(ch_atlas_infant12.map { tuple -> tuple[1] })
+                .combine(ch_atlas_infant24.map { tuple -> tuple[1] })
+                .combine(ch_atlas_children.map { tuple -> tuple[1] })
+                .branch{ tuple ->
+                    infant00: tuple[0].age < 0.125 || tuple[0].age > 18
+                        return [ tuple[0], tuple[1], tuple[2], [] ]
+                    infant03: (tuple[0].age >= 0.125 && tuple[0].age < 0.375)
+                        return [ tuple[0], tuple[1], tuple[3], [] ]
+                    infant06: (tuple[0].age >= 0.375 && tuple[0].age < 0.75)
+                        return [ tuple[0], tuple[1], tuple[4], [] ]
+                    infant12: (tuple[0].age >= 0.75 && tuple[0].age < 1.5)
+                        return [ tuple[0], tuple[1], tuple[5], [] ]
+                    infant24: (tuple[0].age >= 1.5 && tuple[0].age < 3)
+                        return [ tuple[0], tuple[1], tuple[6], [] ]
                     child: true
-                        return [ it[0], it[1], it[7], [] ]
+                        return [ tuple[0], tuple[1], tuple[7], [] ]
                 }
             ch_register = ch_register.infant00
                 .mix(ch_register.infant03)
@@ -85,37 +85,37 @@ workflow BUNDLE_SEG {
         // ** use the included atlases. ** //
         if ( params.atlas_directory ) {
             ch_recognize_bundle = ch_tractogram
-                .join(REGISTRATION_ANTS.out.affine)
+                .join(REGISTRATION_ANTS.out.forward_affine)
                 .combine(atlas_config)
                 .combine(atlas_average)
         } else {
             ch_recognize_bundle = ch_tractogram
-                .join(REGISTRATION_ANTS.out.affine)
-                .combine(ch_atlas_infant00.map { it[2] }) // config
-                .combine(ch_atlas_infant00.map { it[3] }) // atlas folder
-                .combine(ch_atlas_infant03.map { it[2] })
-                .combine(ch_atlas_infant03.map { it[3] })
-                .combine(ch_atlas_infant06.map { it[2] })
-                .combine(ch_atlas_infant06.map { it[3] })
-                .combine(ch_atlas_infant12.map { it[2] })
-                .combine(ch_atlas_infant12.map { it[3] })
-                .combine(ch_atlas_infant24.map { it[2] })
-                .combine(ch_atlas_infant24.map { it[3] })
-                .combine(ch_atlas_children.map { it[2] })
-                .combine(ch_atlas_children.map { it[3] })
-                .branch {
-                    infant00: it[0].age < 0.125 || it[0].age > 18
-                        return [ it[0], it[1], it[2], it[3], it[4] ]
-                    infant03: (it[0].age >= 0.125 && it[0].age < 0.375)
-                        return [ it[0], it[1], it[2], it[5], it[6] ]
-                    infant06: (it[0].age >= 0.375 && it[0].age < 0.75)
-                        return [ it[0], it[1], it[2], it[7], it[8] ]
-                    infant12: (it[0].age >= 0.75 && it[0].age < 1.5)
-                        return [ it[0], it[1], it[2], it[9], it[10] ]
-                    infant24: (it[0].age >= 1.5 && it[0].age < 3)
-                        return [ it[0], it[1], it[2], it[11], it[12] ]
+                .join(REGISTRATION_ANTS.out.forward_affine)
+                .combine(ch_atlas_infant00.map { tuple -> tuple[2] }) // config
+                .combine(ch_atlas_infant00.map { tuple -> tuple[3] }) // atlas folder
+                .combine(ch_atlas_infant03.map { tuple -> tuple[2] })
+                .combine(ch_atlas_infant03.map { tuple -> tuple[3] })
+                .combine(ch_atlas_infant06.map { tuple -> tuple[2] })
+                .combine(ch_atlas_infant06.map { tuple -> tuple[3] })
+                .combine(ch_atlas_infant12.map { tuple -> tuple[2] })
+                .combine(ch_atlas_infant12.map { tuple -> tuple[3] })
+                .combine(ch_atlas_infant24.map { tuple -> tuple[2] })
+                .combine(ch_atlas_infant24.map { tuple -> tuple[3] })
+                .combine(ch_atlas_children.map { tuple -> tuple[2] })
+                .combine(ch_atlas_children.map { tuple -> tuple[3] })
+                .branch { tuple ->
+                    infant00: tuple[0].age < 0.125 || tuple[0].age > 18
+                        return [ tuple[0], tuple[1], tuple[2], tuple[3], tuple[4] ]
+                    infant03: (tuple[0].age >= 0.125 && tuple[0].age < 0.375)
+                        return [ tuple[0], tuple[1], tuple[2], tuple[5], tuple[6] ]
+                    infant06: (tuple[0].age >= 0.375 && tuple[0].age < 0.75)
+                        return [ tuple[0], tuple[1], tuple[2], tuple[7], tuple[8] ]
+                    infant12: (tuple[0].age >= 0.75 && tuple[0].age < 1.5)
+                        return [ tuple[0], tuple[1], tuple[2], tuple[9], tuple[10] ]
+                    infant24: (tuple[0].age >= 1.5 && tuple[0].age < 3)
+                        return [ tuple[0], tuple[1], tuple[2], tuple[11], tuple[12] ]
                     child: true
-                        return [ it[0], it[1], it[2], it[13], it[14] ]
+                        return [ tuple[0], tuple[1], tuple[2], tuple[13], tuple[14] ]
                 }
             ch_recognize_bundle = ch_recognize_bundle.infant00
                 .mix(ch_recognize_bundle.infant03)
@@ -137,8 +137,8 @@ workflow BUNDLE_SEG {
                     [meta, files]
                 }
             ch_transform_centroids = ch_fa
-                .join( REGISTRATION_ANTS.out.affine )
-                .combine ( ch_compute_centroids.map { [ it[1] ] } )
+                .join( REGISTRATION_ANTS.out.forward_affine )
+                .combine ( ch_compute_centroids.map { tuple -> [ tuple[1] ] } )
                 .map { meta, fa, affine, centroid_data ->
                     [ meta, fa, affine, centroid_data, [], [] ]
                 }
@@ -180,26 +180,26 @@ workflow BUNDLE_SEG {
                     [meta, files]
             }
             ch_transform_centroids = ch_fa
-                .join( REGISTRATION_ANTS.out.affine )
-                .combine( ch_centroids_infant00.map{ [ it[1] ] } )
-                .combine( ch_centroids_infant03.map{ [ it[1] ] } )
-                .combine( ch_centroids_infant06.map{ [ it[1] ] } )
-                .combine( ch_centroids_infant12.map{ [ it[1] ] } )
-                .combine( ch_centroids_infant24.map{ [ it[1] ] } )
-                .combine( ch_centroids_children.map{ [ it[1] ] } )
+                .join( REGISTRATION_ANTS.out.forward_affine )
+                .combine( ch_centroids_infant00.map{ tuple -> [ tuple[1] ] } )
+                .combine( ch_centroids_infant03.map{ tuple -> [ tuple[1] ] } )
+                .combine( ch_centroids_infant06.map{ tuple -> [ tuple[1] ] } )
+                .combine( ch_centroids_infant12.map{ tuple -> [ tuple[1] ] } )
+                .combine( ch_centroids_infant24.map{ tuple -> [ tuple[1] ] } )
+                .combine( ch_centroids_children.map{ tuple -> [ tuple[1] ] } )
                 .branch { it ->
                     infant00: it[0].age < 0.125 || it[0].age > 18
-                        return [ it[0], it[1], it[2], it[3], [], [] ]
+                        return [ it[0], it[3], [], it[1], it[2] ]
                     infant03: (it[0].age >= 0.125 && it[0].age < 0.375)
-                        return [ it[0], it[1], it[2], it[4], [], [] ]
+                        return [ it[0], it[4], [], it[1], it[2] ]
                     infant06: (it[0].age >= 0.375 && it[0].age < 0.75)
-                        return [ it[0], it[1], it[2], it[5], [], [] ]
+                        return [ it[0], it[5], [], it[1], it[2] ]
                     infant12: (it[0].age >= 0.75 && it[0].age < 1.5)
-                        return [ it[0], it[1], it[2], it[6], [], [] ]
+                        return [ it[0], it[6], [], it[1], it[2] ]
                     infant24: (it[0].age >= 1.5 && it[0].age < 3)
-                        return [ it[0], it[1], it[2], it[7], [], [] ]
+                        return [ it[0], it[7], [], it[1], it[2] ]
                     child: true
-                        return [ it[0], it[1], it[2], it[8], [], [] ]
+                        return [ it[0], it[8], [], it[1], it[2] ]
                 }
             ch_transform_centroids = ch_transform_centroids.infant00
                 .mix(ch_transform_centroids.infant03)

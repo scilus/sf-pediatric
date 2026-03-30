@@ -33,7 +33,7 @@
                     ]
                 ],
                 "4": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "csf_frf": [
                     [
@@ -57,7 +57,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "wm_frf": [
                     [
@@ -71,10 +71,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.10.0"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2024-11-28T20:54:23.833965559"
+        "timestamp": "2026-02-26T14:51:21.495979752"
     },
     "reconst - frf_set_frf_no_mask": {
         "content": [
@@ -98,7 +98,7 @@
                     
                 ],
                 "4": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "csf_frf": [
                     
@@ -116,7 +116,7 @@
                     
                 ],
                 "versions": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "wm_frf": [
                     
@@ -124,10 +124,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.10.0"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2024-11-28T20:54:17.732032899"
+        "timestamp": "2026-02-26T14:46:13.45937534"
     },
     "reconst - frf": {
         "content": [
@@ -151,7 +151,7 @@
                     
                 ],
                 "4": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "csf_frf": [
                     
@@ -169,7 +169,7 @@
                     
                 ],
                 "versions": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "wm_frf": [
                     
@@ -177,10 +177,22 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.10.0"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2024-11-28T20:53:55.867095265"
+        "timestamp": "2026-02-26T14:45:43.537518037"
+    },
+    "reconst - frf - stub-run": {
+        "content": [
+            [
+                "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-02-26T14:51:47.955547738"
     },
     "reconst - frf_set_frf": {
         "content": [
@@ -204,7 +216,7 @@
                     
                 ],
                 "4": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "csf_frf": [
                     
@@ -222,7 +234,7 @@
                     
                 ],
                 "versions": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "wm_frf": [
                     
@@ -230,10 +242,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.10.0"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2024-11-28T20:54:10.018700009"
+        "timestamp": "2026-02-26T14:46:02.732634024"
     },
     "reconst - frf_no_mask": {
         "content": [
@@ -257,7 +269,7 @@
                     
                 ],
                 "4": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "csf_frf": [
                     
@@ -275,7 +287,7 @@
                     
                 ],
                 "versions": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "wm_frf": [
                     
@@ -283,10 +295,10 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.10.0"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2024-11-28T20:54:02.707061504"
+        "timestamp": "2026-02-26T14:45:52.080016074"
     },
     "reconst - frf_msmt_set_frf": {
         "content": [
@@ -322,7 +334,7 @@
                     ]
                 ],
                 "4": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "csf_frf": [
                     [
@@ -346,7 +358,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,0ebf33e30da5fc7e67dee8889822322e"
+                    "versions.yml:md5,3d091d08788e7b1b15292c6c26971d74"
                 ],
                 "wm_frf": [
                     [
@@ -360,9 +372,9 @@
             }
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "24.10.0"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2024-11-28T20:54:31.726195565"
+        "timestamp": "2026-02-26T14:51:36.110958517"
     }
 }

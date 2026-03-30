@@ -3,7 +3,7 @@ process REGISTRATION_TEMPLATETODWI {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-    container 'scilus/scilus:2.1.0'
+    container 'scilus/scilus:2.2.2'
 
     input:
     tuple val(meta), path(ref), path(fa), path(moving), path(wm)
@@ -74,11 +74,11 @@ process REGISTRATION_TEMPLATETODWI {
         # Iterate over images.
         for image in ${suffix}_warped reference;
         do
-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
+            scil_viz_volume_screenshot *\${image}.nii.gz \${image}_coronal.png \
                 --slices \$coronal_mid --axis coronal \$viz_params
-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_sagittal.png \
+            scil_viz_volume_screenshot *\${image}.nii.gz \${image}_sagittal.png \
                 --slices \$sagittal_mid --axis sagittal \$viz_params
-            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
+            scil_viz_volume_screenshot *\${image}.nii.gz \${image}_axial.png \
                 --slices \$axial_mid --axis axial \$viz_params
 
             if [ \$image != reference ];
@@ -108,9 +108,10 @@ process REGISTRATION_TEMPLATETODWI {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
+        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*: v?([0-9.a-zA-Z-]+).*/\\1/')
         mrtrix: \$(mrinfo -version 2>&1 | sed -n 's/== mrinfo \\([0-9.]\\+\\).*/\\1/p')
         imagemagick: \$(convert -version | sed -n 's/.*ImageMagick \\([0-9]\\{1,\\}\\.[0-9]\\{1,\\}\\.[0-9]\\{1,\\}\\).*/\\1/p')
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -130,9 +131,10 @@ process REGISTRATION_TEMPLATETODWI {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*v([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/')
+        ants: \$(antsRegistration --version | grep "Version" | sed -E 's/.*: v?([0-9.a-zA-Z-]+).*/\\1/')
         mrtrix: \$(mrinfo -version 2>&1 | sed -n 's/== mrinfo \\([0-9.]\\+\\).*/\\1/p')
         imagemagick: \$(convert -version | sed -n 's/.*ImageMagick \\([0-9]\\{1,\\}\\.[0-9]\\{1,\\}\\.[0-9]\\{1,\\}\\).*/\\1/p')
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }

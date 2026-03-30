@@ -3,7 +3,7 @@ process IMAGE_RESAMPLE {
     label 'process_single'
     label 'process_high_memory'
 
-    container "scilus/scilpy:2.2.0_cpu"
+    container "scilus/scilpy:2.2.2_cpu"
 
     input:
     tuple val(meta), path(image), path(ref) /* optional, input = [] */
@@ -37,7 +37,7 @@ process IMAGE_RESAMPLE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(uv -q -n pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -51,7 +51,7 @@ process IMAGE_RESAMPLE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(uv -q -n pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }

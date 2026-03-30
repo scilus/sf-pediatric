@@ -5,7 +5,7 @@ nextflow_process {
     process "TRACKING_PFTTRACKING"
 
     tag "modules"
-    tag "modules_nfcore"
+    tag "modules_nfneuro"
     tag "tracking"
     tag "tracking/pfttracking"
 
@@ -17,7 +17,7 @@ nextflow_process {
                 script "../../../../../subworkflows/nf-neuro/load_test_data/main.nf"
                 process {
                     """
-                    input[0] = Channel.from( [ "tracking.zip" ] )
+                    input[0] = channel.from( [ "tracking.zip" ] )
                     input[1] = "test.load-test-data"
                     """
                 }
@@ -113,6 +113,33 @@ nextflow_process {
                     process.out.excludes,
                     process.out.versions,
                     process.out.seeding).match() }
+            )
+        }
+    }
+
+    test("tracking - pfttracking - stub-run") {
+        tag "stub"
+        options "-stub-run"
+        when {
+            process {
+                """
+                input[0] = LOAD_DATA.out.test_data_directory.map{
+                    test_data_directory -> [
+                        [ id:'test', single_end:false ], // meta map
+                        file("\${test_data_directory}/map_wm.nii.gz"),
+                        file("\${test_data_directory}/map_gm.nii.gz"),
+                        file("\${test_data_directory}/map_csf.nii.gz"),
+                        file("\${test_data_directory}/fodf.nii.gz"),
+                        file("\${test_data_directory}/fa.nii.gz")
+                    ]
+                }
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.versions).match() }
             )
         }
     }

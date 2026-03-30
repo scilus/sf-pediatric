@@ -5,7 +5,7 @@ nextflow_process {
     process "BETCROP_FSLBETCROP"
 
     tag "modules"
-    tag "modules_nfcore"
+    tag "modules_nfneuro"
     tag "betcrop"
     tag "betcrop/fslbetcrop"
 
@@ -17,7 +17,7 @@ nextflow_process {
             script "../../../../../subworkflows/nf-neuro/load_test_data/main.nf"
             process {
                 """
-                input[0] = Channel.from( [ "heavy.zip" ] )
+                input[0] = channel.from( [ "heavy.zip" ] )
                 input[1] = "test.load-test-data"
                 """
             }
@@ -110,6 +110,7 @@ nextflow_process {
 
     test("betcrop - fslbetcrop - stub-run") {
 
+        tag "stub"
         options "-stub-run"
 
         when {

@@ -1,10 +1,12 @@
-process BETCROP_SYNTHBET {
+process BETCROP_SYNTHSTRIP {
     tag "$meta.id"
     label 'process_single'
 
-    container "freesurfer/synthstrip:1.5"
+    container "${ task.ext.gpu ?
+        "freesurfer/synthstrip:1.8-gpu" :
+        "freesurfer/synthstrip:1.8"}"
     containerOptions {
-        (workflow.containerEngine == 'docker') ? '--entrypoint ""': ''
+        (workflow.containerEngine == 'docker') ? '--entrypoint ""' : ''
     }
 
     input:
@@ -22,20 +24,18 @@ process BETCROP_SYNTHBET {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     def gpu = task.ext.gpu ? "--gpu" : ""
+    def cpu = "--threads $task.cpus"
     def border = task.ext.border ? "-b " + task.ext.border : ""
     def nocsf = task.ext.nocsf ? "--no-csf" : ""
     def model = "$weights" ? "--model $weights" : ""
 
     """
-    export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$task.cpus
-    export OMP_NUM_THREADS=1
-    export OPENBLAS_NUM_THREADS=1
-
-    mri_synthstrip -i $image --out ${prefix}__bet_image.nii.gz --mask ${prefix}__brain_mask.nii.gz $gpu $border $nocsf $model
+    unset PYTHONNOUSERSITE
+    mri_synthstrip -i $image --out ${prefix}__bet_image.nii.gz --mask ${prefix}__brain_mask.nii.gz $gpu $cpu $border $nocsf $model
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        synthstrip: 1.5
+        synthstrip: 1.8
     END_VERSIONS
     """
 
@@ -43,21 +43,22 @@ process BETCROP_SYNTHBET {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
+    set +e
+    function handle_code () {
+    local code=\$?
+    ignore=( 1 )
+    [[ " \${ignore[@]} " =~ " \$code " ]] || exit \$code
+    }
+    trap 'handle_code' ERR
+
+    mri_synthstrip -h
+
     touch ${prefix}__bet_image.nii.gz
     touch ${prefix}__brain_mask.nii.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        synthstrip: 1.5
+        synthstrip: 1.8
     END_VERSIONS
-
-    function handle_code () {
-    local code=\$?
-    ignore=( 1 )
-    exit \$([[ " \${ignore[@]} " =~ " \$code " ]] && echo 0 || echo \$code)
-    }
-    trap 'handle_code' ERR
-
-    mri_synthstrip -h
     """
 }

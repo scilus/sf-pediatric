@@ -2,14 +2,14 @@
     "topup - stub-run": {
         "content": [
             [
-                "versions.yml:md5,65694a7807b5ca6e5a6d5ae021b89de2"
+                "versions.yml:md5,cbd051bfcfbf2c10cd5499c03332d443"
             ]
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "25.04.2"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-05-27T02:53:27.397012458"
+        "timestamp": "2026-02-26T22:19:39.935952679"
     },
     "topup - AP DWI+sbref | PA DWI+sbref": {
         "content": [
@@ -38,14 +38,14 @@
             "test__b0_topup_mqc.gif",
             "test__rev_b0_topup_mqc.gif",
             [
-                "versions.yml:md5,4f4b0ba79e976735b1c4ccfb8b3ee140"
+                "versions.yml:md5,0d2b497df1c035d6cf2249971a843be0"
             ]
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "25.04.2"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-05-27T15:08:29.188827108"
+        "timestamp": "2026-02-26T22:18:29.533803801"
     },
     "topup - AP DWI | PA sbref": {
         "content": [
@@ -88,14 +88,14 @@
             "test1__b0_topup_mqc.gif",
             "test1__rev_b0_topup_mqc.gif",
             [
-                "versions.yml:md5,4f4b0ba79e976735b1c4ccfb8b3ee140",
-                "versions.yml:md5,4f4b0ba79e976735b1c4ccfb8b3ee140"
+                "versions.yml:md5,0d2b497df1c035d6cf2249971a843be0",
+                "versions.yml:md5,0d2b497df1c035d6cf2249971a843be0"
             ]
         ],
         "meta": {
-            "nf-test": "0.9.0",
-            "nextflow": "25.04.2"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-05-27T15:09:38.579042348"
+        "timestamp": "2026-02-26T22:19:31.581871877"
     }
 }

@@ -17,7 +17,6 @@ nextflow_pipeline {
 
                 params.tracking = true
                 params.run_freewater = true
-                params.run_noddi = true
             }
         }
 
@@ -49,8 +48,11 @@ nextflow_pipeline {
                 params.dti_max_shell_value = 1500
 
                 params.tracking = true
-                params.skip_dwi_preprocessing = true
-
+                params.run_dwi_denoising = false
+                params.run_dwi_degibbs = false
+                params.run_dwi_topup = false
+                params.run_dwi_eddy = false
+                params.run_dwi_n4 = false
             }
         }
 

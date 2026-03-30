@@ -4,18 +4,7 @@ Changes in component 'nf-neuro/reconst/frf'
 Changes in 'reconst/frf/main.nf':
 --- modules/nf-neuro/reconst/frf/main.nf
 +++ modules/nf-neuro/reconst/frf/main.nf
-@@ -4,9 +4,7 @@
-     tag "$meta.id"
-     label 'process_single'
- 
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        'https://scil.usherbrooke.ca/containers/scilus_2.0.2.sif':
--        'scilus/scilus:dev' }"
-+    container 'scilus/scilus:2.1.0'
- 
-     input:
-         tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(wm_mask), path(gm_mask), path(csf_mask)
-@@ -43,7 +41,9 @@
+@@ -41,7 +41,9 @@
      def md_thr_gm = task.ext.md_thr_gm ? "--md_thr_gm " + task.ext.md_thr_gm : ""
      def md_thr_csf = task.ext.md_thr_csf ? "--md_thr_csf " + task.ext.md_thr_csf : ""
  
@@ -26,7 +15,7 @@ Changes in 'reconst/frf/main.nf':
      def fix_wm_frf = task.ext.manual_wm_frf ? task.ext.manual_wm_frf : ""
      def fix_gm_frf = task.ext.manual_gm_frf ? task.ext.manual_gm_frf : ""
      def fix_csf_frf = task.ext.manual_csf_frf ? task.ext.manual_csf_frf : ""
-@@ -103,9 +103,14 @@
+@@ -101,9 +103,14 @@
      """
  
      stub:
@@ -38,9 +27,9 @@ Changes in 'reconst/frf/main.nf':
      """
 +    echo "FRF parameters used: ${fix_frf}"
 +
-     scil_dwi_extract_shell.py -h
-     scil_frf_ssst.py -h
-     scil_frf_set_diffusivities.py -h
+     scil_dwi_extract_shell -h
+     scil_frf_ssst -h
+     scil_frf_set_diffusivities -h
 
 'modules/nf-neuro/reconst/frf/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/reconst/frf/tests/nextflow_set_frf.config' is unchanged
