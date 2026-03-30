@@ -97,7 +97,7 @@
                     },
                     "connectivity/visualize": {
                         "branch": "main",
-                        "git_sha": "0606cd86e04ccf5c61da8b1b705620477ece5edc",
+                        "git_sha": "2f10b269f2158b1eaad89614303b237b92cda863",
                         "installed_by": ["modules"]
                     },
                     "denoising/mppca": {
