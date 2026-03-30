@@ -2,7 +2,7 @@ process CONNECTIVITY_AFDFIXEL {
     tag "$meta.id"
     label 'process_single'
 
-    container "scilus/scilpy:2.2.2_cpu"
+    container "scilus/scilpy@sha256:c9a85951a107f2c15816e33b5684c8ebf9c703b79d8fd546e43822564780331c"
 
     input:
     tuple val(meta), path(hdf5), path(fodf)
