@@ -295,7 +295,6 @@ workflow PEDIATRIC {
         )
 
         ch_versions = ch_versions.mix(SEGMENTATION.out.versions)
-        // ch_multiqc_files = ch_multiqc_files.mix(FASTSURFER.out.zip.collect{it[1]})
 
     }
 
@@ -934,7 +933,8 @@ workflow PEDIATRIC {
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())
-        // ch_multiqc_files = ch_multiqc_files.mix(CONNECTIVITY_METRICS.out.zip.collect{it[1]})
+        ch_multiqc_files_sub = ch_multiqc_files_sub
+            .mix(CONNECTIVITY_METRICS.out.metrics)
 
         //
         // MODULE: Run CONNECTIVITY_VISUALIZE
@@ -1070,7 +1070,6 @@ workflow PEDIATRIC {
     QC (
         ch_anat_qc,
         ch_tissueseg,
-        params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : channel.empty(),
         params.connectomics ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : channel.empty(),
         params.tracking ? ch_inputs.dwi_bval_bvec : params.connectomics ? ch_dwi_bval_bvec : channel.empty(),
         params.tracking ? RECONST_DTIMETRICS.out.fa : channel.empty(),
@@ -1080,11 +1079,13 @@ workflow PEDIATRIC {
     )
 
     qc_files = ch_multiqc_files_sub
+        .mix(params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : channel.empty())
+        .mix(params.segmentation ? SEGMENTATION.out.lut : channel.empty())
+        .mix(params.bundling ? TRACTOMETRY.out.bundles : channel.empty())
         .mix(QC.out.tissueseg_png)
         .mix(QC.out.tracking_png)
         .mix(QC.out.shell_png)
         .mix(QC.out.metrics_png)
-        .mix(QC.out.labels_png)
         .groupTuple()
         .map { meta, png_list ->
             def images = png_list.flatten().findAll { png -> png != null }
@@ -1160,6 +1161,10 @@ workflow PEDIATRIC {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_lh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_rh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.subcortical)
+    }
+    if ( params.connectomics ) {
+        ch_multiqc_files_global = ch_multiqc_files_global
+            .mix(CONNECTIVITY_METRICS.out.metrics.map{ _meta, metrics -> metrics })
     }
 
     // Collect the framewise displacement files from the ch_multiqc_files_sub channel

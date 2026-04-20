@@ -17,4 +17,15 @@ module_order:
   - tractometry
   - cortical
   - subcortical
+  - connectivity
   - custom_content
+
+connectivity:
+  metrics: []
+  iqr_multiplier: 1.5
+
+sp:
+  connectivity/matrices:
+    fn: "*stat-*.npy"
+  connectivity/lut:
+    fn: "*LUT.json"
