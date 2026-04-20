@@ -164,7 +164,7 @@
                     },
                     "qc/multiqc": {
                         "branch": "main",
-                        "git_sha": "43d0739c2920cc414373454a3f30c553e426bada",
+                        "git_sha": "05b9d29a8182815a89d67c8f4ee4f3235345ae6d",
                         "installed_by": ["modules"]
                     },
                     "qc/tractogram": {
