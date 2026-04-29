@@ -3,7 +3,7 @@ process RECONST_FREEWATER {
     tag "$meta.id"
     label 'process_low'
 
-    container "scilus/scilpy:2.2.2_cpu"
+    container 'scilus/scilpy@sha256:17ab2a09bc049cea9fc1f04df4b1324f280bed86202092c9f263b742093aa735'
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(kernels), val(para_diff), val(iso_diff), val(perp_diff_min), val(perp_diff_max)
@@ -29,6 +29,7 @@ process RECONST_FREEWATER {
     def perp_diff_max_str = task.ext.perp_diff_max ? "--perp_diff_max " + task.ext.perp_diff_max : perp_diff_max ? "--perp_diff_max " + perp_diff_max : ""
     def lambda1 = task.ext.fw_lambda1 ? "--lambda1 " + task.ext.fw_lambda1 : ""
     def lambda2 = task.ext.fw_lambda2 ? "--lambda2 " + task.ext.fw_lambda2 : ""
+    def replace_bad_voxels = task.ext.replace_bad_voxels ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
     def nthreads = task.ext.single_thread ? 1 : task.cpus
     def b_thr = task.ext.b_thr ? "--b_thr " + task.ext.b_thr : ""
     def set_kernels = kernels ? "--load_kernels $kernels" : "--save_kernels kernels/"
@@ -45,7 +46,7 @@ process RECONST_FREEWATER {
 
     scil_freewater_maps $dwi $bval $bvec $para_diff_str $perp_diff_min_str \
         $perp_diff_max_str $iso_diff_str $lambda1 $lambda2 --processes $nthreads $b_thr \
-        $set_mask $set_kernels $compute_only
+        $set_mask $set_kernels $compute_only $replace_bad_voxels
 
     if [ -z "${compute_only}" ]; then
         mv results/DWI_corrected.nii.gz ${prefix}__dwi_fw_corrected.nii.gz

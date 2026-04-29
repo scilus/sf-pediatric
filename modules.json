@@ -190,7 +190,8 @@
                     "reconst/freewater": {
                         "branch": "main",
                         "git_sha": "9826fd22d5e7565d0bb9db80941ba09fb7ecb0a1",
-                        "installed_by": ["reconst_fw_noddi"]
+                        "installed_by": ["reconst_fw_noddi"],
+                        "patch": "modules/nf-neuro/reconst/freewater/reconst-freewater.diff"
                     },
                     "reconst/frf": {
                         "branch": "main",
