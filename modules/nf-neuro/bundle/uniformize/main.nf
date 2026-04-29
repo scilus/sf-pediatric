@@ -32,12 +32,14 @@ process BUNDLE_UNIFORMIZE {
         pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
         bname=\${bundles[index]:\$pos}
         bname=\$(basename \${bname} .\${ext})
+        # Replace "_" with "-" in bname to ease string parsing
+        bname=\${bname//_/-}
         if [[ -f "$centroids" ]]; then
             option="--centroid \${centroids[index]}"
         else
             option="$method"
         fi
-        scil_bundle_uniformize_endpoints \${bundles[index]} ${prefix}__\${bname}_uniformized.trk\
+        scil_bundle_uniformize_endpoints \${bundles[index]} ${prefix}__tract-\${bname}_uniformized.trk\
             \${option}\
             $swap -f
     done
@@ -61,7 +63,8 @@ process BUNDLE_UNIFORMIZE {
         pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
         bname=\${bundles[index]:\$pos}
         bname=\$(basename \${bname} .\${ext})
-        touch ${prefix}__\${bname}_uniformized.trk
+        bname=\${bname//_/-}
+        touch ${prefix}__tract-\${bname}_uniformized.trk
     done
 
     cat <<-END_VERSIONS > versions.yml

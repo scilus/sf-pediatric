@@ -4,7 +4,7 @@ Changes in component 'nf-neuro/bundle/uniformize'
 Changes in 'bundle/uniformize/main.nf':
 --- modules/nf-neuro/bundle/uniformize/main.nf
 +++ modules/nf-neuro/bundle/uniformize/main.nf
-@@ -28,8 +28,10 @@
+@@ -28,14 +28,18 @@
  
      for index in \${!bundles[@]};
          do \
@@ -14,10 +14,19 @@ Changes in 'bundle/uniformize/main.nf':
 +        pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
 +        bname=\${bundles[index]:\$pos}
 +        bname=\$(basename \${bname} .\${ext})
++        # Replace "_" with "-" in bname to ease string parsing
++        bname=\${bname//_/-}
          if [[ -f "$centroids" ]]; then
              option="--centroid \${centroids[index]}"
          else
-@@ -49,11 +51,16 @@
+             option="$method"
+         fi
+-        scil_bundle_uniformize_endpoints \${bundles[index]} ${prefix}__\${bname}_uniformized.trk\
++        scil_bundle_uniformize_endpoints \${bundles[index]} ${prefix}__tract-\${bname}_uniformized.trk\
+             \${option}\
+             $swap -f
+     done
+@@ -49,12 +53,18 @@
      stub:
      def prefix = task.ext.prefix ?: "${meta.id}"
      """
@@ -29,13 +38,16 @@ Changes in 'bundle/uniformize/main.nf':
 +    for index in \${!bundles[@]};
          do \
 -        bname=\$(basename \${bundles} .trk)
+-        touch ${prefix}__\${bname}_uniformized.trk
 +        ext=\${bundles[index]#*.}
 +        pos=\$((\$(echo \${bundles[index]} | grep -b -o __ | cut -d: -f1)+2))
 +        bname=\${bundles[index]:\$pos}
 +        bname=\$(basename \${bname} .\${ext})
-         touch ${prefix}__\${bname}_uniformized.trk
++        bname=\${bname//_/-}
++        touch ${prefix}__tract-\${bname}_uniformized.trk
      done
  
+     cat <<-END_VERSIONS > versions.yml
 
 'modules/nf-neuro/bundle/uniformize/tests/nextflow_centroid.config' is unchanged
 'modules/nf-neuro/bundle/uniformize/tests/main.nf.test.snap' is unchanged
