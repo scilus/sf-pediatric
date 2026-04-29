@@ -1,0 +1,54 @@
+Changes in component 'nf-neuro/reconst/noddi'
+'modules/nf-neuro/reconst/noddi/environment.yml' is unchanged
+Changes in 'reconst/noddi/meta.yml':
+--- modules/nf-neuro/reconst/noddi/meta.yml
++++ modules/nf-neuro/reconst/noddi/meta.yml
+@@ -73,6 +73,9 @@
+   - noddi_lambda2:
+       type: float
+       description: Second regularization parameter for NODDI fitting.
++  - replace_bad_voxels:
++      type: float
++      description: If set, replace bad voxels with the current specified value.
+   - b_thr:
+       type: float
+       description: Limit value to consider that a b-value is on an existing shell. Above this limit, the b-value is placed on a new shell. This includes b0s values.
+
+Changes in 'reconst/noddi/main.nf':
+--- modules/nf-neuro/reconst/noddi/main.nf
++++ modules/nf-neuro/reconst/noddi/main.nf
+@@ -2,7 +2,7 @@
+     tag "$meta.id"
+     label 'process_medium'
+ 
+-    container "scilus/scilpy:2.2.2_cpu"
++    container 'scilus/scilpy@sha256:17ab2a09bc049cea9fc1f04df4b1324f280bed86202092c9f263b742093aa735'
+ 
+     input:
+         tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(kernels), val(para_diff), val(iso_diff)
+@@ -26,6 +26,7 @@
+     def iso_diff_str = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : iso_diff ? "--iso_diff " + iso_diff : ""
+     def lambda1 = task.ext.noddi_lambda1 ? "--lambda1 " + task.ext.noddi_lambda1 : ""
+     def lambda2 = task.ext.noddi_lambda2 ? "--lambda2 " + task.ext.noddi_lambda2 : ""
++    def replace_bad_voxels = task.ext.replace_bad_voxels ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
+     def nthreads = task.ext.single_thread ? 1 : task.cpus
+     def b_thr = task.ext.b_thr ? "--tolerance " + task.ext.b_thr : ""
+     def set_kernels = kernels ? "--load_kernels $kernels" : "--save_kernels kernels/"
+@@ -66,7 +67,8 @@
+     export HOME=/tmp
+ 
+     scil_NODDI_maps $dwi $bval $bvec $para_diff_str $iso_diff_str $lambda1 \
+-        $lambda2 --processes $nthreads $b_thr $set_mask $set_kernels --skip_b0_check $compute_only
++        $lambda2 --processes $nthreads $b_thr $set_mask $set_kernels --skip_b0_check $compute_only \
++        $replace_bad_voxels
+ 
+     if [ -z "${compute_only}" ];
+     then
+
+'modules/nf-neuro/reconst/noddi/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/reconst/noddi/tests/nextflow_compute_only.config' is unchanged
+'modules/nf-neuro/reconst/noddi/tests/tags.yml' is unchanged
+'modules/nf-neuro/reconst/noddi/tests/main.nf.test' is unchanged
+'modules/nf-neuro/reconst/noddi/tests/nextflow_extract_metrics_priors.config' is unchanged
+'modules/nf-neuro/reconst/noddi/tests/nextflow_extract_metrics.config' is unchanged
+************************************************************

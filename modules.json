@@ -207,7 +207,8 @@
                     "reconst/noddi": {
                         "branch": "main",
                         "git_sha": "6e69a03390c2a4bc19b2e459d0d55c8cd0501626",
-                        "installed_by": ["reconst_fw_noddi"]
+                        "installed_by": ["reconst_fw_noddi"],
+                        "patch": "modules/nf-neuro/reconst/noddi/reconst-noddi.diff"
                     },
                     "registration/anattodwi": {
                         "branch": "main",
