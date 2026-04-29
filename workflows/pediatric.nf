@@ -1149,6 +1149,7 @@ workflow PEDIATRIC {
         []
     )
 
+    ch_atlas_lut = channel.fromPath("$projectDir/assets/FS_BN_GL_SF_utils/freesurfer_utils/atlas_brainnetome_child_v1_LUT.json", checkIfExists: true)
     ch_multiqc_files_global = ch_multiqc_files_global.mix(
         ch_multiqc_files.mix(QC.out.dice_stats.map{ _meta, dice -> dice }.flatten())
     )
@@ -1174,6 +1175,7 @@ workflow PEDIATRIC {
         }
         .map { _meta, files -> files }
     ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_fd_files.flatten())
+        .mix(ch_atlas_lut)
 
     MULTIQC_GLOBAL (
         channel.of([meta:[id:"global"], qc_images:[]]),
