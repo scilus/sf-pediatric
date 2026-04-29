@@ -26,7 +26,7 @@ process FILTERING_COMMIT {
     def para_diff = task.ext.para_diff ? "--para_diff " + task.ext.para_diff : "--para_diff ${para}"
     def iso_diff = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : "--iso_diff ${iso}"
     def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : "--perp_diff ${perp}"
-    def replace_bad_voxels = task.ext.replace_bad_voxels ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
+    def replace_bad_voxels = task.ext.replace_bad_voxels != null ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
     def ball_stick = task.ext.ball_stick ? "--ball_stick" : ""
     def commit2 = task.ext.commit2 ? "--commit2" : ""
     def commit2_lambda = task.ext.commit2_lambda ? "--lambda_commit_2 " + task.ext.commit2_lambda : ""

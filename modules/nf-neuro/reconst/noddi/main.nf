@@ -26,7 +26,7 @@ process RECONST_NODDI {
     def iso_diff_str = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : iso_diff ? "--iso_diff " + iso_diff : ""
     def lambda1 = task.ext.noddi_lambda1 ? "--lambda1 " + task.ext.noddi_lambda1 : ""
     def lambda2 = task.ext.noddi_lambda2 ? "--lambda2 " + task.ext.noddi_lambda2 : ""
-    def replace_bad_voxels = task.ext.replace_bad_voxels ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
+    def replace_bad_voxels = task.ext.replace_bad_voxels != null ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
     def nthreads = task.ext.single_thread ? 1 : task.cpus
     def b_thr = task.ext.b_thr ? "--tolerance " + task.ext.b_thr : ""
     def set_kernels = kernels ? "--load_kernels $kernels" : "--save_kernels kernels/"

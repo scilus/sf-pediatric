@@ -29,7 +29,7 @@ process RECONST_FREEWATER {
     def perp_diff_max_str = task.ext.perp_diff_max ? "--perp_diff_max " + task.ext.perp_diff_max : perp_diff_max ? "--perp_diff_max " + perp_diff_max : ""
     def lambda1 = task.ext.fw_lambda1 ? "--lambda1 " + task.ext.fw_lambda1 : ""
     def lambda2 = task.ext.fw_lambda2 ? "--lambda2 " + task.ext.fw_lambda2 : ""
-    def replace_bad_voxels = task.ext.replace_bad_voxels ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
+    def replace_bad_voxels = task.ext.replace_bad_voxels != null ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
     def nthreads = task.ext.single_thread ? 1 : task.cpus
     def b_thr = task.ext.b_thr ? "--b_thr " + task.ext.b_thr : ""
     def set_kernels = kernels ? "--load_kernels $kernels" : "--save_kernels kernels/"
