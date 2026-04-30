@@ -1082,6 +1082,7 @@ workflow PEDIATRIC {
         .mix(params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : channel.empty())
         .mix(params.segmentation ? SEGMENTATION.out.lut : channel.empty())
         .mix(params.bundling ? TRACTOMETRY.out.bundles : channel.empty())
+        .mix(ch_anat_qc)
         .mix(QC.out.tissueseg_png)
         .mix(QC.out.tracking_png)
         .mix(QC.out.shell_png)
