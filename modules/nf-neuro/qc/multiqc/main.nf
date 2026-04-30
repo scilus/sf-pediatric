@@ -3,7 +3,7 @@ process QC_MULTIQC {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container "gagnonanthony/multiqc-neuroimaging:0.1.1"
+    container "gagnonanthony/multiqc-neuroimaging:0.1.2"
         containerOptions((workflow.containerEngine == 'docker') ? '--entrypoint "" --user $(id -u):$(id -g)' : '')
 
     input:

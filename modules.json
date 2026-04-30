@@ -165,7 +165,8 @@
                     "qc/multiqc": {
                         "branch": "main",
                         "git_sha": "05b9d29a8182815a89d67c8f4ee4f3235345ae6d",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/qc/multiqc/qc-multiqc.diff"
                     },
                     "qc/tractogram": {
                         "branch": "main",
