@@ -316,7 +316,7 @@
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "913afe95df67300a0e9434374a59b866449f277b",
+                        "git_sha": "7755bea10e388c2f47412f99e383e41695662b21",
                         "installed_by": ["preproc_dwi"]
                     },
                     "tractometry": {
