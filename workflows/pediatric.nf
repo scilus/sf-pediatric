@@ -327,6 +327,7 @@ workflow PEDIATRIC {
                 "preproc_dwi_run_degibbs": params.run_dwi_degibbs,
                 "topup_eddy_run_topup": params.run_dwi_topup,
                 "topup_eddy_run_eddy": params.run_dwi_eddy,
+                "eddy_nan_threshold": 1,
                 "preproc_dwi_run_synthstrip": true,
                 "preproc_dwi_keep_dwi_with_skull": false,
                 "preproc_dwi_run_N4": params.run_dwi_n4,
