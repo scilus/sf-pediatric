@@ -137,7 +137,7 @@
                     },
                     "preproc/eddy": {
                         "branch": "main",
-                        "git_sha": "fb2be9087de66fec30ae707e04b4a02c003651db",
+                        "git_sha": "d8b76bf2572247daced80a770df4bd36204480c1",
                         "installed_by": ["topup_eddy"]
                     },
                     "preproc/gibbs": {
