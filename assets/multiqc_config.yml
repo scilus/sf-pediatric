@@ -242,9 +242,9 @@ sp:
   bundles/nii:
     fn: "*.nii.gz"
   atlaslabels/volume:
-    fn: "*seg-*_dseg.nii.gz"
+    fn: "*atlas*.nii.gz"
   atlaslabels/metadata:
-    fn: "*seg-*_dseg.txt"
+    fn: "*atlas*LUT.txt"
   connectivity/matrices:
     fn: "*stat-*.npy"
   connectivity/lut:
