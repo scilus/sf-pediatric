@@ -101,9 +101,12 @@ workflow SEGMENTATION {
     ch_labels = channel.empty()
         .mix(BRAINNETOMECHILD.out.labels)
         .mix(FORMATLABELS.out.labels)
-    ch_lut = channel.empty()
+    ch_lut_json = channel.empty()
         .mix(BRAINNETOMECHILD.out.labels_json)
         .mix(FORMATLABELS.out.labels_json)
+    ch_lut_txt = channel.empty()
+        .mix(BRAINNETOMECHILD.out.labels_txt)
+        .mix(FORMATLABELS.out.labels_txt)
 
     //
     // MODULE: Concatenate stats
@@ -126,7 +129,8 @@ workflow SEGMENTATION {
 
     // ** Segmentation ** //
     labels          = ch_labels                                             // channel: [ val(meta), [ labels ] ]
-    lut             = ch_lut                                                // channel: [ val(meta), [ labels_json ] ]
+    lut_json        = ch_lut_json                                           // channel: [ val(meta), [ labels_json ] ]
+    lut_txt         = ch_lut_txt                                            // channel: [ val(meta), [ labels_txt ] ]
 
     // ** Stats ** //
     volume_lh       = CONCATENATESTATS.out.volume_lh ?: channel.empty()     // channel: [ volume_lh.tsv ]

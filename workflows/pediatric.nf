@@ -1081,7 +1081,8 @@ workflow PEDIATRIC {
 
     qc_files = ch_multiqc_files_sub
         .mix(params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : channel.empty())
-        .mix(params.segmentation ? SEGMENTATION.out.lut : channel.empty())
+        .mix(params.segmentation ? SEGMENTATION.out.lut_json : channel.empty())
+        .mix(params.segmentation ? SEGMENTATION.out.lut_txt : channel.empty())
         .mix(params.bundling ? TRACTOMETRY.out.bundles : channel.empty())
         .mix(ch_anat_qc)
         .mix(QC.out.tissueseg_png)
