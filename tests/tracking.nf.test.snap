@@ -78,7 +78,7 @@
                     "scilpy": "2.2.2"
                 },
                 "RECONST_FREEWATER": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.2.2"
@@ -115,7 +115,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -710,7 +710,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T16:18:59.211115"
+        "timestamp": "2026-05-08T12:36:02.750618"
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
@@ -803,7 +803,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -1278,6 +1278,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T21:57:24.683701"
+        "timestamp": "2026-05-08T12:45:31.114659"
     }
 }

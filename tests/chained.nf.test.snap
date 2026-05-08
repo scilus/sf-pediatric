@@ -34,7 +34,7 @@
                     "pandas": "2.2.3"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.2.2"
@@ -71,7 +71,7 @@
                     "fsl": 6.0
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
@@ -107,13 +107,13 @@
                     "scilpy": "2.2.2"
                 },
                 "RECONST_FREEWATER": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.2.2"
                 },
                 "RECONST_NODDI": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "REGISTRATION_ANTS": {
                     "ants": "2.6.2",
@@ -191,7 +191,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -1166,7 +1166,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-04-20T15:44:06.24491"
+        "timestamp": "2026-05-08T12:08:33.94759"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -1307,7 +1307,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -1716,7 +1716,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T21:31:07.651248"
+        "timestamp": "2026-05-08T12:19:26.314565"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -1731,7 +1731,7 @@
                     "pandas": "2.2.3"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.2.2"
@@ -1752,7 +1752,7 @@
                     "scilpy": "2.2.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
@@ -1774,7 +1774,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -1982,7 +1982,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-04-20T15:23:35.444426"
+        "timestamp": "2026-05-08T11:47:29.78775"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
@@ -2001,7 +2001,7 @@
                     "mrtrix": "3.0.5"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.2.2"
@@ -2044,7 +2044,7 @@
                     "fsl": 6.0
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "IMAGE_POWDERAVERAGE": {
                     "scilpy": "2.2.2"
@@ -2113,7 +2113,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -2568,6 +2568,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-04-20T15:32:43.456899"
+        "timestamp": "2026-05-08T11:57:41.246571"
     }
 }
