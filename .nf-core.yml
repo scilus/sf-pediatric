@@ -30,7 +30,7 @@ lint:
     - manifest.name
     - manifest.homePage
   template_strings: false
-nf_core_version: 3.4.1
+nf_core_version: 3.5.2
 repository_type: pipeline
 template:
   author: Anthony Gagnon
@@ -47,4 +47,4 @@ template:
     - license
     - test_config
     - seqera_platform
-  version: 0.2.2
+  version: 0.2.3
