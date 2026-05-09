@@ -20,6 +20,18 @@ def readParticipantsTsv(file) {
     return participantData
 }
 
+// Helper function to get age with session support
+def getAge(participantId, participantData, sessionId = null) {
+    def searchParticipantId = participantId.toString()
+    def searchSessionId = (sessionId == null || sessionId.toString().trim() == "") ? "" : sessionId.toString()
+
+    def match = participantData.find { row ->
+        return row.participant_id == searchParticipantId && row.session_id == searchSessionId
+    }
+
+    return match ? match.age : 0.0  // Return 0.0 instead of empty string
+}
+
 workflow FETCH_DERIVATIVES {
 
     take:
@@ -43,18 +55,6 @@ workflow FETCH_DERIVATIVES {
         params.participant_label.tokenize(',') :
         params.participant_label : []
 
-    // Helper function to get age with session support
-    def getAge = { participantId, sessionId = null ->
-        def searchParticipantId = participantId.toString()
-        def searchSessionId = (sessionId == null || sessionId.toString().trim() == "") ? "" : sessionId.toString()
-
-        def match = participantData.find { row ->
-            return row.participant_id == searchParticipantId && row.session_id == searchSessionId
-        }
-
-        return match ? match.age : 0.0  // Return 0.0 instead of empty string
-    }
-
     // ** Segmentations ** //
     if ( params.connectomics && !params.segmentation ) {
         ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
@@ -63,7 +63,7 @@ workflow FETCH_DERIVATIVES {
                 def parts = file.toAbsolutePath().toString().split('/')
                 def id = parts.find { it.startsWith('sub-') }
                 def session = parts.find { it.startsWith('ses-') }
-                def age = getAge(id, session)
+                def age = getAge(id, participantData, session)
                 def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
                 def priors = fetchPriors(tempAge)
                 def metadata = session ? \
@@ -98,7 +98,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
+            def age = getAge(id, participantData, session)
             def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
             def priors = fetchPriors(tempAge)
             def metadata = session ? \
@@ -124,7 +124,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
+            def age = getAge(id, participantData, session)
             def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
             def priors = fetchPriors(tempAge)
             def metadata = session ? \
@@ -158,7 +158,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
+            def age = getAge(id, participantData, session)
             def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
             def priors = fetchPriors(tempAge)
             def metadata = session ? \
@@ -175,7 +175,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
+            def age = getAge(id, participantData, session)
             def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
             def priors = fetchPriors(tempAge)
             def metadata = session ? \
@@ -195,7 +195,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
+            def age = getAge(id, participantData, session)
             def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
             def priors = fetchPriors(tempAge)
             def metadata = session ? \
@@ -231,7 +231,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
+            def age = getAge(id, participantData, session)
             def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
             def priors = fetchPriors(tempAge)
             def metadata = session ? \
@@ -261,7 +261,7 @@ workflow FETCH_DERIVATIVES {
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
             def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
+            def age = getAge(id, participantData, session)
             def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
             def priors = fetchPriors(tempAge)
             def metadata = session ? \
@@ -280,9 +280,9 @@ workflow FETCH_DERIVATIVES {
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
-            def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
+            def id = parts.find { it -> it.startsWith('sub-') }
+            def session = parts.find { it -> it.startsWith('ses-') }
+            def age = getAge(id, participantData, session)
             def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
             def priors = fetchPriors(tempAge)
             def metadata = session ? \
@@ -291,7 +291,7 @@ workflow FETCH_DERIVATIVES {
 
             return [metadata, file]
         }
-        .filter {
+        .filter { it ->
             participant_ids.isEmpty() || it[0].id in participant_ids
         }
 
