@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- Support for `nextflow` 26.04.0 ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
 - Quality control section for connectivity data ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
 - Quality control visualization section for bundles ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
 - Improved visualization of cortical/subcortical segmentation results in native subject space ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
