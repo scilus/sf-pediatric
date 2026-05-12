@@ -3,10 +3,8 @@ process QC_MULTIQC {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container "gagnonanthony/multiqc-neuroimaging:0.1.0"
-    containerOptions {
-        (workflow.containerEngine == 'docker') ? '--entrypoint "" --user $(id -u):$(id -g)' : ''
-    }
+    container "gagnonanthony/multiqc-neuroimaging:0.1.3"
+        containerOptions((workflow.containerEngine == 'docker') ? '--entrypoint "" --user $(id -u):$(id -g)' : '')
 
     input:
     tuple val(meta), path(qc_images)
@@ -36,6 +34,8 @@ process QC_MULTIQC {
     def replace = replace_names ? "--replace-names ${replace_names}" : ''
     def samples = sample_names ? "--sample-names ${sample_names}" : ''
     def single_subject = task.ext.single_subject ? "--single-subject-report" : ""
+    def cortical_rois = task.ext.cortical_rois ? "--cortical-rois ${task.ext.cortical_rois}" : ''
+    def subcortical_rois = task.ext.subcortical_rois ? "--subcortical-rois ${task.ext.subcortical_rois}" : ''
 
     """
     multiqc \\
@@ -48,6 +48,8 @@ process QC_MULTIQC {
         $replace \\
         $samples \\
         $single_subject \\
+        $cortical_rois \\
+        $subcortical_rois \\
         .
 
     cat <<-END_VERSIONS > versions.yml
@@ -59,6 +61,7 @@ process QC_MULTIQC {
 
     stub:
     def prefix = "${meta.id}" // No timestamp in stub, otherwise tests will fail.
+
     """
     multiqc --help
 

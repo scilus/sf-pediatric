@@ -88,6 +88,9 @@ args:
   - fw_lambda2:
       type: float
       description: Second regularization parameter for freewater fitting.
+  - replace_bad_voxels:
+      type: float
+      description: If set, replace bad voxels with the current specified value.
   - b_thr:
       type: float
       description: Limit value to consider that a b-value is on an existing shell. Above this limit, the b-value is placed on a new shell. This includes b0s values.

@@ -716,11 +716,16 @@ def indentForYaml(String text, int spaces = 2) {
 }
 
 //
+// Helper to assess if a params is enabled
+//
+def enabled(key) {
+    return (params[key] ?: false) as boolean
+}
+
+//
 // Build a dynamic methods boilerplate.
 //
 def buildMethodsDescription() {
-    def enabled = { key -> (params[key] ?: false) as boolean }
-
     def fragments = [
         dwi_preproc: { ->
             if ( !enabled('tracking') ) return ""
@@ -976,7 +981,7 @@ def buildMethodsDescription() {
         }
     ]
 
-    def pieces = fragments.collect { _, c -> try { c() } catch(Exception e) { "" } }.findAll { it && it.trim() }
+    def pieces = fragments.collect { _f, c -> try { c.call() } catch(Exception e) { "" } }.findAll { it -> it && it.trim() }
 
     def html = """<div class="sf-pediatric-methods">
 ${pieces.join('\n\n')}

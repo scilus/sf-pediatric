@@ -137,7 +137,7 @@
                     },
                     "preproc/eddy": {
                         "branch": "main",
-                        "git_sha": "2c6b000e9e4e1d882a6c2d3739c440596ca039dd",
+                        "git_sha": "d8b76bf2572247daced80a770df4bd36204480c1",
                         "installed_by": ["topup_eddy"]
                     },
                     "preproc/gibbs": {
@@ -164,7 +164,7 @@
                     },
                     "qc/multiqc": {
                         "branch": "main",
-                        "git_sha": "43d0739c2920cc414373454a3f30c553e426bada",
+                        "git_sha": "d8b93933d8ac1b36e184fd27bbd93bb84d2afdc7",
                         "installed_by": ["modules"]
                     },
                     "qc/tractogram": {
@@ -190,7 +190,8 @@
                     "reconst/freewater": {
                         "branch": "main",
                         "git_sha": "9826fd22d5e7565d0bb9db80941ba09fb7ecb0a1",
-                        "installed_by": ["reconst_fw_noddi"]
+                        "installed_by": ["reconst_fw_noddi"],
+                        "patch": "modules/nf-neuro/reconst/freewater/reconst-freewater.diff"
                     },
                     "reconst/frf": {
                         "branch": "main",
@@ -206,7 +207,8 @@
                     "reconst/noddi": {
                         "branch": "main",
                         "git_sha": "6e69a03390c2a4bc19b2e459d0d55c8cd0501626",
-                        "installed_by": ["reconst_fw_noddi"]
+                        "installed_by": ["reconst_fw_noddi"],
+                        "patch": "modules/nf-neuro/reconst/noddi/reconst-noddi.diff"
                     },
                     "registration/anattodwi": {
                         "branch": "main",
@@ -298,7 +300,7 @@
                     },
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "7f8c953cdbf66d7a76ca0df56df948798b44f6ec",
+                        "git_sha": "d50587b763e4dc6932b3f44e96688d5ff8f0d303",
                         "installed_by": ["subworkflows"]
                     },
                     "preproc_t1": {
@@ -308,12 +310,12 @@
                     },
                     "reconst_fw_noddi": {
                         "branch": "main",
-                        "git_sha": "6e69a03390c2a4bc19b2e459d0d55c8cd0501626",
+                        "git_sha": "1abf35399bb849907151269787234a4d6f6df6f3",
                         "installed_by": ["subworkflows"]
                     },
                     "topup_eddy": {
                         "branch": "main",
-                        "git_sha": "913afe95df67300a0e9434374a59b866449f277b",
+                        "git_sha": "7755bea10e388c2f47412f99e383e41695662b21",
                         "installed_by": ["preproc_dwi"]
                     },
                     "tractometry": {

@@ -9,5 +9,9 @@ export PS1='\[\e[3;36m\]\w ->\[\e[0m\\] '
 # Update Nextflow
 nextflow self-update
 
+# Install precommit hooks
+pip install pre-commit
+prek install --install-hooks --overwrite
+
 # Update welcome message
 echo "Welcome to the scilus/sf-pediatric devcontainer!" > /usr/local/etc/vscode-dev-containers/first-run-notice.txt

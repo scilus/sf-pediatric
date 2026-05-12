@@ -1,7 +1,7 @@
 {
     "Connectomics + tracking + segmentation profiles - should run successfully": {
         "content": [
-            215,
+            211,
             {
                 "ANATTODWI": {
                     "ants": "2.6.2",
@@ -34,7 +34,7 @@
                     "pandas": "2.2.3"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.2.2"
@@ -71,7 +71,7 @@
                     "fsl": 6.0
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
@@ -107,13 +107,13 @@
                     "scilpy": "2.2.2"
                 },
                 "RECONST_FREEWATER": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "RECONST_FRF": {
                     "scilpy": "2.2.2"
                 },
                 "RECONST_NODDI": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "REGISTRATION_ANTS": {
                     "ants": "2.6.2",
@@ -191,7 +191,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -407,7 +407,6 @@
                 "sub-test1/ses-baseline/figures",
                 "sub-test1/ses-baseline/figures/sub-test1__coverage_overlay_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_gradients_mqc.png",
-                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_labels_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_metrics_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_desc-fwc_stat-ad.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_desc-fwc_stat-fa.png",
@@ -634,7 +633,6 @@
                 "sub-test1/ses-time1/figures",
                 "sub-test1/ses-time1/figures/sub-test1__coverage_overlay_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_gradients_mqc.png",
-                "sub-test1/ses-time1/figures/sub-test1_ses-time1_labels_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_metrics_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_desc-fwc_stat-ad.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_desc-fwc_stat-fa.png",
@@ -855,7 +853,6 @@
                 "sub-test2/figures",
                 "sub-test2/figures/sub-test2__coverage_overlay_mqc.png",
                 "sub-test2/figures/sub-test2_gradients_mqc.png",
-                "sub-test2/figures/sub-test2_labels_mqc.png",
                 "sub-test2/figures/sub-test2_metrics_mqc.png",
                 "sub-test2/figures/sub-test2_seg-DK_desc-fwc_stat-ad.png",
                 "sub-test2/figures/sub-test2_seg-DK_desc-fwc_stat-fa.png",
@@ -1074,7 +1071,6 @@
                 "sub-test3/figures",
                 "sub-test3/figures/sub-test3__coverage_overlay_mqc.png",
                 "sub-test3/figures/sub-test3_gradients_mqc.png",
-                "sub-test3/figures/sub-test3_labels_mqc.png",
                 "sub-test3/figures/sub-test3_metrics_mqc.png",
                 "sub-test3/figures/sub-test3_seg-DK_desc-fwc_stat-ad.png",
                 "sub-test3/figures/sub-test3_seg-DK_desc-fwc_stat-fa.png",
@@ -1170,7 +1166,7 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-30T13:33:09.185511"
+        "timestamp": "2026-05-08T12:08:33.94759"
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -1311,7 +1307,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -1720,11 +1716,11 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T21:31:07.651248"
+        "timestamp": "2026-05-08T12:19:26.314565"
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
-            61,
+            57,
             {
                 "BRAINNETOMECHILD": {
                     "scilpy": 1.6,
@@ -1735,7 +1731,7 @@
                     "pandas": "2.2.3"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.2.2"
@@ -1756,7 +1752,7 @@
                     "scilpy": "2.2.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "FORMATLABELS": {
                     "scilpy": 1.6,
@@ -1778,7 +1774,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -1835,7 +1831,6 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_tract-wholebrain_seg-DK_desc-preproc_tractogram.h5",
                 "sub-test1/ses-baseline/figures",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_gradients_mqc.png",
-                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_labels_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ad.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-fa.png",
                 "sub-test1/ses-baseline/multiqc",
@@ -1869,7 +1864,6 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test1/ses-time1/figures",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_gradients_mqc.png",
-                "sub-test1/ses-time1/figures/sub-test1_ses-time1_labels_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-odi.png",
@@ -1900,7 +1894,6 @@
                 "sub-test3/dwi/sub-test3_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test3/figures",
                 "sub-test3/figures/sub-test3_gradients_mqc.png",
-                "sub-test3/figures/sub-test3_labels_mqc.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-fa.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-md.png",
                 "sub-test3/multiqc",
@@ -1930,7 +1923,6 @@
                 "sub-test4/dwi/sub-test4_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test4/figures",
                 "sub-test4/figures/sub-test4_gradients_mqc.png",
-                "sub-test4/figures/sub-test4_labels_mqc.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-fa.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-md.png",
                 "sub-test4/multiqc",
@@ -1990,11 +1982,11 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T19:58:02.144527"
+        "timestamp": "2026-05-08T11:47:29.78775"
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
-            184,
+            180,
             {
                 "ANATTODWI": {
                     "ants": "2.6.2",
@@ -2009,7 +2001,7 @@
                     "mrtrix": "3.0.5"
                 },
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.2.2"
@@ -2052,7 +2044,7 @@
                     "fsl": 6.0
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "IMAGE_POWDERAVERAGE": {
                     "scilpy": "2.2.2"
@@ -2121,7 +2113,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -2228,7 +2220,6 @@
                 "sub-test1/ses-baseline/figures",
                 "sub-test1/ses-baseline/figures/sub-test1__coverage_overlay_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_gradients_mqc.png",
-                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_labels_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_metrics_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ad.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-afd_total.png",
@@ -2343,7 +2334,6 @@
                 "sub-test1/ses-time1/figures",
                 "sub-test1/ses-time1/figures/sub-test1__coverage_overlay_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_gradients_mqc.png",
-                "sub-test1/ses-time1/figures/sub-test1_ses-time1_labels_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_metrics_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-afd_total.png",
@@ -2450,7 +2440,6 @@
                 "sub-test2/figures",
                 "sub-test2/figures/sub-test2__coverage_overlay_mqc.png",
                 "sub-test2/figures/sub-test2_gradients_mqc.png",
-                "sub-test2/figures/sub-test2_labels_mqc.png",
                 "sub-test2/figures/sub-test2_metrics_mqc.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-ad.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-afd_total.png",
@@ -2555,7 +2544,6 @@
                 "sub-test4/figures",
                 "sub-test4/figures/sub-test4__coverage_overlay_mqc.png",
                 "sub-test4/figures/sub-test4_gradients_mqc.png",
-                "sub-test4/figures/sub-test4_labels_mqc.png",
                 "sub-test4/figures/sub-test4_metrics_mqc.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-ad.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-afd_total.png",
@@ -2580,6 +2568,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T20:07:27.429694"
+        "timestamp": "2026-05-08T11:57:41.246571"
     }
 }

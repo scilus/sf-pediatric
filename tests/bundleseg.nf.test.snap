@@ -1,7 +1,7 @@
 {
     "BundleSeg - should run successfully": {
         "content": [
-            64,
+            68,
             {
                 "BET_T1W": {
                     "scilpy": "2.2.2",
@@ -34,7 +34,7 @@
                     "imagemagick": "6.9.12"
                 },
                 "RECONST_FREEWATER": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "REGISTRATION_ANTS": {
                     "ants": "2.6.2",
@@ -73,7 +73,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -133,6 +133,10 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_space-MNIInfant_model-tensor_param-rd_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_space-MNIInfant_model-tensor_param-rgb_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_space-MNIInfant_model-tensor_param-rgb_dwimap.nii.gz",
+                "sub-test1/ses-baseline/multiqc",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_report.html",
                 "sub-test1/ses-baseline/xfm",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-MNIInfant_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
@@ -184,6 +188,10 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_space-MNIInfant_model-tensor_param-rd_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_space-MNIInfant_model-tensor_param-rgb_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_space-MNIInfant_model-tensor_param-rgb_dwimap.nii.gz",
+                "sub-test1/ses-time1/multiqc",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_data",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_report.html",
                 "sub-test1/ses-time1/xfm",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-MNIInfant_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
@@ -235,6 +243,10 @@
                 "sub-test3/dwi/sub-test3_space-MNIInfant_model-tensor_param-rd_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_space-MNIInfant_model-tensor_param-rgb_dwimap.json",
                 "sub-test3/dwi/sub-test3_space-MNIInfant_model-tensor_param-rgb_dwimap.nii.gz",
+                "sub-test3/multiqc",
+                "sub-test3/multiqc/sub-test3_multiqc_data",
+                "sub-test3/multiqc/sub-test3_multiqc_plots",
+                "sub-test3/multiqc/sub-test3_multiqc_report.html",
                 "sub-test3/xfm",
                 "sub-test3/xfm/sub-test3_from-MNIInfant_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test3/xfm/sub-test3_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
@@ -286,6 +298,10 @@
                 "sub-test4/dwi/sub-test4_space-MNIInfant_model-tensor_param-rd_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_space-MNIInfant_model-tensor_param-rgb_dwimap.json",
                 "sub-test4/dwi/sub-test4_space-MNIInfant_model-tensor_param-rgb_dwimap.nii.gz",
+                "sub-test4/multiqc",
+                "sub-test4/multiqc/sub-test4_multiqc_data",
+                "sub-test4/multiqc/sub-test4_multiqc_plots",
+                "sub-test4/multiqc/sub-test4_multiqc_report.html",
                 "sub-test4/xfm",
                 "sub-test4/xfm/sub-test4_from-MNIInfant_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
@@ -303,6 +319,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-30T11:38:25.642094"
+        "timestamp": "2026-05-08T11:44:31.195032"
     }
 }

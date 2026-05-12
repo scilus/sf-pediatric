@@ -3,6 +3,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3] - [Unreleased]
+
+### `Added`
+
+- Support for `nextflow` 26.04.0 ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
+- Quality control section for connectivity data ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
+- Quality control visualization section for bundles ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
+- Improved visualization of cortical/subcortical segmentation results in native subject space ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
+
+### `Fixed`
+
+- Issues where `NaN` values would appear following `eddy` and were making `amico` models fail du to invalid voxels. `NaN` values are now quantified, reported, and converted to 0.
+
 ## [0.2.2] - [2026-02-09]
 
 ### `Added`

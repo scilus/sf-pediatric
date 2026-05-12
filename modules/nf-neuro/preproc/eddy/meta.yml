@@ -70,6 +70,18 @@ args:
       type: boolean
       description: Run QC for Eddy.
       default: false
+  - single_thread:
+      type: boolean
+      description: If true, the command will be run in single-threaded mode. By default, the command will use multiple threads based on the number of CPUs allocated to the task.
+      default: false
+  - ants_rng_seed:
+      type: integer
+      description: Random seed for ANTs registration. Setting a fixed seed can help with reproducibility of results.
+      default: 1234
+  - mrtrix_rng_seed:
+      type: integer
+      description: Random seed for MRtrix3. Setting a fixed seed can help with reproducibility of results.
+      default: 1234
 input:
   - - meta:
         type: map
@@ -172,6 +184,16 @@ output:
           pattern: "*__b0_bet_mask.nii.gz"
           ontologies:
             - edam: http://edamontology.org/format_3989 # GZIP format
+  nan_percentage:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', single_end:false ]`
+      - nan_percentage:
+          type: float
+          description: Percentage of NaN voxels in the brain mask after Eddy correction.
+          ontologies: []
   dwi_eddy_mqc:
     - - meta:
           type: map

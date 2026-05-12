@@ -1,7 +1,7 @@
 {
     "Segmentation profile - should run successfully": {
         "content": [
-            29,
+            26,
             {
                 "BRAINNETOMECHILD": {
                     "scilpy": 1.6,
@@ -34,7 +34,7 @@
                     "freesurfer": "8.0.0"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -82,8 +82,6 @@
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T1w.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T2w.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T2w.nii.gz",
-                "sub-test1/ses-baseline/figures",
-                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_labels_mqc.png",
                 "sub-test1/ses-baseline/multiqc",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
@@ -105,8 +103,6 @@
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_hemi-right_stat-thickness.tsv",
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_hemi-right_stat-volume.tsv",
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_stat-subcortical.tsv",
-                "sub-test1/ses-time1/figures",
-                "sub-test1/ses-time1/figures/sub-test1_ses-time1_labels_mqc.png",
                 "sub-test1/ses-time1/multiqc",
                 "sub-test1/ses-time1/multiqc/sub-test1_multiqc_data",
                 "sub-test1/ses-time1/multiqc/sub-test1_multiqc_plots",
@@ -125,8 +121,6 @@
                 "sub-test3/anat/sub-test3_seg-BrainnetomeChild_hemi-right_stat-thickness.tsv",
                 "sub-test3/anat/sub-test3_seg-BrainnetomeChild_hemi-right_stat-volume.tsv",
                 "sub-test3/anat/sub-test3_seg-BrainnetomeChild_stat-subcortical.tsv",
-                "sub-test3/figures",
-                "sub-test3/figures/sub-test3_labels_mqc.png",
                 "sub-test3/multiqc",
                 "sub-test3/multiqc/sub-test3_multiqc_data",
                 "sub-test3/multiqc/sub-test3_multiqc_plots",
@@ -174,6 +168,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T15:12:32.980592"
+        "timestamp": "2026-05-08T12:24:46.10467"
     }
 }

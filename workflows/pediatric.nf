@@ -295,7 +295,6 @@ workflow PEDIATRIC {
         )
 
         ch_versions = ch_versions.mix(SEGMENTATION.out.versions)
-        // ch_multiqc_files = ch_multiqc_files.mix(FASTSURFER.out.zip.collect{it[1]})
 
     }
 
@@ -328,6 +327,7 @@ workflow PEDIATRIC {
                 "preproc_dwi_run_degibbs": params.run_dwi_degibbs,
                 "topup_eddy_run_topup": params.run_dwi_topup,
                 "topup_eddy_run_eddy": params.run_dwi_eddy,
+                "eddy_nan_threshold": 1,
                 "preproc_dwi_run_synthstrip": true,
                 "preproc_dwi_keep_dwi_with_skull": false,
                 "preproc_dwi_run_N4": params.run_dwi_n4,
@@ -934,7 +934,8 @@ workflow PEDIATRIC {
 
         CONNECTIVITY_METRICS ( ch_metrics_conn )
         ch_versions = ch_versions.mix(CONNECTIVITY_METRICS.out.versions.first())
-        // ch_multiqc_files = ch_multiqc_files.mix(CONNECTIVITY_METRICS.out.zip.collect{it[1]})
+        ch_multiqc_files_sub = ch_multiqc_files_sub
+            .mix(CONNECTIVITY_METRICS.out.metrics)
 
         //
         // MODULE: Run CONNECTIVITY_VISUALIZE
@@ -1070,7 +1071,6 @@ workflow PEDIATRIC {
     QC (
         ch_anat_qc,
         ch_tissueseg,
-        params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : channel.empty(),
         params.connectomics ? FILTERING_COMMIT.out.trk : params.tracking ? ch_trk : channel.empty(),
         params.tracking ? ch_inputs.dwi_bval_bvec : params.connectomics ? ch_dwi_bval_bvec : channel.empty(),
         params.tracking ? RECONST_DTIMETRICS.out.fa : channel.empty(),
@@ -1080,11 +1080,15 @@ workflow PEDIATRIC {
     )
 
     qc_files = ch_multiqc_files_sub
+        .mix(params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : channel.empty())
+        .mix(params.segmentation ? SEGMENTATION.out.lut_json : channel.empty())
+        .mix(params.segmentation ? SEGMENTATION.out.lut_txt : channel.empty())
+        .mix(params.bundling ? TRACTOMETRY.out.bundles : channel.empty())
+        .mix(ch_anat_qc)
         .mix(QC.out.tissueseg_png)
         .mix(QC.out.tracking_png)
         .mix(QC.out.shell_png)
         .mix(QC.out.metrics_png)
-        .mix(QC.out.labels_png)
         .groupTuple()
         .map { meta, png_list ->
             def images = png_list.flatten().findAll { png -> png != null }
@@ -1148,6 +1152,7 @@ workflow PEDIATRIC {
         []
     )
 
+    ch_atlas_lut = channel.fromPath("$projectDir/assets/FS_BN_GL_SF_utils/freesurfer_utils/atlas_brainnetome_child_v1_LUT.json", checkIfExists: true)
     ch_multiqc_files_global = ch_multiqc_files_global.mix(
         ch_multiqc_files.mix(QC.out.dice_stats.map{ _meta, dice -> dice }.flatten())
     )
@@ -1161,6 +1166,10 @@ workflow PEDIATRIC {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_rh)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.subcortical)
     }
+    if ( params.connectomics ) {
+        ch_multiqc_files_global = ch_multiqc_files_global
+            .mix(CONNECTIVITY_METRICS.out.metrics.map{ _meta, metrics -> metrics })
+    }
 
     // Collect the framewise displacement files from the ch_multiqc_files_sub channel
     ch_fd_files = ch_multiqc_files_sub
@@ -1169,6 +1178,7 @@ workflow PEDIATRIC {
         }
         .map { _meta, files -> files }
     ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_fd_files.flatten())
+        .mix(ch_atlas_lut)
 
     MULTIQC_GLOBAL (
         channel.of([meta:[id:"global"], qc_images:[]]),

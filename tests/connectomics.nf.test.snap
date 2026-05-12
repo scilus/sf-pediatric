@@ -1,10 +1,10 @@
 {
     "Connectomics profile with derivatives and session - should run successfully": {
         "content": [
-            44,
+            39,
             {
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.2.2"
@@ -16,7 +16,7 @@
                     "scilpy": "2.2.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.6.2",
@@ -25,7 +25,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -48,7 +48,6 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_tract-wholebrain_seg-DK_desc-preproc_tractogram.h5",
                 "sub-test1/ses-baseline/figures",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_gradients_mqc.png",
-                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_labels_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ad.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-fa.png",
                 "sub-test1/ses-baseline/multiqc",
@@ -67,7 +66,6 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test1/ses-time1/figures",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_gradients_mqc.png",
-                "sub-test1/ses-time1/figures/sub-test1_ses-time1_labels_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-odi.png",
@@ -85,7 +83,6 @@
                 "sub-test2/dwi/sub-test2_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test2/figures",
                 "sub-test2/figures/sub-test2_gradients_mqc.png",
-                "sub-test2/figures/sub-test2_labels_mqc.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-ad.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-afdtotal.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-fa.png",
@@ -105,7 +102,6 @@
                 "sub-test3/dwi/sub-test3_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test3/figures",
                 "sub-test3/figures/sub-test3_gradients_mqc.png",
-                "sub-test3/figures/sub-test3_labels_mqc.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-fa.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-md.png",
                 "sub-test3/multiqc",
@@ -120,7 +116,6 @@
                 "sub-test4/dwi/sub-test4_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test4/figures",
                 "sub-test4/figures/sub-test4_gradients_mqc.png",
-                "sub-test4/figures/sub-test4_labels_mqc.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-fa.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-md.png",
                 "sub-test4/multiqc",
@@ -133,14 +128,14 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T14:33:04.191798"
+        "timestamp": "2026-05-08T12:22:58.167137"
     },
     "Connectomics profile with derivatives - should run successfully": {
         "content": [
-            49,
+            44,
             {
                 "CONNECTIVITY_AFDFIXEL": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "CONNECTIVITY_DECOMPOSE": {
                     "scilpy": "2.2.2"
@@ -152,10 +147,10 @@
                     "scilpy": "2.2.2"
                 },
                 "FILTERING_COMMIT": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "RECONST_NODDI": {
-                    "scilpy": "2.2.2"
+                    "scilpy": "2.3.0"
                 },
                 "TRANSFORM_LABELS": {
                     "ants": "2.6.2",
@@ -164,7 +159,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf-pediatric": "v0.2.3"
                 }
             },
             [
@@ -201,7 +196,6 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_tract-wholebrain_seg-DK_desc-preproc_tractogram.h5",
                 "sub-test1/ses-baseline/figures",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_gradients_mqc.png",
-                "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_labels_mqc.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ad.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-ecvf.png",
                 "sub-test1/ses-baseline/figures/sub-test1_ses-baseline_seg-DK_stat-fa.png",
@@ -237,7 +231,6 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test1/ses-time1/figures",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_gradients_mqc.png",
-                "sub-test1/ses-time1/figures/sub-test1_ses-time1_labels_mqc.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ad.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-ecvf.png",
                 "sub-test1/ses-time1/figures/sub-test1_ses-time1_seg-BrainnetomeChild_stat-fa.png",
@@ -272,7 +265,6 @@
                 "sub-test2/dwi/sub-test2_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test2/figures",
                 "sub-test2/figures/sub-test2_gradients_mqc.png",
-                "sub-test2/figures/sub-test2_labels_mqc.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-ad.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-afdtotal.png",
                 "sub-test2/figures/sub-test2_seg-DK_stat-ecvf.png",
@@ -310,7 +302,6 @@
                 "sub-test3/dwi/sub-test3_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test3/figures",
                 "sub-test3/figures/sub-test3_gradients_mqc.png",
-                "sub-test3/figures/sub-test3_labels_mqc.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-ecvf.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-fa.png",
                 "sub-test3/figures/sub-test3_seg-DK_stat-icvf.png",
@@ -343,7 +334,6 @@
                 "sub-test4/dwi/sub-test4_tract-wholebrain_seg-BrainnetomeChild_desc-preproc_tractogram.h5",
                 "sub-test4/figures",
                 "sub-test4/figures/sub-test4_gradients_mqc.png",
-                "sub-test4/figures/sub-test4_labels_mqc.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-ecvf.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-fa.png",
                 "sub-test4/figures/sub-test4_seg-BrainnetomeChild_stat-icvf.png",
@@ -360,6 +350,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2026-03-27T14:49:13.735051"
+        "timestamp": "2026-05-08T12:21:23.003135"
     }
 }
