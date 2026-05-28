@@ -170,11 +170,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-05-21T11:25:39.441615",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-02-26T23:29:23.820516886"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "reconst_fw_noddi - noddi & freewater - custom priors": {
         "content": [
@@ -557,11 +557,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-05-21T11:24:14.527722",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-04-14T17:07:58.910975216"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "reconst_fw_noddi - noddi & freewater": {
         "content": [
@@ -781,11 +781,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-05-21T11:22:51.582278",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-04-14T17:07:02.322925422"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "reconst_fw_noddi - noddi & freewater - average priors": {
         "content": [
@@ -1006,11 +1006,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-05-21T11:23:34.896342",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-04-14T17:07:28.225314278"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "reconst_fw_noddi - noddi": {
         "content": [
@@ -1066,11 +1066,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-05-21T11:21:14.434683",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-04-14T17:06:12.440587943"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "reconst_fw_noddi - freewater": {
         "content": [
@@ -1244,11 +1244,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-05-21T11:22:09.540073",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-02-26T23:28:09.646051384"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "reconst_fw_noddi - noddi - custom priors": {
         "content": [
@@ -1303,11 +1303,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-05-21T11:25:07.57886",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-04-14T17:08:34.29062954"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "reconst_fw_noddi - noddi & freewater - custom priors subject-bound": {
         "content": [
@@ -1526,10 +1526,10 @@
                 ]
             }
         ],
+        "timestamp": "2026-05-21T11:24:50.106651",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-04-14T17:08:21.327744991"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }
