@@ -730,10 +730,10 @@ workflow SF_PEDIATRIC {
             // ** Prepare channels for priors coming from the normative curves ** //
             ch_normative_diff = ch_dwi_bval_bvec
                 .multiMap { meta, _dwi, _bval, _bvec ->
-                    para_diff: params.average_diff_priors ? channel.empty() : params.para_diff ? channel.value(params.para_diff) : tuple(meta, meta.ad)
-                    iso_diff: params.average_diff_priors ? channel.empty() : params.iso_diff ? channel.value(params.iso_diff) : tuple(meta, meta.md)
-                    perp_diff_min: params.average_diff_priors ? channel.empty() : params.perp_diff_min ? channel.value(params.perp_diff_min) : tuple(meta, meta.rd_min)
-                    perp_diff_max: params.average_diff_priors ? channel.empty() : params.perp_diff_max ? channel.value(params.perp_diff_max) : tuple(meta, meta.rd_max)
+                    para_diff: params.average_diff_priors ? channel.empty() : params.para_diff ? tuple(meta, params.para_diff) : tuple(meta, meta.ad)
+                    iso_diff: params.average_diff_priors ? channel.empty() : params.iso_diff ? tuple(meta, params.iso_diff) : tuple(meta, meta.md)
+                    perp_diff_min: params.average_diff_priors ? channel.empty() : params.perp_diff_min ? tuple(meta, params.perp_diff_min) : tuple(meta, meta.rd_min)
+                    perp_diff_max: params.average_diff_priors ? channel.empty() : params.perp_diff_max ? tuple(meta, params.perp_diff_max) : tuple(meta, meta.rd_max)
                 }
 
             // ** Run NODDI / FreeWater reconstruction ** //
