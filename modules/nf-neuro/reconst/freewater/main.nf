@@ -3,7 +3,7 @@ process RECONST_FREEWATER {
     tag "$meta.id"
     label 'process_low'
 
-    container 'scilus/scilpy@sha256:17ab2a09bc049cea9fc1f04df4b1324f280bed86202092c9f263b742093aa735'
+    container 'scilus/scilpy@sha256:2626bb7cec11a9acf421ba5c5d9c333f065e2434134c6cfdcaa850122727a1c3'
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(kernels), val(para_diff), val(iso_diff), val(perp_diff_min), val(perp_diff_max)
@@ -13,6 +13,7 @@ process RECONST_FREEWATER {
         tuple val(meta), path("*__dir.nii.gz")               , emit: dir, optional: true
         tuple val(meta), path("*__fibervolume.nii.gz")       , emit: fibervolume, optional: true
         tuple val(meta), path("*__fwf.nii.gz")               , emit: fwf, optional: true
+        tuple val(meta), path("*__rmse.nii.gz")              , emit: rmse, optional: true
         tuple val(meta), path("*__nrmse.nii.gz")             , emit: nrmse, optional: true
         path("kernels")                                      , emit: kernels, optional: true
         path "versions.yml"                                  , emit: versions
@@ -30,6 +31,8 @@ process RECONST_FREEWATER {
     def lambda1 = task.ext.fw_lambda1 ? "--lambda1 " + task.ext.fw_lambda1 : ""
     def lambda2 = task.ext.fw_lambda2 ? "--lambda2 " + task.ext.fw_lambda2 : ""
     def replace_bad_voxels = task.ext.replace_bad_voxels != null ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
+    def compute_rmse = task.ext.compute_rmse ? "--compute_rmse" : ""
+    def compute_nrmse = task.ext.compute_nrmse ? "--compute_nrmse" : ""
     def nthreads = task.ext.single_thread ? 1 : task.cpus
     def b_thr = task.ext.b_thr ? "--b_thr " + task.ext.b_thr : ""
     def set_kernels = kernels ? "--load_kernels $kernels" : "--save_kernels kernels/"
@@ -46,13 +49,15 @@ process RECONST_FREEWATER {
 
     scil_freewater_maps $dwi $bval $bvec $para_diff_str $perp_diff_min_str \
         $perp_diff_max_str $iso_diff_str $lambda1 $lambda2 --processes $nthreads $b_thr \
-        $set_mask $set_kernels $compute_only $replace_bad_voxels
+        $set_mask $set_kernels $compute_only $replace_bad_voxels \
+        $compute_rmse $compute_nrmse
 
     if [ -z "${compute_only}" ]; then
         mv results/DWI_corrected.nii.gz ${prefix}__dwi_fw_corrected.nii.gz
         mv results/fit_dir.nii.gz ${prefix}__dir.nii.gz
         mv results/fit_FiberVolume.nii.gz ${prefix}__fibervolume.nii.gz
         mv results/fit_FW.nii.gz ${prefix}__fwf.nii.gz
+        mv results/fit_RMSE.nii.gz ${prefix}__rmse.nii.gz
         mv results/fit_NRMSE.nii.gz ${prefix}__nrmse.nii.gz
 
         rm -rf results
@@ -79,6 +84,7 @@ process RECONST_FREEWATER {
     touch "${prefix}__dir.nii.gz"
     touch "${prefix}__fibervolume.nii.gz"
     touch "${prefix}__fwf.nii.gz"
+    touch "${prefix}__rmse.nii.gz"
     touch "${prefix}__nrmse.nii.gz"
 
     cat <<-END_VERSIONS > versions.yml
