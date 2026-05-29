@@ -37,7 +37,7 @@ template:
   description: sf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
-  name: sf-pediatric
+  name: sf_pediatric
   org: scilus
   outdir: .
   skip_features:
