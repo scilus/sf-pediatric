@@ -228,6 +228,10 @@ workflow PIPELINE_COMPLETION {
 
         completionSummary(monochrome_logs)
 
+        //
+        // ** Generate sidecar jsons for all files **
+        //
+        generateSidecarJson(outdir)
     }
 
     workflow.onError {
