@@ -1,4 +1,4 @@
-# scilus/pediatric: Output
+# scilus/sf_pediatric: Output
 
 ## Introduction
 

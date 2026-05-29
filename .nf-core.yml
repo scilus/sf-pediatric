@@ -38,7 +38,7 @@ template:
     (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
-  name: pediatric
+  name: sf_pediatric
   org: scilus
   outdir: .
   skip_features:

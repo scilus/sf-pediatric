@@ -7,7 +7,7 @@ include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_pediatric_pipeline'
+include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,7 +15,7 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_pedi
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow PEDIATRIC {
+workflow SF_PEDIATRIC {
 
     take:
     ch_samplesheet // channel: samplesheet read in from --input
@@ -53,7 +53,7 @@ workflow PEDIATRIC {
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${outdir}/pipeline_info",
-            name:  'pediatric_software_'  + 'mqc_'  + 'versions.yml',
+            name:  'sf_pediatric_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
         )
@@ -73,7 +73,7 @@ workflow PEDIATRIC {
     MULTIQC(
         ch_multiqc_files.flatten().collect().map { files ->
             [
-                [id: 'pediatric'],
+                [id: 'sf_pediatric'],
                 files,
                 multiqc_config
                     ? file(multiqc_config, checkIfExists: true)

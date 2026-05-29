@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the scilus/pediatric pipeline
+// Subworkflow with functionality specific to the scilus/sf_pediatric pipeline
 //
 
 /*

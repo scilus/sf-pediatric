@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/scilus/pediatric/master/nextflow_schema.json",
-    "title": "scilus/pediatric pipeline parameters",
+    "$id": "https://raw.githubusercontent.com/scilus/sf_pediatric/master/nextflow_schema.json",
+    "title": "scilus/sf_pediatric pipeline parameters",
     "description": "sf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.",
     "type": "object",
     "$defs": {

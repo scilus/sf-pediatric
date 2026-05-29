@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    scilus/pediatric
+    scilus/sf_pediatric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/scilus/pediatric
+    Github : https://github.com/scilus/sf_pediatric
 ----------------------------------------------------------------------------------------
 */
 
@@ -13,9 +13,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { PEDIATRIC  } from './workflows/pediatric'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_pediatric_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_pediatric_pipeline'
+include { SF_PEDIATRIC  } from './workflows/sf_pediatric'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -25,7 +25,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_pedi
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow SCILUS_PEDIATRIC {
+workflow SCILUS_SF_PEDIATRIC {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -35,7 +35,7 @@ workflow SCILUS_PEDIATRIC {
     //
     // WORKFLOW: Run pipeline
     //
-    PEDIATRIC (
+    SF_PEDIATRIC (
         samplesheet,
         params.multiqc_config,
         params.multiqc_logo,
@@ -43,7 +43,7 @@ workflow SCILUS_PEDIATRIC {
         params.outdir,
     )
     emit:
-    multiqc_report = PEDIATRIC.out.multiqc_report // channel: /path/to/multiqc_report.html
+    multiqc_report = SF_PEDIATRIC.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,7 +72,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    SCILUS_PEDIATRIC (
+    SCILUS_SF_PEDIATRIC (
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //
@@ -84,7 +84,7 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        SCILUS_PEDIATRIC.out.multiqc_report
+        SCILUS_SF_PEDIATRIC.out.multiqc_report
     )
 }
 
