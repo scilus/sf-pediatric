@@ -115,7 +115,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.2.3"
                 }
             },
             [
@@ -126,7 +126,7 @@
                 "multiqc/global_multiqc_report.html",
                 "participants.tsv",
                 "pipeline_info",
-                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf_pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
@@ -706,11 +706,11 @@
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
+        "timestamp": "2026-05-29T15:21:24.027889",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2026-05-08T12:36:02.750618"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
         "content": [
@@ -803,7 +803,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.2.3"
                 }
             },
             [
@@ -814,7 +814,7 @@
                 "multiqc/global_multiqc_report.html",
                 "participants.tsv",
                 "pipeline_info",
-                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf_pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
@@ -1274,10 +1274,10 @@
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
+        "timestamp": "2026-05-29T15:30:33.618472",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2026-05-08T12:45:31.114659"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }
