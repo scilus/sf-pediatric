@@ -13,9 +13,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { PEDIATRIC  } from './workflows/pediatric'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
+include { SF_PEDIATRIC  } from './workflows/sf_pediatric'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -25,21 +25,21 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sf-p
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NF_PEDIATRIC {
+workflow SCILUS_SF_PEDIATRIC {
 
     take:
     input_bids  // channel: BIDS folder read in from --input
 
     main:
-
     //
     // WORKFLOW: Run pipeline
     //
-    PEDIATRIC (
+    SF_PEDIATRIC (
         input_bids
     )
+
     emit:
-    multiqc_report = PEDIATRIC.out.multiqc_report // channel: /path/to/multiqc_report.html
+    multiqc_report = SF_PEDIATRIC.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -69,7 +69,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NF_PEDIATRIC (
+    SCILUS_SF_PEDIATRIC (
         PIPELINE_INITIALISATION.out.input_bids
     )
     //
@@ -81,9 +81,7 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
-
-        NF_PEDIATRIC.out.multiqc_report
+        SCILUS_SF_PEDIATRIC.out.multiqc_report
     )
 }
 

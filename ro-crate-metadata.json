@@ -1,22 +1,5 @@
 {
-    "@context": [
-        "https://w3id.org/ro/crate/1.1/context",
-        {
-            "GithubService": "https://w3id.org/ro/terms/test#GithubService",
-            "JenkinsService": "https://w3id.org/ro/terms/test#JenkinsService",
-            "PlanemoEngine": "https://w3id.org/ro/terms/test#PlanemoEngine",
-            "TestDefinition": "https://w3id.org/ro/terms/test#TestDefinition",
-            "TestInstance": "https://w3id.org/ro/terms/test#TestInstance",
-            "TestService": "https://w3id.org/ro/terms/test#TestService",
-            "TestSuite": "https://w3id.org/ro/terms/test#TestSuite",
-            "TravisService": "https://w3id.org/ro/terms/test#TravisService",
-            "definition": "https://w3id.org/ro/terms/test#definition",
-            "engineVersion": "https://w3id.org/ro/terms/test#engineVersion",
-            "instance": "https://w3id.org/ro/terms/test#instance",
-            "resource": "https://w3id.org/ro/terms/test#resource",
-            "runsOn": "https://w3id.org/ro/terms/test#runsOn"
-        }
-    ],
+    "@context": "https://w3id.org/ro/crate/1.2/context",
     "@graph": [
         {
             "@id": "./",
@@ -65,12 +48,6 @@
                     "@id": "nextflow_schema.json"
                 },
                 {
-                    "@id": "CHANGELOG.md"
-                },
-                {
-                    "@id": "LICENSE"
-                },
-                {
                     "@id": "CITATIONS.md"
                 },
                 {
@@ -112,7 +89,7 @@
             },
             "conformsTo": [
                 {
-                    "@id": "https://w3id.org/ro/crate/1.1"
+                    "@id": "https://w3id.org/ro/crate/1.2"
                 },
                 {
                     "@id": "https://w3id.org/workflowhub/workflow-ro-crate/1.0"
@@ -126,9 +103,9 @@
                 "SoftwareSourceCode",
                 "ComputationalWorkflow"
             ],
-            "creator": [
+            "contributor": [
                 {
-                    "@id": "#anthony.gagnon7@usherbrooke.ca"
+                    "@id": "#87abf7f8-135b-434d-9728-e5888bf40ee1"
                 }
             ],
             "dateCreated": "",
@@ -139,12 +116,7 @@
                 "nextflow"
             ],
             "license": [
-                "MIT"
-            ],
-            "maintainer": [
-                {
-                    "@id": "#anthony.gagnon7@usherbrooke.ca"
-                }
+                null
             ],
             "name": [
                 "scilus/sf-pediatric"
@@ -267,16 +239,6 @@
             "description": "JSON schema for pipeline parameter specification"
         },
         {
-            "@id": "CHANGELOG.md",
-            "@type": "File",
-            "description": "Information on changes made to the pipeline"
-        },
-        {
-            "@id": "LICENSE",
-            "@type": "File",
-            "description": "The license - should be MIT"
-        },
-        {
             "@id": "CITATIONS.md",
             "@type": "File",
             "description": "Citations needed when using the pipeline"
@@ -318,7 +280,7 @@
             "url": "https://nf-co.re/"
         },
         {
-            "@id": "#anthony.gagnon7@usherbrooke.ca",
+            "@id": "#87abf7f8-135b-434d-9728-e5888bf40ee1",
             "@type": "Person",
             "email": "anthony.gagnon7@usherbrooke.ca",
             "name": "Anthony Gagnon"

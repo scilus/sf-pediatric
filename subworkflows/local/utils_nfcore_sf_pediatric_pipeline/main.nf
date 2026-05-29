@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the scilus/sf-pediatric pipeline
+// Subworkflow with functionality specific to the scilus/sf_pediatric pipeline
 //
 
 /*
@@ -14,7 +14,6 @@ include { samplesheetToList         } from 'plugin/nf-schema'
 include { paramsHelp                } from 'plugin/nf-schema'
 include { completionEmail           } from '../../nf-core/utils_nfcore_pipeline'
 include { completionSummary         } from '../../nf-core/utils_nfcore_pipeline'
-include { imNotification            } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NEXTFLOW_PIPELINE   } from '../../nf-core/utils_nextflow_pipeline'
 include { UTILS_BIDSLAYOUT          } from '../../../modules/local/utils/bidslayout'
@@ -35,13 +34,13 @@ workflow PIPELINE_INITIALISATION {
     outdir            //  string: The output directory where the results will be saved
     input_bids        //  string: Path to input samplesheet
     bids_script       //  string: Path to BIDS layout script
-    help              // boolean: Show help message and exit
-    help_full         // boolean: Show full help message and exit
-    show_hidden       // boolean: Show hidden parameters in help message
+    help              // boolean: Display help message and exit
+    help_full         // boolean: Show the full help message
+    show_hidden       // boolean: Show hidden parameters in the help message
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     //
     // Print version and exit if required and dump pipeline parameters to JSON file
@@ -56,6 +55,13 @@ workflow PIPELINE_INITIALISATION {
     //
     // Validate parameters and generate parameter summary to stdout
     //
+
+    def before_text = ""
+    def after_text = ""
+    if (monochrome_logs) {
+        before_text = before_text.replaceAll(/\033\[[0-9;]*m/, '')
+    }
+
     command = "nextflow run ${workflow.manifest.name} -profile <tracking,docker,...> --input <BIDS_folder> --outdir <OUTDIR>"
 
     UTILS_NFSCHEMA_PLUGIN (
@@ -65,8 +71,8 @@ workflow PIPELINE_INITIALISATION {
         help,
         help_full,
         show_hidden,
-        "",
-        "",
+        before_text,
+        after_text,
         command
     )
 
@@ -98,8 +104,8 @@ workflow PIPELINE_INITIALISATION {
     // Create channel from input file provided through params.input
     //
     if ( input_bids ) {
-        ch_bids_script = Channel.fromPath(bids_script)
-        ch_input_bids = Channel.fromPath(input_bids)
+        ch_bids_script = channel.fromPath(bids_script)
+        ch_input_bids = channel.fromPath(input_bids)
         def participant_ids = params.participant_label ?
             params.participant_label instanceof String ?
             params.participant_label.tokenize(',') :
@@ -134,11 +140,11 @@ workflow PIPELINE_INITIALISATION {
 
                     // Add a check that b-values are within the params.dti_max_shell_value and params.fodf_min_shell_value, and if not, throw an error.
                     if ( item.bval && !params.dti_shells && !params.fodf_shells && params.tracking ) {
-                        def bvals = file(item.bval).text.trim().split(/\s+/).findAll { it }.collect { it as Double }.toSet()
-                            .findAll { !(it >= 0 - params.dwi_b0_threshold) || !(it <= 0 + params.dwi_b0_threshold) }
+                        def bvals = file(item.bval).text.trim().split(/\s+/).findAll { it -> it }.collect { it -> it as Double }.toSet()
+                            .findAll { it -> !(it >= 0 - params.dwi_b0_threshold) || !(it <= 0 + params.dwi_b0_threshold) }
 
                         // Check if any values fits the threshold for DTI fitting (shells under the threshold)
-                        def belowDTI = bvals.findAll { it <= params.dti_max_shell_value }
+                        def belowDTI = bvals.findAll { it -> it <= params.dti_max_shell_value }
                         if ( belowDTI.size() == 0) {
                             error "ERROR: No b-values are below the dti_max_shell_value threshold of ${params.dti_max_shell_value} for subject ${sid}. " +
                                 "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
@@ -147,7 +153,7 @@ workflow PIPELINE_INITIALISATION {
                         }
 
                         // Check if any values fits the threshold for fODF fitting (shells over the threshold)
-                        def aboveFODF = bvals.findAll { it >= params.fodf_min_shell_value }
+                        def aboveFODF = bvals.findAll { it -> it >= params.fodf_min_shell_value }
                         if ( aboveFODF.size() == 0) {
                             error "ERROR: No b-values are above the fodf_min_shell_value threshold of ${params.fodf_min_shell_value} for subject ${sid}. " +
                                 "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
@@ -176,7 +182,7 @@ workflow PIPELINE_INITIALISATION {
             }
 
     } else {
-        ch_inputs = Channel.empty()
+        ch_inputs = channel.empty()
     }
 
     emit:
@@ -198,7 +204,6 @@ workflow PIPELINE_COMPLETION {
     plaintext_email // boolean: Send plain-text email instead of HTML
     outdir          //    path: Path to output directory where results will be published
     monochrome_logs // boolean: Disable ANSI colour codes in log output
-    hook_url        //  string: hook URL for notifications
     multiqc_report  //  string: Path to MultiQC report
 
     main:
@@ -222,18 +227,11 @@ workflow PIPELINE_COMPLETION {
         }
 
         completionSummary(monochrome_logs)
-        if (hook_url) {
-            imNotification(summary_params, hook_url)
-        }
 
-        //
-        // ** Generate sidecar jsons for all files
-        //
-        generateSidecarJson( outdir )
     }
 
     workflow.onError {
-        log.error "Pipeline failed. Please refer to troubleshooting docs: https://scilus.github.io/sf-pediatric/guides/troubleshooting/"
+        log.error "Pipeline failed. Please refer to troubleshooting docs for common issues: https://scilus.github.io/sf-pediatric/guides/troubleshooting/"
     }
 }
 
@@ -290,8 +288,8 @@ def generateDatasetJson() {
 //
 def extractBidsInfo(filePath) {
     def pathParts = filePath.toString().split('/')
-    def subjectId = pathParts.find { it.startsWith('sub-') }
-    def sessionId = pathParts.find { it.startsWith('ses-') }
+    def subjectId = pathParts.find { it -> it.startsWith('sub-') }
+    def sessionId = pathParts.find { it -> it.startsWith('ses-') }
 
     return [ subject: subjectId, sessionId: sessionId != null ? sessionId + "/" : '' ]
 }
@@ -600,9 +598,9 @@ def generateSidecarJson(outputDir) {
             if (frfFile.exists() && frfFile.size() > 0) {
                 def line = frfFile.text.trim()
                 if (line) {
-                    def values = line.split(/\s+/).findAll { it }.collect { it as Double }
+                    def values = line.split(/\s+/).findAll { it -> it }.collect { it -> it as Double }
                     // Create nested list: [[val1], [val2], [val3], [val4]]
-                    responseList = values.collect { [it] }
+                    responseList = values.collect { it -> [it] }
                 }
             }
         }
@@ -981,7 +979,7 @@ def buildMethodsDescription() {
         }
     ]
 
-    def pieces = fragments.collect { _f, c -> try { c.call() } catch(Exception e) { "" } }.findAll { it -> it && it.trim() }
+    def pieces = fragments.collect { _f, c -> try { c.call() } catch(Exception _e) { "" } }.findAll { it -> it && it.trim() }
 
     def html = """<div class="sf-pediatric-methods">
 ${pieces.join('\n\n')}
@@ -1012,7 +1010,7 @@ def toolBibliographyText() {
         token = token.replaceAll("\\s+", " ")
         found << token
     }
-    found = found.findAll{ it }.unique()
+    found = found.findAll{ it -> it }.unique()
 
     // Map of known tokens -> full bibliographic <li> entries.
     // Add or update entries here as you need (these are the common citations used across the methods).
@@ -1072,11 +1070,11 @@ def toolBibliographyText() {
             bibMap["Jenkinson et al., 2012"],
             bibMap["Tustison et al., 2010"],
             bibMap["Ewels et al., 2016"]
-        ].findAll{ it }
+        ].findAll{ it -> it }
     }
 
     // Return joined HTML fragment (no wrapping <ul> here so caller can place it)
-    return "<ul>" + bibliographyEntries.sort{ it.toLowerCase() }.join("") + "</ul>"
+    return "<ul>" + bibliographyEntries.sort{ it -> it.toLowerCase() }.join("") + "</ul>"
 }
 
 //

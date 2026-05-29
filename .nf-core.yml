@@ -8,6 +8,14 @@ lint:
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
     - tests/default.nf.test
+    - conf/containers_conda_lock_files_amd64.config
+    - conf/containers_conda_lock_files_arm64.config
+    - conf/containers_docker_amd64.config
+    - conf/containers_docker_arm64.config
+    - conf/containers_singularity_https_amd64.config
+    - conf/containers_singularity_https_arm64.config
+    - conf/containers_singularity_oras_amd64.config
+    - conf/containers_singularity_oras_arm64.config
   files_unchanged:
     - CODE_OF_CONDUCT.md
     - .github/ISSUE_TEMPLATE/feature_request.yml
@@ -30,11 +38,12 @@ lint:
     - manifest.name
     - manifest.homePage
   template_strings: false
-nf_core_version: 3.5.2
+nf_core_version: 4.0.2
 repository_type: pipeline
 template:
   author: Anthony Gagnon
-  description: sf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.
+  description: sf-pediatric is a neuroimaging pipeline to process pediatric MRI data
+    (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
   name: sf_pediatric

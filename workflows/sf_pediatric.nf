@@ -9,9 +9,9 @@ include { QC_MULTIQC as MULTIQC_GLOBAL         } from '../modules/nf-neuro/qc/mu
 include { paramsSummaryMap                  } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc              } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML            } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
+include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
 include { FETCH_DERIVATIVES                 } from '../subworkflows/local/utils/fetch_derivatives.nf'
-include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_sf-pediatric_pipeline'
+include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
 
 // ** Prepare templates ** //
 include { TEMPLATES                         } from '../subworkflows/local/templates/main.nf'
@@ -70,7 +70,6 @@ include { OUTPUT_TEMPLATE_SPACE             } from '../subworkflows/nf-neuro/out
 
 // ** QC ** //
 include { QC } from '../subworkflows/local/QC/qc.nf'
-include { imNotification } from '../subworkflows/nf-core/utils_nfcore_pipeline/main.nf'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,22 +77,21 @@ include { imNotification } from '../subworkflows/nf-core/utils_nfcore_pipeline/m
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow PEDIATRIC {
+workflow SF_PEDIATRIC {
 
     take:
     ch_input_bids    // channel: from --input_bids
 
     main:
 
-    // Empty channels to collect data during runtime
-    ch_versions = channel.empty()
-    ch_multiqc_files_sub = channel.empty()
-    ch_multiqc_files_global = channel.empty()
-    ch_nifti_files_to_transform = channel.empty()
-    ch_rgb_files_to_transform = channel.empty()
-    ch_mask_files_to_transform = channel.empty()
-    ch_labels_files_to_transform = channel.empty()
-    ch_trk_files_to_transform = channel.empty()
+    def ch_versions = channel.empty()
+    def ch_multiqc_files_sub = channel.empty()
+    def ch_multiqc_files_global = channel.empty()
+    def ch_nifti_files_to_transform = channel.empty()
+    def ch_rgb_files_to_transform = channel.empty()
+    def ch_mask_files_to_transform = channel.empty()
+    def ch_labels_files_to_transform = channel.empty()
+    def ch_trk_files_to_transform = channel.empty()
 
     // ** BIDS dataset_description file. ** //
     generateDatasetJson ()
@@ -786,7 +784,7 @@ workflow PEDIATRIC {
                 .mix(RECONST_FW_NODDI.out.fw_dti_fa)
             ch_rgb_files_to_transform = ch_rgb_files_to_transform
                 .mix(RECONST_FW_NODDI.out.fw_dti_rgb)
-        }
+    }
 
     if ( params.bundling ) {
         //
@@ -1098,13 +1096,31 @@ workflow PEDIATRIC {
     //
     // Collate and save software versions
     //
-    softwareVersionsToYAML(ch_versions)
+    def topic_versions = channel.topic("versions")
+        .distinct()
+        .branch { entry ->
+            versions_file: entry instanceof Path
+            versions_tuple: true
+        }
+
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
+        }
+        .groupTuple(by:0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    def ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+        .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
-            name:  'sf-pediatric_software_'  + 'mqc_'  + 'versions.yml',
+            name:  'sf_pediatric_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
-        ).set { ch_collated_versions }
+        )
 
     //
     // MODULE: MultiQC
@@ -1123,26 +1139,16 @@ workflow PEDIATRIC {
         channel.fromPath(params.multiqc_logo, checkIfExists: true) :
         channel.fromPath("$projectDir/assets/sf-pediatric-light-logo.png", checkIfExists: true)
 
-    summary_params      = paramsSummaryMap(
-        workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = channel.value(paramsSummaryMultiqc(summary_params))
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
-        file(params.multiqc_methods_description, checkIfExists: true) :
-        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-    ch_methods_description                = channel.value(
-        methodsDescriptionText(ch_multiqc_custom_methods_description))
-
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_methods_description.collectFile(
-            name: 'methods_description_mqc.yaml',
-            sort: true
-        )
-    )
-
-    MULTIQC_SUBJECT (
+    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    def ch_multiqc_custom_methods_description = params.multiqc_methods_description
+        ? file(params.multiqc_methods_description, checkIfExists: true)
+        : file("${projectDir}/assets/methods_description_template.yml", checkIfExists: true)
+    def ch_methods_description = channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: true))
+    MULTIQC_SUBJECT(
         qc_files,
         ch_multiqc_files.collect(),
         ch_multiqc_config_subject.toList(),
@@ -1191,9 +1197,8 @@ workflow PEDIATRIC {
     )
 
     emit:
-    multiqc_report = MULTIQC_SUBJECT.out.report.toList()    // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                            // channel: [ path(versions.yml) ]
-
+    multiqc_report = MULTIQC_SUBJECT.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 
 /*
