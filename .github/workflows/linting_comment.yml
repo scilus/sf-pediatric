@@ -15,6 +15,7 @@ jobs:
         with:
           workflow: linting.yml
           workflow_conclusion: completed
+          allow_forks: true
 
       - name: Get PR number
         id: pr_number
