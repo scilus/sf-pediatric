@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/scilus/nf-pediatric/master/nextflow_schema.json",
-    "title": "scilus/nf-pediatric pipeline parameters",
-    "description": "nf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.",
+    "$id": "https://raw.githubusercontent.com/scilus/pediatric/master/nextflow_schema.json",
+    "title": "scilus/pediatric pipeline parameters",
+    "description": "sf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.",
     "type": "object",
     "$defs": {
         "input_output_options": {
@@ -139,13 +139,6 @@
                     "type": "boolean",
                     "description": "Do not use coloured log outputs.",
                     "fa_icon": "fas fa-palette",
-                    "hidden": true
-                },
-                "hook_url": {
-                    "type": "string",
-                    "description": "Incoming hook URL for messaging service",
-                    "fa_icon": "fas fa-people-group",
-                    "help_text": "Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.",
                     "hidden": true
                 },
                 "multiqc_config": {
