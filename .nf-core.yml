@@ -1,9 +1,9 @@
 lint:
   files_exist:
     - CODE_OF_CONDUCT.md
-    - assets/nf-core-sf-pediatric_logo_light.png
-    - docs/images/nf-core-sf-pediatric_logo_light.png
-    - docs/images/nf-core-sf-pediatric_logo_dark.png
+    - assets/nf-core-sf_pediatric_logo_light.png
+    - docs/images/nf-core-sf_pediatric_logo_light.png
+    - docs/images/nf-core-sf_pediatric_logo_dark.png
     - .github/ISSUE_TEMPLATE/config.yml
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
@@ -16,28 +16,28 @@ lint:
     - conf/containers_singularity_https_arm64.config
     - conf/containers_singularity_oras_amd64.config
     - conf/containers_singularity_oras_arm64.config
+    - conf/test_full.config
   files_unchanged:
     - CODE_OF_CONDUCT.md
     - .github/ISSUE_TEMPLATE/feature_request.yml
+    - .github/ISSUE_TEMPLATE/config.yml
     - assets/email_template.html
     - assets/email_template.txt
     - assets/sendmail_template.txt
     - .github/workflows/linting.yml
     - .github/workflows/branch.yml
     - .github/workflows/linting_comment.yml
-    - assets/nf-core-sf-pediatric_logo_light.png
-    - docs/images/nf-core-sf-pediatric_logo_light.png
-    - docs/images/nf-core-sf-pediatric_logo_dark.png
     - .github/ISSUE_TEMPLATE/bug_report.yml
     - .github/PULL_REQUEST_TEMPLATE.md
     - docs/README.md
     - .github/CONTRIBUTING.md
     - .gitignore
-  multiqc_config: false
+  multiqc_config: False
   nextflow_config:
     - manifest.name
     - manifest.homePage
-  template_strings: false
+  template_strings: False
+  container_configs: False
 nf_core_version: 4.0.2
 repository_type: pipeline
 template:
