@@ -2,7 +2,7 @@ process FILTERING_COMMIT {
     tag "$meta.id"
     label 'process_medium'
 
-    container 'scilus/scilpy@sha256:17ab2a09bc049cea9fc1f04df4b1324f280bed86202092c9f263b742093aa735'
+    container 'scilus/scilpy@sha256:2626bb7cec11a9acf421ba5c5d9c333f065e2434134c6cfdcaa850122727a1c3'
 
     input:
     tuple val(meta), path(hdf5), path(dwi), path(bval), path(bvec), path(peaks)

@@ -5,19 +5,6 @@ include { RECONST_FREEWATER      } from '../../../modules/nf-neuro/reconst/freew
 include { RECONST_DTIMETRICS as FW_CORRECTED_DTIMETRICS } from '../../../modules/nf-neuro/reconst/dtimetrics/main'
 include { UTILS_OPTIONS } from '../utils_options/main'
 
-// Helper function to format inputs
-def format_input(channel) {
-    channel.ifEmpty { [[tag: 'empty'], null] }
-        .map { it ->
-            // If we have subject-bound, leave as is
-            if (it instanceof List && it.size() == 2)
-                return it
-            // If we have a single value, convert to tuple
-            else {
-                return [[tag: 'global'], it]
-            }
-        }
-}
 
 workflow RECONST_FW_NODDI {
 
@@ -39,121 +26,120 @@ workflow RECONST_FW_NODDI {
         }
 
         // Prepase base input channels
-        ch_base_noddi = dwi_bval_bvec.join(brain_mask)
-        ch_base_freewater = dwi_bval_bvec.join(brain_mask)
+        ch_base = dwi_bval_bvec.join(brain_mask)
 
-        para_diff = format_input(diffusivities.para_diff)
-        iso_diff = format_input(diffusivities.iso_diff)
-        perp_diff_min = format_input(diffusivities.perp_diff_min)
-        perp_diff_max = format_input(diffusivities.perp_diff_max)
-
-        // Combine all diffusivity priors together, and assess wheter they are
-        // empty, single value, or per-subject values.
-        ch_priors_branched = para_diff
-            .combine( iso_diff )
-            .combine( perp_diff_min )
-            .combine( perp_diff_max )
-            .map { items ->
-                // Flatten the combined tuples
-                def flattened = items.flatten()
-
-                def para_t = flattened[0..1]
-                def iso_t = flattened[2..3]
-                def perp_min_t = flattened[4..5]
-                def perp_max_t = flattened[6..7]
-
-                // Assertions to check which one we got
-                def has_para = !(para_t[0].containsKey('tag') && para_t[0].tag == 'empty')
-                def has_iso = !(iso_t[0].containsKey('tag') && iso_t[0].tag == 'empty')
-                def has_perp_min = !(perp_min_t[0].containsKey('tag') && perp_min_t[0].tag == 'empty')
-                def has_perp_max = !(perp_max_t[0].containsKey('tag') && perp_max_t[0].tag == 'empty')
-
-                // Validation checks for NODDI
-                if ( options.run_noddi && (has_para != has_iso) ) {
-                    error "For NODDI reconstruction, both para_diff and iso_diff must be provided together."
-                }
-
-                // Validation checks for Freewater
-                if ( options.run_freewater && (has_para != has_iso || has_para != has_perp_min || has_para != has_perp_max) ) {
-                    error "For Freewater Elimination reconstruction, para_diff, iso_diff, perp_diff_min and perp_diff_max "
-                        "must be provided together."
-                }
-
-                // Check if per-subject values were provided
-                def subject_bound = has_para && para_t[0].containsKey('id') && !para_t[0].containsKey('tag')
-
-                // Warn if both custom priors and averaging are requested
-                if ((has_para || has_iso) && options.average_diff_priors) {
-                    log.warn "Both custom diffusivity priors and options.average_diff_priors parameter were provided. " +
-                        "The specified custom diffusivity priors will be used across subjects."
-                }
-
-                return tuple(has_para, has_iso, has_perp_min, has_perp_max, subject_bound,
-                    para_t, iso_t, perp_min_t, perp_max_t)
+        // Classify priors based on their format
+        ch_para = diffusivities.para_diff
+            .branch { item ->
+                per_subject: item instanceof List && item.size() == 2 && item[0] instanceof Map && item[0].containsKey('id')
+                global: true
             }
-            .branch{
-                has_para, has_iso, has_perp_min, has_perp_max, subject_bound,
-                para_t, iso_t, perp_min_t, perp_max_t ->
-
-                custom_subject_bound: (has_para && has_iso) && subject_bound
-                    return tuple(para_t, iso_t, perp_min_t, perp_max_t)
-                custom: (has_para && has_iso) && !subject_bound
-                    return tuple(para_t[1], iso_t[1], has_perp_min ? perp_min_t[1] : null, has_perp_max ? perp_max_t[1] : null)
-                compute: true
-                    // No custom priors provided, will compute them later
-                    return true
+        ch_iso = diffusivities.iso_diff
+            .branch { item ->
+                per_subject: item instanceof List && item.size() == 2 && item[0] instanceof Map && item[0].containsKey('id')
+                global: true
             }
+        ch_perp_min = diffusivities.perp_diff_min
+            .branch { item ->
+                per_subject: item instanceof List && item.size() == 2 && item[0] instanceof Map && item[0].containsKey('id')
+                global: true
+            }
+        ch_perp_max = diffusivities.perp_diff_max
+            .branch { item ->
+                per_subject: item instanceof List && item.size() == 2 && item[0] instanceof Map && item[0].containsKey('id')
+                global: true
+            }
+
+        // Combine all counts into a single validation tuple and check
+        ch_para.per_subject.count()
+            .combine(ch_iso.per_subject.count())
+            .combine(ch_perp_min.per_subject.count())
+            .combine(ch_perp_max.per_subject.count())
+            .combine(ch_para.global.count())
+            .combine(ch_iso.global.count())
+            .combine(ch_perp_min.global.count())
+            .combine(ch_perp_max.global.count())
+            .map { para_s, iso_s, perp_min_s, perp_max_s, para_g, iso_g, perp_min_g, perp_max_g ->
+
+                // NODDI validation: para and iso must be provided together
+                if ( options.run_noddi ) {
+                    def has_para = (para_s > 0 || para_g > 0)
+                    def has_iso = (iso_s > 0 || iso_g > 0)
+                    if ( has_para != has_iso ) {
+                        error "For NODDI reconstruction, both para_diff and iso_diff must be provided together, " +
+                            "either as per-subject values or as global values."
+                    }
+                }
+
+                // Freewater validation: all four priors must be provided together
+                if ( options.run_freewater ) {
+                    def has_para = (para_s > 0 || para_g > 0)
+                    def has_iso = (iso_s > 0 || iso_g > 0)
+                    def has_perp_min = (perp_min_s > 0 || perp_min_g > 0)
+                    def has_perp_max = (perp_max_s > 0 || perp_max_g > 0)
+                    if ( has_para && (has_para != has_iso || has_para != has_perp_min || has_para != has_perp_max) ) {
+                        error "For Freewater Elimination reconstruction, para_diff, iso_diff, perp_diff_min and " +
+                            "perp_diff_max must be provided together, either as per-subject values or as global values."
+                    }
+                }
+
+                // Warn if per-subject priors are provided alongside average_diff_priors
+                if ( options.average_diff_priors && (para_s > 0 || iso_s > 0 || perp_min_s > 0 || perp_max_s > 0) ) {
+                    log.warn "Options.average_diff_priors is set to true, but per-subject diffusivity priors " +
+                            "were provided. The per-subject diffusivity priors will be ignored and the computed " +
+                            "diffusivity priors will be averaged across subjects."
+                }
+
+                return true
+            }
+            .subscribe {}
 
         // Prepare NODDI inputs. This channel will be combined/joined in the
         // lines that follow with diffusivity priors w.r.t the following 3 scenarios:
         // Option 1: The user specifies the diffusivity priors to use (via options.para_diff and options.iso_diff).
-        // Option 2: The user wants to compute the mean diffusivity priors across subjects. (Recommended)
-        // Option 3: The user wants to compute diffusivity priors for each subject individually.
+        // Option 2: The user provides global diffusivity priors to be used across all subjects.
+        // Option 3: The user wants to compute diffusivity priors for each subject individually or average them across subjects (recommended).
 
         // Branch 1: Custom diffusivity priors provided per-subject
-        ch_custom_subject = ch_priors_branched.custom_subject_bound
-            .multiMap{ para_t, iso_t, perp_min_t, perp_max_t ->
-                para: para_t
-                iso: iso_t
-                perp_min: perp_min_t
-                perp_max: perp_max_t
-            }
-
-        ch_noddi_custom_subj = ch_base_noddi
-            .join( ch_custom_subject.para )         // para
-            .join( ch_custom_subject.iso )          // iso
-
-        ch_freewater_custom_subj = ch_base_freewater
-            .join( ch_custom_subject.para )         // para
-            .join( ch_custom_subject.iso )          // iso
-            .join( ch_custom_subject.perp_min )     // perp_min
-            .join( ch_custom_subject.perp_max )     // perp_max
+        ch_noddi_custom_subj = ch_base
+            .join( ch_para.per_subject )
+            .join( ch_iso.per_subject )
+        ch_freewater_custom_subj = ch_base
+            .join( ch_para.per_subject )
+            .join( ch_iso.per_subject )
+            .join( ch_perp_min.per_subject )
+            .join( ch_perp_max.per_subject )
 
         // Branch 2: Custom diffusivity priors provided (single value across subjects)
-        ch_custom = ch_priors_branched.custom
-            .multiMap{ para, iso, perp_min, perp_max ->
-                para: para
-                iso: iso
-                perp_min: perp_min
-                perp_max: perp_max
-            }
-
-        ch_noddi_custom = ch_base_noddi
-            .combine( ch_custom.para )        // para
-            .combine( ch_custom.iso )         // iso
-
-        ch_freewater_custom = ch_base_freewater
-            .combine( ch_custom.para )        // para
-            .combine( ch_custom.iso )         // iso
-            .combine( ch_custom.perp_min )    // perp_min
-            .combine( ch_custom.perp_max )    // perp_max
+        ch_noddi_custom = ch_base
+            .combine( ch_para.global )
+            .combine( ch_iso.global )
+        ch_freewater_custom = ch_base
+            .combine( ch_para.global )
+            .combine( ch_iso.global )
+            .combine( ch_perp_min.global )
+            .combine( ch_perp_max.global )
 
         // Branch 3: Compute diffusivity priors
-        ch_compute_diff_priors = ch_priors_branched.compute
+        ch_subjects_with_custom_priors = ch_para.per_subject
+            .map { meta, _value -> meta }
+        ch_has_global_prior = ch_para.global.count()
+        ch_compute_diff_priors = ch_has_global_prior
             .combine( fa_ad_rd_md )
-            .map{ _bool, meta, fa, ad, rd, md ->
-                return tuple(meta, fa, ad, rd, md)
+            .filter { count, _meta, _fa, _ad, _rd, _md -> count == 0 } // Only compute diffusivity priors if no global prior is provided
+            .map{ _count, meta, fa, ad, rd, md ->
+                return [meta, fa, ad, rd, md]
             }
+
+        // This should not be the case, but removing subjects that have custom priors
+        ch_compute_diff_priors = ch_compute_diff_priors
+            .map { meta, fa, ad, rd, md -> [meta.id, meta, fa, ad, rd, md] }
+            .join(
+                ch_subjects_with_custom_priors.map{ meta -> [meta.id, true] },
+                remainder: true
+            )
+            .filter { items -> items[-1] == null } // Keep only those that do not have custom priors
+            .map { _id, meta, fa, ad, rd, md, _null -> [meta, fa, ad, rd, md] }
 
         RECONST_DIFFUSIVITYPRIORS( ch_compute_diff_priors )
         ch_versions = ch_versions.mix(RECONST_DIFFUSIVITYPRIORS.out.versions)
@@ -176,20 +162,20 @@ workflow RECONST_FW_NODDI {
             )
             ch_versions = ch_versions.mix(RECONST_MEANDIFFUSIVITYPRIORS.out.versions)
 
-            ch_noddi_computed = ch_base_noddi
+            ch_noddi_computed = ch_base
                 .combine(RECONST_MEANDIFFUSIVITYPRIORS.out.mean_para_diff)
                 .combine(RECONST_MEANDIFFUSIVITYPRIORS.out.mean_iso_diff)
-            ch_freewater_computed = ch_base_freewater
+            ch_freewater_computed = ch_base
                 .combine(RECONST_MEANDIFFUSIVITYPRIORS.out.mean_para_diff)
                 .combine(RECONST_MEANDIFFUSIVITYPRIORS.out.mean_iso_diff)
                 .combine(RECONST_MEANDIFFUSIVITYPRIORS.out.min_perp_diff)
                 .combine(RECONST_MEANDIFFUSIVITYPRIORS.out.max_perp_diff)
         }
         else {
-            ch_noddi_computed = ch_base_noddi
+            ch_noddi_computed = ch_base
                 .join(RECONST_DIFFUSIVITYPRIORS.out.mean_para_diff)
                 .join(RECONST_DIFFUSIVITYPRIORS.out.mean_iso_diff)
-            ch_freewater_computed = ch_base_freewater
+            ch_freewater_computed = ch_base
                 .join(RECONST_DIFFUSIVITYPRIORS.out.mean_para_diff)
                 .join(RECONST_DIFFUSIVITYPRIORS.out.mean_iso_diff)
                 .join(RECONST_DIFFUSIVITYPRIORS.out.min_perp_diff)

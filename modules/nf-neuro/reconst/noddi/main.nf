@@ -2,7 +2,7 @@ process RECONST_NODDI {
     tag "$meta.id"
     label 'process_medium'
 
-    container 'scilus/scilpy@sha256:17ab2a09bc049cea9fc1f04df4b1324f280bed86202092c9f263b742093aa735'
+    container 'scilus/scilpy@sha256:2626bb7cec11a9acf421ba5c5d9c333f065e2434134c6cfdcaa850122727a1c3'
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(kernels), val(para_diff), val(iso_diff)
@@ -13,6 +13,8 @@ process RECONST_NODDI {
         tuple val(meta), path("*__icvf.nii.gz")         , emit: icvf, optional: true
         tuple val(meta), path("*__ecvf.nii.gz")         , emit: ecvf, optional: true
         tuple val(meta), path("*__odi.nii.gz")          , emit: odi, optional: true
+        tuple val(meta), path("*__rmse.nii.gz")         , emit: rmse, optional: true
+        tuple val(meta), path("*__nrmse.nii.gz")        , emit: nrmse, optional: true
         path("kernels")                                 , emit: kernels, optional: true
         path "versions.yml"                             , emit: versions
 
@@ -27,6 +29,8 @@ process RECONST_NODDI {
     def lambda1 = task.ext.noddi_lambda1 ? "--lambda1 " + task.ext.noddi_lambda1 : ""
     def lambda2 = task.ext.noddi_lambda2 ? "--lambda2 " + task.ext.noddi_lambda2 : ""
     def replace_bad_voxels = task.ext.replace_bad_voxels != null ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
+    def compute_rmse = task.ext.compute_rmse ? "--compute_rmse" : ""
+    def compute_nrmse = task.ext.compute_nrmse ? "--compute_nrmse" : ""
     def nthreads = task.ext.single_thread ? 1 : task.cpus
     def b_thr = task.ext.b_thr ? "--tolerance " + task.ext.b_thr : ""
     def set_kernels = kernels ? "--load_kernels $kernels" : "--save_kernels kernels/"
@@ -68,7 +72,7 @@ process RECONST_NODDI {
 
     scil_NODDI_maps $dwi $bval $bvec $para_diff_str $iso_diff_str $lambda1 \
         $lambda2 --processes $nthreads $b_thr $set_mask $set_kernels --skip_b0_check $compute_only \
-        $replace_bad_voxels
+        $replace_bad_voxels $compute_rmse $compute_nrmse
 
     if [ -z "${compute_only}" ];
     then
@@ -76,6 +80,8 @@ process RECONST_NODDI {
         mv results/fit_NDI.nii.gz ${prefix}__icvf.nii.gz    # ICVF -> NDI
         mv results/fit_FWF.nii.gz ${prefix}__isovf.nii.gz   # ISOVF -> FWF
         mv results/fit_ODI.nii.gz ${prefix}__odi.nii.gz     # ODI -> OD
+        mv results/fit_RMSE.nii.gz ${prefix}__rmse.nii.gz
+        mv results/fit_NRMSE.nii.gz ${prefix}__nrmse.nii.gz
 
         scil_volume_math subtraction 1 ${prefix}__icvf.nii.gz ${prefix}__ecvf.nii.gz
 
@@ -107,6 +113,8 @@ process RECONST_NODDI {
     touch "${prefix}__isovf.nii.gz"
     touch "${prefix}__ecvf.nii.gz"
     touch "${prefix}__odi.nii.gz"
+    touch "${prefix}__rmse.nii.gz"
+    touch "${prefix}__nrmse.nii.gz"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
