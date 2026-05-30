@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- Add RMSE and NRMSE maps to freewater and noddi output ([#118](https://github.com/scilus/sf-pediatric/pull/118))
 - Support for `nextflow` 26.04.0 ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
 - Quality control section for connectivity data ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
 - Quality control visualization section for bundles ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
@@ -14,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
-- Issues where `NaN` values would appear following `eddy` and were making `amico` models fail du to invalid voxels. `NaN` values are now quantified, reported, and converted to 0.
+- Issues where `reconst_fw_noddi` would use too much RAM causing java heap errors ([#118](https://github.com/scilus/sf-pediatric/pull/118))
+- Issues where `NaN` values would appear following `eddy` and were making `amico` models fail due to invalid voxels. `NaN` values are now quantified, reported, and converted to 0.
 
 ### `Changed`
 
