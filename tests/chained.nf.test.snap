@@ -191,7 +191,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.2.3"
                 }
             },
             [
@@ -214,7 +214,7 @@
                 "multiqc/global_multiqc_report.html",
                 "participants.tsv",
                 "pipeline_info",
-                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf_pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
@@ -1162,11 +1162,11 @@
                 "tpl-MNIInfant_metadata.json"
             ]
         ],
+        "timestamp": "2026-05-29T14:53:35.598031",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2026-05-08T12:08:33.94759"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "Bundling + tracking profiles - should run successfully": {
         "content": [
@@ -1307,7 +1307,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.2.3"
                 }
             },
             [
@@ -1320,7 +1320,7 @@
                 "multiqc/global_multiqc_report.html",
                 "participants.tsv",
                 "pipeline_info",
-                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf_pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
@@ -1712,11 +1712,11 @@
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
+        "timestamp": "2026-05-29T15:07:25.235209",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2026-05-08T12:19:26.314565"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "Segmentation + connectomics profiles - should run successfully": {
         "content": [
@@ -1774,7 +1774,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.2.3"
                 }
             },
             [
@@ -1797,7 +1797,7 @@
                 "multiqc/global_multiqc_report.html",
                 "participants.tsv",
                 "pipeline_info",
-                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf_pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
@@ -1978,11 +1978,11 @@
                 "sub-test4/sub-test4/touch"
             ]
         ],
+        "timestamp": "2026-05-29T14:32:44.535284",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2026-05-08T11:47:29.78775"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     },
     "Connectomics + tracking profiles - should run successfully": {
         "content": [
@@ -2113,7 +2113,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.2.3"
                 }
             },
             [
@@ -2124,7 +2124,7 @@
                 "multiqc/global_multiqc_report.html",
                 "participants.tsv",
                 "pipeline_info",
-                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf_pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
@@ -2564,10 +2564,10 @@
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
+        "timestamp": "2026-05-29T14:40:55.404139",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2026-05-08T11:57:41.246571"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }

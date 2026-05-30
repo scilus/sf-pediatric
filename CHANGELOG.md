@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Issues where `NaN` values would appear following `eddy` and were making `amico` models fail du to invalid voxels. `NaN` values are now quantified, reported, and converted to 0.
 
+### `Changed`
+
+- Update to nf-core template `4.0.2` ([#117](https://github.com/scilus/sf-pediatric/pull/117))
+
 ## [0.2.2] - [2026-02-09]
 
 ### `Added`

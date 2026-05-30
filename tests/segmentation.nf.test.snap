@@ -34,7 +34,7 @@
                     "freesurfer": "8.0.0"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.2.3"
                 }
             },
             [
@@ -57,7 +57,7 @@
                 "multiqc/global_multiqc_report.html",
                 "participants.tsv",
                 "pipeline_info",
-                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf_pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
@@ -164,10 +164,10 @@
                 "sub-test1_ses-baseline"
             ]
         ],
+        "timestamp": "2026-05-29T15:08:55.870976",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2026-05-08T12:24:46.10467"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }
