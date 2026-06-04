@@ -8,11 +8,10 @@ process UTILS_EXTRACTB0 {
     tuple val(meta), path(dwi), path(bval), path(bvec)
 
     output:
-    tuple val(meta), path("*_b0.nii.gz")        , emit: b0
-    tuple val(meta), path("*_b0_mask.nii.gz")   , emit: b0_mask
-    tuple val(meta), path("final.bval")         , emit: bval
-    tuple val(meta), path("final.bvec")         , emit: bvec
-    path "versions.yml"                         , emit: versions
+    tuple val(meta), path("*_b0.nii.gz"), emit: b0
+    tuple val(meta), path("*_copy_dwi.bval"), emit: bval, optional: true
+    tuple val(meta), path("*_copy_dwi.bvec"), emit: bvec, optional: true
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -22,20 +21,18 @@ process UTILS_EXTRACTB0 {
     def extraction_strategy = task.ext.b0_extraction_strategy ? "--$task.ext.b0_extraction_strategy" : "--mean"
     def b0_threshold = task.ext.b0_threshold ? "--b0_threshold $task.ext.b0_threshold" : ""
     def output_series = task.ext.output_series ? "" : "--single-image"
+    def extract_bval_bvec = task.ext.extract_bval_bvec ?: ""
     """
-    export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=1
-    export OMP_NUM_THREADS=1
-    export OPENBLAS_NUM_THREADS=1
+    export OMP_NUM_THREADS=${task.ext.single_thread ? 1 : task.cpus}
 
     scil_dwi_extract_b0 $dwi $bval $bvec ${prefix}_b0.nii.gz \
         $output_series $extraction_strategy $b0_threshold --skip_b0_check
 
-    scil_volume_math lower_threshold ${prefix}_b0.nii.gz 0.0001 ${prefix}_b0_mask.nii.gz \
-        --data_type uint8
-
-    # Simple copy to ensure filename is catched by Nextflow since inputs are excluded.
-    cp $bval final.bval
-    cp $bvec final.bvec
+    if [[ "$extract_bval_bvec" ]];
+    then
+        cp $bval ${prefix}_copy_dwi.bval
+        cp $bvec ${prefix}_copy_dwi.bvec
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -45,15 +42,18 @@ process UTILS_EXTRACTB0 {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def extract_bval_bvec = task.ext.extract_bval_bvec ?: ""
 
     """
     scil_dwi_extract_b0 -h
-    scil_volume_math -h
 
     touch ${prefix}_b0.nii.gz
-    touch ${prefix}_b0_mask.nii.gz
-    touch final.bval
-    touch final.bvec
+
+    if [[ "$extract_bval_bvec" ]];
+    then
+        touch ${prefix}_copy_dwi.bval
+        touch ${prefix}_copy_dwi.bvec
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
