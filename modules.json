@@ -278,9 +278,8 @@
                     },
                     "utils/extractb0": {
                         "branch": "main",
-                        "git_sha": "feca233b6cd5a3c53f92573f94fddee34275e75b",
-                        "installed_by": ["preproc_dwi", "topup_eddy"],
-                        "patch": "modules/nf-neuro/utils/extractb0/utils-extractb0.diff"
+                        "git_sha": "42ddcc735fb731fc7b57d7b5d53ea73b4183b2ea",
+                        "installed_by": ["preproc_dwi", "topup_eddy"]
                     },
                     "utils/templateflow": {
                         "branch": "main",
@@ -299,7 +298,7 @@
                     },
                     "preproc_dwi": {
                         "branch": "main",
-                        "git_sha": "d50587b763e4dc6932b3f44e96688d5ff8f0d303",
+                        "git_sha": "491e3158753438258b6a0339299718bdd1c583a5",
                         "installed_by": ["subworkflows"]
                     },
                     "preproc_t1": {

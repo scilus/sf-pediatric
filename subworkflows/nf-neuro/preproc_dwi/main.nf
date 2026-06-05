@@ -274,18 +274,12 @@ workflow PREPROC_DWI {
         ch_dwi_preproc = ch_dwi
             .map{ meta, dwi, _bval, _bvec -> [ meta, dwi ] }
 
-        ch_bval = ch_dwi
-            .map{ meta, _dwi, bval, _bvec -> [ meta, bval ] }
-
-        ch_bvec = ch_dwi
-            .map{ meta, _dwi, _bval, bvec -> [ meta, bvec ] }
-
     emit:
         dwi                 = ch_dwi_preproc                        // channel: [ val(meta), dwi-preproc ]
-        bval                = ch_bval           // channel: [ val(meta), bval-corrected ]
-        bvec                = ch_bvec           // channel: [ val(meta), bvec-corrected ]
+        bval                = EXTRACT_B0.out.bval           // channel: [ val(meta), bval-corrected ]
+        bvec                = EXTRACT_B0.out.bvec           // channel: [ val(meta), bvec-corrected ]
         pwd_avg             = ch_pwd_avg                    // channel: [ val(meta), pwd-avg ]
-        b0                  = EXTRACT_B0.out.b0        // channel: [ val(meta), b0-preproc ]
+        b0                  = EXTRACT_B0.out.b0             // channel: [ val(meta), b0-preproc ]
         b0_mask             = ch_mask                       // channel: [ val(meta), b0-mask ]
         dwi_bounding_box    = ch_bbox                       // channel: [ val(meta), dwi-bounding-box ]
         mqc                 = ch_multiqc_files              // channel: [ val(meta), mqc ]
