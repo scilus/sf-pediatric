@@ -1,5 +1,5 @@
 ARG FREESURFER_BUILD_IMAGE=vnmd/freesurfer:7.4.1
-ARG SCILPY_BASE_IMAGE=scilus/scilpy:1.6.0
+ARG SCILPY_BASE_IMAGE=scilus/scilpy:2.2.2_cpu
 
 # Create a stage to build the freesurfer image (only essential scripts).
 FROM $FREESURFER_BUILD_IMAGE AS build_freesurfer
@@ -34,11 +34,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install required packages for freesurfer to dry_run
 RUN apt-get update && apt-get install -y --no-install-recommends \
       bc \
+      ca-certificates \
       gawk \
+      gnupg \
       libgomp1 \
       libglu1-mesa \
       libjpeg62 \
-      libtiff5 \
       libpng16-16 \
       libxt6 \
       libxmu6 \
@@ -54,6 +55,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       fi && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install connectome workbench
+RUN wget -O- http://neuro.debian.net/lists/jammy.us-tn.libre | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
+      wget -q -O/etc/apt/trusted.gpg.d/neuro.debian.net.asc https://neuro.debian.net/_static/neuro.debian.net.asc && \
+      apt-get update && \
+      apt-get install -y connectome-workbench && \
+      apt-get clean && \
+      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Installing Parallel
 # Installing dependencies.
