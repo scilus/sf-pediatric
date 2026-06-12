@@ -29,3 +29,7 @@ sp:
     fn: "*stat-*.npy"
   connectivity/lut:
     fn: "*LUT.json"
+  cortical/volume:
+    fn: "*_volume_*.tsv"
+  subcortical/volume:
+    fn: "*_volume_subcortical_*.tsv"
