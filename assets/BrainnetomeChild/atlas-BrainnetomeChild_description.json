@@ -1,0 +1,38 @@
+{
+    "BIDSVersion": "1.8.0",
+    "Density": {
+        "32k": "29706 vertices per hemisphere"
+    },
+    "Description": "The Child version of the Brainnetome atlas, in fsLR space, with 32k vertices per hemisphere.",
+    "Name": "Brainnetome Child Atlas",
+    "ReferencesAndLinks": [
+        "https://atlas.brainnetome.org",
+        "https://academic.oup.com/cercor/article/33/9/5264/6762896",
+        "https://academic.oup.com/cercor/article/26/8/3508/2429104"
+    ],
+    "SpatialReference": {
+        "CIFTI_STRUCTURE_CORTEX_LEFT": "https://templateflow.s3.amazonaws.com/tpl-fsLR_den-32k_hemi-L_midthickness.surf.gii",
+        "CIFTI_STRUCTURE_CORTEX_RIGHT": "https://templateflow.s3.amazonaws.com/tpl-fsLR_den-32k_hemi-R_midthickness.surf.gii",
+        "VolumeReference": "https://templateflow.s3.amazonaws.com/tpl-MNI152NLin6Asym_res-02_T1w.nii.gz"
+    },
+    "cifti_label": {
+        "Description": "The region label present in the CIFTI file.",
+        "LongName": "CIFTI Label"
+    },
+    "color_red": {
+        "Description": "The red component of the region's specified color, ranging from 0 to 255.",
+        "LongName": "Red Color"
+    },
+    "color_green": {
+        "Description": "The green component of the region's specified color, ranging from 0 to 255.",
+        "LongName": "Green Color"
+    },
+    "color_blue": {
+        "Description": "The blue component of the region's specified color, ranging from 0 to 255.",
+        "LongName": "Blue Color"
+    },
+    "opacity": {
+        "Description": "The opacity to be used when rendering the region, ranging from 0 to 255.",
+        "LongName": "Opacity"
+    }
+}
