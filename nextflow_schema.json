@@ -159,14 +159,19 @@
             "description": "Options for atlases used in the pipeline.",
             "help_text": "These options are used to configure the atlases used in the pipeline. You can use these options to customise the behaviour of the atlases.",
             "properties": {
-                "utils_folder": {
+                "atlas_name": {
                     "type": "string",
-                    "description": "Path to the utils folder.",
-                    "fa_icon": "fas fa-folder",
-                    "help_text": "This folder contains the atlases used in the pipeline. Unless you know what you are doing, please do not change this.",
-                    "format": "directory-path",
-                    "exists": true,
-                    "hidden": true
+                    "description": "Name of the atlas to use. This will determine the BIDS atlas to use. Multiple values can be specified.",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "BrainnetomeChild",
+                    "hidden": false
+                },
+                "atlas_folder": {
+                    "type": "string",
+                    "description": "Path to the directory containing the atlases. This should be a directory containing the atlases in BIDS format. If not specified, will search in the default location ('$projectDir/assets/').",
+                    "fa_icon": "fas fa-folder-open",
+                    "default": null,
+                    "hidden": false
                 }
             }
         },
