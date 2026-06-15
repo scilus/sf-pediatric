@@ -172,6 +172,20 @@
                     "fa_icon": "fas fa-folder-open",
                     "default": null,
                     "hidden": false
+                },
+                "cortical_rois": {
+                    "type": "string",
+                    "description": "Indexes of the cortical ROIs in the atlas to use in the QC report. Will mostly be used to properly separate cortical and subcortical ROIs in the QC report. Should be provided as a string of comma-separated values or ranges (e.g. '1:188,225:227').",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "1:188,225:227",
+                    "hidden": false
+                },
+                "subcortical_rois": {
+                    "type": "string",
+                    "description": "Indexes of the subcortical ROIs in the atlas to use in the QC report. Will mostly be used to properly separate cortical and subcortical ROIs in the QC report. Should be provided as a string of comma-separated values or ranges (e.g. '189:224').",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "189:224",
+                    "hidden": false
                 }
             }
         },

@@ -48,8 +48,6 @@ bundles:
 
 atlaslabels:
   style: "glossy"
-  cortical_rois_indexes: ["1:188", "225:227"]
-  subcortical_rois_indexes: ["189:224"]
   cortical_cmap: "viridis"
   subcortical_cmap: "magma"
   force_cortical_cmap: false
@@ -242,9 +240,9 @@ sp:
   bundles/nii:
     fn: "*.nii.gz"
   atlaslabels/volume:
-    fn: "*atlas*.nii.gz"
+    fn: "*seg*dseg.nii.gz"
   atlaslabels/metadata:
-    fn: "*atlas*LUT.txt"
+    fn: "*seg*dseg.tsv"
   connectivity/matrices:
     fn: "*stat-*.npy"
   connectivity/lut:
