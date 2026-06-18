@@ -1,15 +1,16 @@
 {
     "Segmentation profile - should run successfully": {
         "content": [
-            26,
+            32,
             {
-                "BRAINNETOMECHILD": {
-                    "scilpy": 1.6,
-                    "freesurfer": "7.4.1"
+                "ATLASES_FSAVERAGE2SUBJECT": {
+                    "freesurfer": "8.2.0",
+                    "scilpy": "2.2.2",
+                    "workbench": "2.1.0"
                 },
-                "CONCATENATESTATS": {
-                    "python": "3.10.12",
-                    "pandas": "2.2.3"
+                "ATLASES_FSLR2FSAVERAGE": {
+                    "freesurfer": "8.2.0",
+                    "workbench": "2.1.0"
                 },
                 "COREG": {
                     "ants": "2.6.2",
@@ -20,10 +21,6 @@
                 "DENOISING_NLMEANS": {
                     "scilpy": "2.2.2"
                 },
-                "FORMATLABELS": {
-                    "scilpy": 1.6,
-                    "freesurfer": "7.4.1"
-                },
                 "MCRIBS": {
                     "mcribs": "2.1.0",
                     "ants": "2.5.3-g98bf76d",
@@ -33,23 +30,30 @@
                 "RECONALLCLINICAL": {
                     "freesurfer": "8.0.0"
                 },
+                "REGISTRATION_ANTS": {
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
+                },
+                "REGISTRATION_ANTSAPPLYTRANSFORMS": {
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
+                },
                 "Workflow": {
                     "scilus/sf_pediatric": "v0.2.3"
                 }
             },
             [
-                "cortical_Child_area_lh.tsv",
-                "cortical_Child_area_rh.tsv",
-                "cortical_Child_thickness_lh.tsv",
-                "cortical_Child_thickness_rh.tsv",
-                "cortical_Child_volume_lh.tsv",
-                "cortical_Child_volume_rh.tsv",
-                "cortical_Infant_area_lh.tsv",
-                "cortical_Infant_area_rh.tsv",
-                "cortical_Infant_thickness_lh.tsv",
-                "cortical_Infant_thickness_rh.tsv",
-                "cortical_Infant_volume_lh.tsv",
-                "cortical_Infant_volume_rh.tsv",
+                "BrainnetomeChild_area_lh_stats.tsv",
+                "BrainnetomeChild_area_rh_stats.tsv",
+                "BrainnetomeChild_thickness_lh_stats.tsv",
+                "BrainnetomeChild_thickness_rh_stats.tsv",
+                "BrainnetomeChild_volume_lh_stats.tsv",
+                "BrainnetomeChild_volume_rh_stats.tsv",
+                "BrainnetomeChild_volume_subcortical_stats.tsv",
                 "dataset_description.json",
                 "multiqc",
                 "multiqc/global_multiqc_data",
@@ -61,17 +65,16 @@
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_desc-labels_dseg.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_desc-labels_dseg.txt",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_dseg.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_dseg.nii.gz",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_hemi-left_stat-surfacearea.tsv",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_hemi-left_stat-thickness.tsv",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_hemi-left_stat-volume.tsv",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_hemi-right_stat-surfacearea.tsv",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_hemi-right_stat-thickness.tsv",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_hemi-right_stat-volume.tsv",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-DK_stat-subcortical.tsv",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_desc-labels_dseg.tsv",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_dseg.json",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_dseg.nii.gz",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_hemi-left_stat-surfacearea.tsv",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_hemi-left_stat-thickness.tsv",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_hemi-left_stat-volume.tsv",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_hemi-right_stat-surfacearea.tsv",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_hemi-right_stat-thickness.tsv",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_hemi-right_stat-volume.tsv",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_stat-subcortical.tsv",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T1w_desc-brain_mask.json",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T1w_desc-brain_mask.nii.gz",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T1w_desc-preproc_T1w.json",
@@ -91,9 +94,7 @@
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/anat",
-                "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_desc-dilated_dseg.nii.gz",
-                "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_desc-labels_dseg.json",
-                "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_desc-labels_dseg.txt",
+                "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_desc-labels_dseg.tsv",
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_dseg.json",
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_dseg.nii.gz",
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_hemi-left_stat-surfacearea.tsv",
@@ -109,9 +110,7 @@
                 "sub-test1/ses-time1/multiqc/sub-test1_multiqc_report.html",
                 "sub-test3",
                 "sub-test3/anat",
-                "sub-test3/anat/sub-test3_seg-BrainnetomeChild_desc-dilated_dseg.nii.gz",
-                "sub-test3/anat/sub-test3_seg-BrainnetomeChild_desc-labels_dseg.json",
-                "sub-test3/anat/sub-test3_seg-BrainnetomeChild_desc-labels_dseg.txt",
+                "sub-test3/anat/sub-test3_seg-BrainnetomeChild_desc-labels_dseg.tsv",
                 "sub-test3/anat/sub-test3_seg-BrainnetomeChild_dseg.json",
                 "sub-test3/anat/sub-test3_seg-BrainnetomeChild_dseg.nii.gz",
                 "sub-test3/anat/sub-test3_seg-BrainnetomeChild_hemi-left_stat-surfacearea.tsv",
@@ -124,50 +123,58 @@
                 "sub-test3/multiqc",
                 "sub-test3/multiqc/sub-test3_multiqc_data",
                 "sub-test3/multiqc/sub-test3_multiqc_plots",
-                "sub-test3/multiqc/sub-test3_multiqc_report.html",
-                "subcortical_Child_volumes.tsv",
-                "subcortical_Infant_volumes.tsv"
+                "sub-test3/multiqc/sub-test3_multiqc_report.html"
             ],
             [
                 "",
+                "sub-test1_ses-baseline",
+                "sub-test1_ses-baseline/label",
+                "sub-test1_ses-baseline/label/lh.BrainnetomeChild.annot",
+                "sub-test1_ses-baseline/label/rh.BrainnetomeChild.annot",
+                "sub-test1_ses-baseline/mri",
+                "sub-test1_ses-baseline/mri/transforms",
+                "sub-test1_ses-baseline/scripts",
+                "sub-test1_ses-baseline/stats",
+                "sub-test1_ses-baseline/stats/lh.BrainnetomeChild.stats",
+                "sub-test1_ses-baseline/stats/rh.BrainnetomeChild.stats",
+                "sub-test1_ses-baseline/stats/subcortical.BrainnetomeChild.stats",
+                "sub-test1_ses-baseline/surf",
+                "sub-test1_ses-baseline/tmp",
+                "sub-test1_ses-baseline/touch",
                 "sub-test1_ses-time1",
-                "sub-test1_ses-time1/sub-test1_ses-time1",
-                "sub-test1_ses-time1/sub-test1_ses-time1/label",
-                "sub-test1_ses-time1/sub-test1_ses-time1/label/lh.BN_Child.annot",
-                "sub-test1_ses-time1/sub-test1_ses-time1/label/rh.BN_Child.annot",
-                "sub-test1_ses-time1/sub-test1_ses-time1/mri",
-                "sub-test1_ses-time1/sub-test1_ses-time1/mri/transforms",
-                "sub-test1_ses-time1/sub-test1_ses-time1/scripts",
-                "sub-test1_ses-time1/sub-test1_ses-time1/stats",
-                "sub-test1_ses-time1/sub-test1_ses-time1/stats/lh.BN_Child.stats",
-                "sub-test1_ses-time1/sub-test1_ses-time1/stats/rh.BN_Child.stats",
-                "sub-test1_ses-time1/sub-test1_ses-time1/surf",
-                "sub-test1_ses-time1/sub-test1_ses-time1/tmp",
-                "sub-test1_ses-time1/sub-test1_ses-time1/touch",
+                "sub-test1_ses-time1/label",
+                "sub-test1_ses-time1/label/lh.BrainnetomeChild.annot",
+                "sub-test1_ses-time1/label/rh.BrainnetomeChild.annot",
+                "sub-test1_ses-time1/mri",
+                "sub-test1_ses-time1/mri/transforms",
+                "sub-test1_ses-time1/scripts",
+                "sub-test1_ses-time1/stats",
+                "sub-test1_ses-time1/stats/lh.BrainnetomeChild.stats",
+                "sub-test1_ses-time1/stats/rh.BrainnetomeChild.stats",
+                "sub-test1_ses-time1/stats/subcortical.BrainnetomeChild.stats",
+                "sub-test1_ses-time1/surf",
+                "sub-test1_ses-time1/tmp",
+                "sub-test1_ses-time1/touch",
                 "sub-test3",
-                "sub-test3/sub-test3",
-                "sub-test3/sub-test3/label",
-                "sub-test3/sub-test3/label/lh.BN_Child.annot",
-                "sub-test3/sub-test3/label/rh.BN_Child.annot",
-                "sub-test3/sub-test3/mri",
-                "sub-test3/sub-test3/mri/transforms",
-                "sub-test3/sub-test3/scripts",
-                "sub-test3/sub-test3/stats",
-                "sub-test3/sub-test3/stats/lh.BN_Child.stats",
-                "sub-test3/sub-test3/stats/rh.BN_Child.stats",
-                "sub-test3/sub-test3/surf",
-                "sub-test3/sub-test3/tmp",
-                "sub-test3/sub-test3/touch"
-            ],
-            [
-                "",
-                "sub-test1_ses-baseline"
+                "sub-test3/label",
+                "sub-test3/label/lh.BrainnetomeChild.annot",
+                "sub-test3/label/rh.BrainnetomeChild.annot",
+                "sub-test3/mri",
+                "sub-test3/mri/transforms",
+                "sub-test3/scripts",
+                "sub-test3/stats",
+                "sub-test3/stats/lh.BrainnetomeChild.stats",
+                "sub-test3/stats/rh.BrainnetomeChild.stats",
+                "sub-test3/stats/subcortical.BrainnetomeChild.stats",
+                "sub-test3/surf",
+                "sub-test3/tmp",
+                "sub-test3/touch"
             ]
         ],
-        "timestamp": "2026-05-29T15:08:55.870976",
+        "timestamp": "2026-06-17T14:32:47.28729",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.0"
+            "nextflow": "26.04.3"
         }
     }
 }
