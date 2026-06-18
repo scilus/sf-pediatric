@@ -10,7 +10,7 @@ process ATLASES_FSLR2FSAVERAGE {
     output:
         tuple val(meta), path("fsaverage_folder")       , emit: fsaverage
         tuple val(meta), path("*_subcortical.nii.gz")   , emit: subcortical
-        val atlas.getName()                             , emit: atlas_name
+        val("${atlas.name}")                            , emit: atlas_name
         path "versions.yml"                             , emit: versions
 
     when:
