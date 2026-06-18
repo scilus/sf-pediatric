@@ -38,7 +38,7 @@ workflow BUNDLE_SEG {
                 .map { tuple -> tuple + [[]] }
         }
         else {
-            ch_atlases_path = channel.fromPath("${projectDir}/assets/")
+            ch_atlases_path = channel.fromPath("${params.templates_download_path}/templates/")
             ch_atlas_infant00 = fetchAtlases(ch_atlases_path, "Infant00")
             ch_atlas_infant03 = fetchAtlases(ch_atlases_path, "Infant03")
             ch_atlas_infant06 = fetchAtlases(ch_atlases_path, "Infant06")
