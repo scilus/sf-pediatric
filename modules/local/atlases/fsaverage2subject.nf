@@ -44,10 +44,10 @@ process ATLASES_FSAVERAGE2SUBJECT {
 
     # Surface-to-surface mapping
     mri_surf2surf --srcsubject \$(basename $fsaverage) --trgsubject ${prefix}_fs \
-        --hemi lh --sval-annot ${atlas_name}.annot --cortex \
+        --hemi lh --sval-annot ${atlas_name}.annot \
         --o ${atlas_name}.annot
     mri_surf2surf --srcsubject \$(basename $fsaverage) --trgsubject ${prefix}_fs \
-        --hemi rh --sval-annot ${atlas_name}.annot --cortex \
+        --hemi rh --sval-annot ${atlas_name}.annot \
         --o ${atlas_name}.annot
 
     # Convert to uint16
