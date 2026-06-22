@@ -374,6 +374,7 @@ workflow SF_PEDIATRIC {
 
                 // Find columns to keep (not containing "???")
                 def keepIdx = header.indices.findAll { i -> !header[i].contains('???') }
+                def expectedCols = keepIdx.size()
 
                 // Rename first column to "sample", filter columns
                 def newHeader = keepIdx.collect { i ->
@@ -382,6 +383,10 @@ workflow SF_PEDIATRIC {
 
                 def newBody = body.collect { line ->
                     def cols = line.split('\t', -1)
+                    // Validate column count before filtering
+                    assert cols.size() == header.size() : log.warn("Column mismatch in ${tsv.name}: " +
+                        "expected ${header.size()} columns, found ${cols.size()}. One subject might have " +
+                        "missing cortical/subcortical ROIs.")
                     keepIdx.collect { i -> cols[i] }.join('\t')
                 }.join('\n')
 
