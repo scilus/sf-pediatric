@@ -38,20 +38,17 @@ process ATLASES_FSAVERAGE2SUBJECT {
 
     # Let's compute the inverse from fsaverage to subject space
     if [ -f ${prefix}_fs/surf/lh.sphere.reg2 ]; then
-        mris_register -1 -curv ${prefix}_fs/surf/lh.sphere.reg2 ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.inv.reg
-        mris_register -1 -curv ${prefix}_fs/surf/rh.sphere.reg2 ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.inv.reg
-    else
-        mris_register -1 -curv ${prefix}_fs/surf/lh.sphere.reg ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.inv.reg
-        mris_register -1 -curv ${prefix}_fs/surf/rh.sphere.reg ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.inv.reg
+        mris_register -1 -curv ${prefix}_fs/surf/lh.sphere ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.reg
+        mris_register -1 -curv ${prefix}_fs/surf/rh.sphere ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.reg
     fi
 
     # Surface-to-surface mapping
     mri_surf2surf --srcsubject \$(basename $fsaverage) --trgsubject ${prefix}_fs \
         --hemi lh --sval-annot ${atlas_name}.annot --cortex \
-        --o ${atlas_name}.annot --srcsurfreg sphere --trgsurfreg sphere.inv.reg
+        --o ${atlas_name}.annot
     mri_surf2surf --srcsubject \$(basename $fsaverage) --trgsubject ${prefix}_fs \
         --hemi rh --sval-annot ${atlas_name}.annot --cortex \
-        --o ${atlas_name}.annot --srcsurfreg sphere --trgsurfreg sphere.inv.reg
+        --o ${atlas_name}.annot
 
     # Convert to uint16
     scil_volume_math convert ${subcortical} \
