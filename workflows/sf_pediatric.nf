@@ -374,7 +374,6 @@ workflow SF_PEDIATRIC {
 
                 // Find columns to keep (not containing "???")
                 def keepIdx = header.indices.findAll { i -> !header[i].contains('???') }
-                def expectedCols = keepIdx.size()
 
                 // Rename first column to "sample", filter columns
                 def newHeader = keepIdx.collect { i ->
@@ -387,14 +386,17 @@ workflow SF_PEDIATRIC {
                     assert cols.size() == header.size() : log.warn("Column mismatch in ${tsv.name}: " +
                         "expected ${header.size()} columns, found ${cols.size()}. One subject might have " +
                         "missing cortical/subcortical ROIs.")
-                    keepIdx.collect { i -> cols[i] }.join('\t')
+                    keepIdx.collect { i -> i == 0 ? cols[i].replaceAll(/_fs$/, '') : cols[i] }.join('\t')
                 }.join('\n')
 
                 def content = newHeader + '\n' + (newBody ? newBody + '\n' : '')
                 ["${params.atlas_name}_${match}_stats.tsv", content]
             }
         ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_merged_tsvs)
-            .mix(SEGMENTATION.out.dseg_tsv.first().map { tuple -> tuple[1]  })
+            .mix(channel.fromPath("${params.atlas_folder}/${params.atlas_name}/*dseg.tsv", checkIfExists: true))
+        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(SEGMENTATION.out.folder)
+            .mix(SEGMENTATION.out.dseg)
+            .mix(channel.fromPath("${params.atlas_folder}/${params.atlas_name}/*dseg.tsv", checkIfExists: true))
     }
 
     //
@@ -1179,8 +1181,6 @@ workflow SF_PEDIATRIC {
     )
 
     qc_files = ch_multiqc_files_sub
-        .mix(params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.dseg : channel.empty())
-        .mix(params.segmentation ? SEGMENTATION.out.dseg_tsv : channel.empty())
         .mix(params.bundling ? TRACTOMETRY.out.bundles : channel.empty())
         .mix(ch_anat_qc)
         .mix(QC.out.tissueseg_png)
