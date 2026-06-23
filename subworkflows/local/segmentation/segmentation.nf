@@ -161,18 +161,13 @@ workflow SEGMENTATION {
     ATLASES_FSAVERAGE2SUBJECT ( ch_fsaverage2subject, ATLASES_FSLR2FSAVERAGE.out.atlas_name.first() )
     ch_versions = ch_versions.mix(ATLASES_FSAVERAGE2SUBJECT.out.versions)
 
-    ch_folder = RECONALLCLINICAL.out.folder
-        .mix(RECONALL.out.recon_all_out_folder)
-        .mix(FASTSURFER.out.fastsurferdirectory)
-        .mix(MCRIBS.out.folder)
-
     emit:
     // ** Processed anatomical image ** //
     t1              = ch_t1                                                 // channel: [ val(meta), [ t1 ] ]
     t2              = ch_t2w                                                // channel: [ val(meta), [ t2 ] ]
 
     // ** Segmentation ** //
-    folder          = ch_folder
+    folder          = ATLASES_FSAVERAGE2SUBJECT.out.folder
     dseg            = ATLASES_FSAVERAGE2SUBJECT.out.dseg
     dseg_tsv        = ATLASES_FSAVERAGE2SUBJECT.out.dseg_tsv
 

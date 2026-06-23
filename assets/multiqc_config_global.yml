@@ -28,7 +28,7 @@ sp:
   connectivity/matrices:
     fn: "*stat-*.npy"
   connectivity/lut:
-    fn: "*LUT.json"
+    fn: "*dseg.tsv"
   cortical/volume:
     fn: "*_volume_*.tsv"
   subcortical/volume:

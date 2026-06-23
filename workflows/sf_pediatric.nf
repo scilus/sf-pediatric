@@ -396,6 +396,7 @@ workflow SF_PEDIATRIC {
         ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_merged_tsvs)
             .mix(ch_lut)
         ch_multiqc_files_sub = ch_multiqc_files_sub.mix(SEGMENTATION.out.folder)
+            .mix(SEGMENTATION.out.dseg)
             .mix(SEGMENTATION.out.dseg.combine(ch_lut)
                     .map{ tuple -> [tuple[0], tuple[2]] }
             )

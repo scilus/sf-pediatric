@@ -240,13 +240,19 @@ sp:
     fn: "*.trk"
   bundles/nii:
     fn: "*.nii.gz"
-  atlaslabels/volume:
-    fn: "*seg*dseg.nii.gz"
-  atlaslabels/metadata:
-    fn: "*seg*dseg.tsv"
+  atlaslabels/surfaces:
+    fn: "*.white"
+  atlaslabels/annot:
+    fn: "*.annot"
+  atlaslabels/lut:
+    fn: "*dseg.tsv"
+    shared: true
+  atlaslabels/nii:
+    fn: "*dseg.nii.gz"
   connectivity/matrices:
     fn: "*stat-*.npy"
   connectivity/lut:
-    fn: "*LUT.json"
+    fn: "*dseg.tsv"
+    shared: true
 
 export_plots: true
