@@ -383,20 +383,22 @@ workflow SF_PEDIATRIC {
                 def newBody = body.collect { line ->
                     def cols = line.split('\t', -1)
                     // Validate column count before filtering
-                    assert cols.size() == header.size() : log.warn("Column mismatch in ${tsv.name}: " +
+                    assert cols.size() == header.size() : "Column mismatch in ${tsv.name}: " +
                         "expected ${header.size()} columns, found ${cols.size()}. One subject might have " +
-                        "missing cortical/subcortical ROIs.")
+                        "missing cortical/subcortical ROIs."
                     keepIdx.collect { i -> i == 0 ? cols[i].replaceAll(/_fs$/, '') : cols[i] }.join('\t')
                 }.join('\n')
 
                 def content = newHeader + '\n' + (newBody ? newBody + '\n' : '')
                 ["${params.atlas_name}_${match}_stats.tsv", content]
             }
+        ch_lut = channel.fromPath("${params.atlas_folder}/${params.atlas_name}/tpl-fsLR/*dseg.tsv", checkIfExists: true)
         ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_merged_tsvs)
-            .mix(channel.fromPath("${params.atlas_folder}/${params.atlas_name}/*dseg.tsv", checkIfExists: true))
+            .mix(ch_lut)
         ch_multiqc_files_sub = ch_multiqc_files_sub.mix(SEGMENTATION.out.folder)
-            .mix(SEGMENTATION.out.dseg)
-            .mix(channel.fromPath("${params.atlas_folder}/${params.atlas_name}/*dseg.tsv", checkIfExists: true))
+            .mix(SEGMENTATION.out.dseg.combine(ch_lut)
+                    .map{ tuple -> [tuple[0], tuple[2]] }
+            )
     }
 
     //
