@@ -45,6 +45,7 @@ modules_order:
 
 bundles:
   bundles: []
+  max_bundles: 55
 
 atlaslabels:
   style: "glossy"
