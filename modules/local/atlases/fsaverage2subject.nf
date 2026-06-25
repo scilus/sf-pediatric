@@ -36,19 +36,26 @@ process ATLASES_FSAVERAGE2SUBJECT {
     export FS_LICENSE=${fs_license}
     export SUBJECTS_DIR=\$(pwd)
 
-    # Let's compute the inverse from fsaverage to subject space
+    # Check if we got infant data, if so, we need to recompute the sphere registration
     if [ -f ${prefix}_fs/surf/lh.sphere.reg2 ]; then
-        mris_register -1 -curv ${prefix}_fs/surf/lh.sphere ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.reg
-        mris_register -1 -curv ${prefix}_fs/surf/rh.sphere ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.reg
+        # Mapping directly subject -> fsaverage yields better results than going through the template
+        mris_register -multi_scale 3 -max_degrees 135 -1 -inflated ${prefix}_fs/surf/lh.sphere \
+            ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.fsaverage.reg
+        mris_register -multi_scale 3 -max_degrees 135 -1 -inflated ${prefix}_fs/surf/rh.sphere \
+            ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.fsaverage.reg
+        args="--srcsurfreg sphere --trgsurfreg sphere.fsaverage.reg --cortex"
+    else
+        # surf to surf works well with adult data, so nothing to add here.
+        args=""
     fi
 
     # Surface-to-surface mapping
     mri_surf2surf --srcsubject \$(basename $fsaverage) --trgsubject ${prefix}_fs \
         --hemi lh --sval-annot ${atlas_name}.annot \
-        --o ${atlas_name}.annot
+        --o ${atlas_name}.annot \$args
     mri_surf2surf --srcsubject \$(basename $fsaverage) --trgsubject ${prefix}_fs \
         --hemi rh --sval-annot ${atlas_name}.annot \
-        --o ${atlas_name}.annot
+        --o ${atlas_name}.annot \$args
 
     # Convert to uint16
     scil_volume_math convert ${subcortical} \
