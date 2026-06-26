@@ -163,7 +163,7 @@
                     },
                     "qc/multiqc": {
                         "branch": "main",
-                        "git_sha": "d8b93933d8ac1b36e184fd27bbd93bb84d2afdc7",
+                        "git_sha": "a7ff2bbe8248fbddbe543c1e8ecb981bf2ceee47",
                         "installed_by": ["modules"]
                     },
                     "qc/tractogram": {
