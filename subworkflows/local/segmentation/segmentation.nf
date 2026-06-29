@@ -4,19 +4,24 @@ include { SEGMENTATION_FSRECONALL as RECONALL } from '../../../modules/nf-neuro/
 include { SEGMENTATION_RECONALLCLINICAL as RECONALLCLINICAL } from '../../../modules/local/segmentation/reconallclinical/main'
 include { SEGMENTATION_MCRIBS as MCRIBS } from '../../../modules/local/segmentation/mcribs'
 
-// ** Atlas modules ** //
-include { ATLASES_BRAINNETOMECHILD as BRAINNETOMECHILD } from '../../../modules/local/atlases/brainnetomechild'
-include { ATLASES_FORMATLABELS as FORMATLABELS         } from '../../../modules/local/atlases/formatlabels'
-include { ATLASES_CONCATENATESTATS as CONCATENATESTATS } from '../../../modules/local/atlases/concatenatestats'
+include { ATLASES_FSLR2FSAVERAGE as ATLASES_FSLR2FSAVERAGE } from '../../../modules/local/atlases/fslr2fsaverage'
+include { ATLASES_FSAVERAGE2SUBJECT as ATLASES_FSAVERAGE2SUBJECT } from '../../../modules/local/atlases/fsaverage2subject'
+include { REGISTRATION_ANTS as REGISTRATION_ANTS } from '../../../modules/nf-neuro/registration/ants/main'
+include { REGISTRATION_ANTSAPPLYTRANSFORMS as REGISTRATION_ANTSAPPLYTRANSFORMS } from '../../../modules/nf-neuro/registration/antsapplytransforms/main'
 
 workflow SEGMENTATION {
 
     take:
-    ch_t1           // channel: [ val(meta), [ t1 ] ]
-    ch_t2           // channel: [ val(meta), [ t2 ] ]
-    ch_coreg        // channel: [ val(meta), [ t1 ] ]
-    ch_fs_license   // channel: [ fs_license ]
-    ch_utils_folder // channel: [ utils_folder ]
+    ch_t1                       // channel: [ val(meta), [ t1 ] ]
+    ch_t2                       // channel: [ val(meta), [ t2 ] ]
+    ch_coreg                    // channel: [ val(meta), [ anat ] ]
+    ch_atlas                    // channel: [ atlas ]
+    ch_fs_license               // channel: [ fs_license ]
+    ch_mni152                   // channel: [ mni152 ]
+    ch_intermediate_template    // channel: [ val(meta), [ intermediate_template ], [ transformations ] ]
+    ch_fslr                     // channel: [ fslr ]
+    ch_fsaverage                // channel: [ fsaverage ]
+    ch_fsaverage_alt            // channel: [ fsaverage_alt ]
 
     main:
 
@@ -69,58 +74,92 @@ workflow SEGMENTATION {
         }
 
     //
-    // MODULE: Run BrainnetomeChild atlas
+    // MODULE: Run REGISTRATION_ANTS
     //
-    ch_atlas = channel.empty()
-        .mix(FASTSURFER.out.fastsurferdirectory)
-        .mix(RECONALL.out.recon_all_out_folder)
-        .mix(RECONALLCLINICAL.out.folder)
-        .mix(MCRIBS.out.folder)
-        .groupTuple()
-        .map {
-            meta, files ->
-                return [meta] + files.flatten().findAll { it -> it != null }
+    /* Compute the registration between subject space and MNI152Lin6Asym space, */
+    /* or the UNCBCP4D template for infant subjects.                            */
+    ch_register = FASTSURFER.out.final_t1
+        .mix(RECONALL.out.final_t1)
+        .mix(RECONALLCLINICAL.out.final_t1)
+        .mix(MCRIBS.out.anat)
+        .combine(ch_mni152)
+        .join(ch_intermediate_template, remainder: true)
+        .branch { meta, anat, mni152, int_template, _int_transfo ->
+            intermediate: int_template != []
+                return [meta, int_template, anat, []]
+            mni: true
+                return [meta, mni152, anat, []]
         }
-        .combine(ch_utils_folder)
+    ch_register_sub = ch_register.intermediate
+        .mix(ch_register.mni)
+
+    REGISTRATION_ANTS ( ch_register_sub )
+    ch_versions = ch_versions.mix(REGISTRATION_ANTS.out.versions)
+
+    //
+    // MODULE: Run FSLR2FSAVERAGE mapping
+    //
+    ch_fslr2fsaverage = ch_atlas
+        .combine(ch_fslr)
+        .combine(ch_fsaverage)
         .combine(ch_fs_license)
-        .branch { it ->
-            infant: it[0].age < 0.25 || it[0].age > 18
-                return it
-            child: it[0].age >= 0.25 && it[0].age <= 18
+        .map{ atlas, fslr, fsaverage, license -> [[id: "fsaverage"], atlas, fslr, fsaverage, license] }
+    ch_fslr2fsaverage_alt = ch_atlas
+        .combine(ch_fslr)
+        .combine(ch_fsaverage_alt)
+        .combine(ch_fs_license)
+        .map{ atlas, fslr, fsaverage, license -> [[id: "fsaverage_alt"], atlas, fslr, fsaverage, license] }
+    ch_fslr2fsaverage = ch_fslr2fsaverage
+        .mix(ch_fslr2fsaverage_alt)
+        .filter{ it -> it[3] } // Filter out if alternative fsaverage is not provided
+
+    ATLASES_FSLR2FSAVERAGE ( ch_fslr2fsaverage )
+    ch_versions = ch_versions.mix(ATLASES_FSLR2FSAVERAGE.out.versions)
+
+    //
+    // MODULE: Run antsapplytransform to warp the subcortical volume
+    //
+    ch_temp_transforms = FASTSURFER.out.final_t1
+        .mix(RECONALL.out.final_t1)
+        .mix(RECONALLCLINICAL.out.final_t1)
+        .mix(MCRIBS.out.anat)
+        .join(REGISTRATION_ANTS.out.backward_image_transform)
+        .combine(ATLASES_FSLR2FSAVERAGE.out.subcortical.map{ it -> it[1] }.first())  // extract the path from the emitted tuple
+        .join(ch_intermediate_template, remainder: true)
+        .branch { meta, anat, transformations, subcortical, int_template, int_transform ->
+            intermediate: int_template != []
+                return [meta, subcortical, anat, transformations + [int_transform]]
+            mni: true
+                return [meta, subcortical, anat, transformations]
         }
+    ch_transforms = ch_temp_transforms.intermediate
+        .mix(ch_temp_transforms.mni)
 
-    BRAINNETOMECHILD ( ch_atlas.child )
-    ch_versions = ch_versions.mix(BRAINNETOMECHILD.out.versions)
-
-    //
-    // MODULE: Format labels
-    //
-    FORMATLABELS ( ch_atlas.infant )
-    ch_versions = ch_versions.mix(FORMATLABELS.out.versions)
-
-    ch_labels = channel.empty()
-        .mix(BRAINNETOMECHILD.out.labels)
-        .mix(FORMATLABELS.out.labels)
-    ch_lut_json = channel.empty()
-        .mix(BRAINNETOMECHILD.out.labels_json)
-        .mix(FORMATLABELS.out.labels_json)
-    ch_lut_txt = channel.empty()
-        .mix(BRAINNETOMECHILD.out.labels_txt)
-        .mix(FORMATLABELS.out.labels_txt)
+    REGISTRATION_ANTSAPPLYTRANSFORMS ( ch_transforms )
+    ch_versions = ch_versions.mix(REGISTRATION_ANTSAPPLYTRANSFORMS.out.versions)
 
     //
-    // MODULE: Concatenate stats
+    // MODULE: Run FSAVERAGE2SUBJECT mapping
     //
-    ch_stats = channel.empty()
-        .mix(FORMATLABELS.out.stats.collect().map { it ->
-            [[id: 'Global', agegroup: 'Infant'], it]
-        })
-        .mix(BRAINNETOMECHILD.out.stats.collect().map{ it ->
-            [[id: 'Global', agegroup: 'Child'], it]
-        })
+    ch_fsaverage2subject_fs = RECONALLCLINICAL.out.folder
+        .mix(RECONALL.out.recon_all_out_folder)
+        .mix(FASTSURFER.out.fastsurferdirectory)
+        .combine(ATLASES_FSLR2FSAVERAGE.out.fsaverage
+            .filter{ meta, _fsaverage -> meta.id == "fsaverage" }
+            .map{ it -> it[1] })  // extract the path from the emitted tuple
+        .join(REGISTRATION_ANTSAPPLYTRANSFORMS.out.warped_image)
+        .combine(ch_fs_license)
+    ch_fsaverage2subject_alt = MCRIBS.out.folder
+        .combine(ATLASES_FSLR2FSAVERAGE.out.fsaverage
+            .filter{ meta, _fsaverage -> meta.id == "fsaverage_alt" }
+            .map{ it -> it[1] })  // extract the path from the emitted tuple
+        .join(REGISTRATION_ANTSAPPLYTRANSFORMS.out.warped_image)
+        .combine(ch_fs_license)
+    ch_fsaverage2subject = ch_fsaverage2subject_fs
+        .mix(ch_fsaverage2subject_alt)
 
-    CONCATENATESTATS ( ch_stats )
-    ch_versions = ch_versions.mix(CONCATENATESTATS.out.versions)
+    ATLASES_FSAVERAGE2SUBJECT ( ch_fsaverage2subject, ATLASES_FSLR2FSAVERAGE.out.atlas_name.first() )
+    ch_versions = ch_versions.mix(ATLASES_FSAVERAGE2SUBJECT.out.versions)
 
     emit:
     // ** Processed anatomical image ** //
@@ -128,18 +167,12 @@ workflow SEGMENTATION {
     t2              = ch_t2w                                                // channel: [ val(meta), [ t2 ] ]
 
     // ** Segmentation ** //
-    labels          = ch_labels                                             // channel: [ val(meta), [ labels ] ]
-    lut_json        = ch_lut_json                                           // channel: [ val(meta), [ labels_json ] ]
-    lut_txt         = ch_lut_txt                                            // channel: [ val(meta), [ labels_txt ] ]
+    folder          = ATLASES_FSAVERAGE2SUBJECT.out.folder
+    dseg            = ATLASES_FSAVERAGE2SUBJECT.out.dseg
+    dseg_tsv        = ATLASES_FSAVERAGE2SUBJECT.out.dseg_tsv
 
     // ** Stats ** //
-    volume_lh       = CONCATENATESTATS.out.volume_lh ?: channel.empty()     // channel: [ volume_lh.tsv ]
-    volume_rh       = CONCATENATESTATS.out.volume_rh ?: channel.empty()     // channel: [ volume_rh.tsv ]
-    area_lh         = CONCATENATESTATS.out.area_lh ?: channel.empty()       // channel: [ area_lh.tsv ]
-    area_rh         = CONCATENATESTATS.out.area_rh ?: channel.empty()       // channel: [ area_rh.tsv ]
-    thickness_lh    = CONCATENATESTATS.out.thickness_lh ?: channel.empty()  // channel: [ thickness_lh.tsv ]
-    thickness_rh    = CONCATENATESTATS.out.thickness_rh ?: channel.empty()  // channel: [ thickness_rh.tsv ]
-    subcortical     = CONCATENATESTATS.out.subcortical ?: channel.empty()   // channel: [ subcortical_volumes.tsv ]
+    tsv             = ATLASES_FSAVERAGE2SUBJECT.out.tsv
 
     versions = ch_versions                                                  // channel: [ versions.yml ]
 }

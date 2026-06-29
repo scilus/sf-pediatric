@@ -32,18 +32,17 @@ lint:
     - docs/README.md
     - .github/CONTRIBUTING.md
     - .gitignore
-  multiqc_config: False
+  multiqc_config: false
   nextflow_config:
     - manifest.name
     - manifest.homePage
-  template_strings: False
-  container_configs: False
+  template_strings: false
+  container_configs: false
 nf_core_version: 4.0.2
 repository_type: pipeline
 template:
   author: Anthony Gagnon
-  description: sf-pediatric is a neuroimaging pipeline to process pediatric MRI data
-    (dMRI, and sMRI) ranging from 0-18 years old.
+  description: sf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
   name: sf_pediatric
@@ -56,4 +55,4 @@ template:
     - license
     - test_config
     - seqera_platform
-  version: 0.2.3
+  version: 0.3.0

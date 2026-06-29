@@ -99,9 +99,7 @@ workflow SF_PEDIATRIC {
     //
     // Fetching required templates
     //
-    if ( params.tracking ) {
-        TEMPLATES ( )
-    }
+    TEMPLATES ( )
 
     //
     // Decomposing the samplesheet into individual channels
@@ -255,9 +253,6 @@ workflow SF_PEDIATRIC {
             ? channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
             : channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
 
-        // ** Fetch utils folder ** //
-        ch_utils_folder = channel.fromPath(params.utils_folder, checkIfExists: true)
-
         // ** Assemble T1w/T2w channels using derivatives for < 0.25 years, ** //
         // ** otherwise, raw images.                                        ** //
         ch_t1_seg = ch_t1
@@ -284,16 +279,127 @@ workflow SF_PEDIATRIC {
             }
         ch_t2_seg = ch_t2_seg.fs.mix(ch_t2_seg_proc.mcribs)
 
+        // ** Set up the intermediate template based on the subject's age **
+        ch_tpl0 = TEMPLATES.out.UNCBCPInfant0.map{ tuple -> tuple[1..2, 6] }
+        ch_tpl3 = TEMPLATES.out.UNCBCPInfant3.map{ tuple -> tuple[1..2, 6] }
+        ch_tpl6 = TEMPLATES.out.UNCBCPInfant6.map{ tuple -> tuple[1..2, 6] }
+        ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ tuple -> tuple[1..2, 6] }
+        ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ tuple -> tuple[1..2, 6] }
+
+        ch_intermediate_template = ch_t1_seg
+            .join(ch_t2_seg, remainder: true)
+            .combine(ch_tpl0)
+            .combine(ch_tpl3)
+            .combine(ch_tpl6)
+            .combine(ch_tpl12)
+            .combine(ch_tpl24)
+            .branch { tuple ->
+                infant0: tuple[0].age < 0.125 || tuple[0].age > 18
+                    // Assess wether a t1 or a t2 is available, and select the appropriate template accordingly
+                    if ( tuple[2] != null && tuple[2] != [] ) {
+                        return [tuple[0], tuple[4], tuple[5]]
+                    } else {
+                        return [tuple[0], tuple[3], tuple[5]]
+                    }
+                infant3_1: tuple[0].age >= 0.125 && tuple[0].age < 0.25
+                    if ( tuple[2] != null && tuple[2] != [] ) {
+                        return [tuple[0], tuple[7], tuple[8]]
+                    } else {
+                        return [tuple[0], tuple[6], tuple[8]]
+                    }
+                infant3_2: tuple[0].age >= 0.25 && tuple[0].age < 0.375
+                    if ( tuple[1] != null && tuple[1] != [] ) {
+                        return [tuple[0], tuple[6], tuple[8]]
+                    } else {
+                        return [tuple[0], tuple[7], tuple[8]]
+                    }
+                infant6: tuple[0].age >= 0.375 && tuple[0].age < 0.625
+                    if ( tuple[1] != null && tuple[1] != [] ) {
+                        return [tuple[0], tuple[9], tuple[11]]
+                    } else {
+                        return [tuple[0], tuple[10], tuple[11]]
+                    }
+                infant12: tuple[0].age >= 0.625 && tuple[0].age < 1.5
+                    if ( tuple[1] != null && tuple[1] != [] ) {
+                        return [tuple[0], tuple[12], tuple[14]]
+                    } else {
+                        return [tuple[0], tuple[13], tuple[14]]
+                    }
+                infant24: tuple[0].age >= 1.5 && tuple[0].age < 2.5
+                    if ( tuple[1] != null && tuple[1] != [] ) {
+                        return [tuple[0], tuple[15], tuple[17]]
+                    } else {
+                        return [tuple[0], tuple[16], tuple[17]]
+                    }
+                other: true
+                    return [tuple[0], [], []]
+            }
+
+
         SEGMENTATION (
             ch_t1_seg,
             ch_t2_seg,
             reg_t1,
+            channel.fromPath("${params.atlas_folder}/${params.atlas_name}", checkIfExists: true),
             ch_fs_license,
-            ch_utils_folder
+            channel.fromPath("$params.templates_download_path/templates/tpl-fsLR/tpl-MNI152NLin6Asym_res-01_desc-brain_T1w.nii.gz", checkIfExists: true),
+            ch_intermediate_template.infant0
+                .mix(ch_intermediate_template.infant3_1)
+                .mix(ch_intermediate_template.infant3_2)
+                .mix(ch_intermediate_template.infant6)
+                .mix(ch_intermediate_template.infant12)
+                .mix(ch_intermediate_template.infant24)
+                .mix(ch_intermediate_template.other),
+            channel.fromPath("$params.templates_download_path/templates/tpl-fsLR", checkIfExists: true),
+            channel.fromPath("$params.templates_download_path/templates/fsaverage", checkIfExists: true),
+            channel.fromPath("$params.templates_download_path/templates/fsaverage_alt", checkIfExists: true)
         )
-
         ch_versions = ch_versions.mix(SEGMENTATION.out.versions)
 
+        // Collate all segmentation tsv files and output them.
+        // We need to filter files to collate based on metric and hemisphere
+        // Iterate over the expected metrics and hemispheres, and collate files matching those patterns
+        ch_merged_tsvs = SEGMENTATION.out.tsv
+            .map { _meta, tsvs -> tsvs }
+            .flatten()
+            .collectFile(
+                storeDir: "${params.outdir}/",
+                keepHeader: true,
+                skip: 1
+            ) { tsv ->
+                def match = (tsv.name =~ /(volume|thickness|area)_(lh|rh|subcortical)/)[0][0]
+                def lines = tsv.text.readLines()
+                def header = lines[0].split('\t')
+                def body = lines.size() > 1 ? lines[1..-1] : []
+
+                // Find columns to keep (not containing "???")
+                def keepIdx = header.indices.findAll { i -> !header[i].contains('???') }
+
+                // Rename first column to "sample", filter columns
+                def newHeader = keepIdx.collect { i ->
+                    i == 0 ? 'sample' : header[i]
+                }.join('\t')
+
+                def newBody = body.collect { line ->
+                    def cols = line.split('\t', -1)
+                    // Validate column count before filtering
+                    assert cols.size() == header.size() : "Column mismatch in ${tsv.name}: " +
+                        "expected ${header.size()} columns, found ${cols.size()}. One subject might have " +
+                        "missing cortical/subcortical ROIs."
+                    keepIdx.collect { i -> i == 0 ? cols[i].replaceAll(/_fs$/, '') : cols[i] }.join('\t')
+                }.join('\n')
+
+                def content = newHeader + '\n' + (newBody ? newBody + '\n' : '')
+                ["${params.atlas_name}_${match}_stats.tsv", content]
+            }
+        ch_lut = channel.fromPath("${params.atlas_folder}/${params.atlas_name}/tpl-fsLR/*dseg.tsv", checkIfExists: true)
+        ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_merged_tsvs)
+            .mix(ch_lut)
+        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(SEGMENTATION.out.folder)
+            .mix(SEGMENTATION.out.dseg)
+            .mix(SEGMENTATION.out.dseg.combine(ch_lut)
+                    .map{ tuple -> [tuple[0], tuple[2]] }
+            )
     }
 
     //
@@ -687,7 +793,7 @@ workflow SF_PEDIATRIC {
         ch_anat = FETCH_DERIVATIVES.out.anat
 
         if ( params.segmentation ) {
-            ch_labels = SEGMENTATION.out.labels
+            ch_labels = SEGMENTATION.out.dseg
         } else {
             ch_labels = FETCH_DERIVATIVES.out.labels
         }
@@ -715,7 +821,7 @@ workflow SF_PEDIATRIC {
         ch_anat = ANATTODWI.out.anat_warped
 
         if ( params.segmentation ) {
-            ch_labels = SEGMENTATION.out.labels
+            ch_labels = SEGMENTATION.out.dseg
         } else if ( params.connectomics ) {
             if ( !params.input_deriv ) {
                 error "No cortical/subcortical segmentation derivatives provided. Please provide a valid --input_deriv path or run the segmentation profile using `-profile segmentation`."
@@ -1078,9 +1184,6 @@ workflow SF_PEDIATRIC {
     )
 
     qc_files = ch_multiqc_files_sub
-        .mix(params.connectomics ? ch_labels_qc : params.segmentation ? SEGMENTATION.out.labels : channel.empty())
-        .mix(params.segmentation ? SEGMENTATION.out.lut_json : channel.empty())
-        .mix(params.segmentation ? SEGMENTATION.out.lut_txt : channel.empty())
         .mix(params.bundling ? TRACTOMETRY.out.bundles : channel.empty())
         .mix(ch_anat_qc)
         .mix(QC.out.tissueseg_png)
@@ -1158,20 +1261,10 @@ workflow SF_PEDIATRIC {
         []
     )
 
-    ch_atlas_lut = channel.fromPath("$projectDir/assets/FS_BN_GL_SF_utils/freesurfer_utils/atlas_brainnetome_child_v1_LUT.json", checkIfExists: true)
     ch_multiqc_files_global = ch_multiqc_files_global.mix(
         ch_multiqc_files.mix(QC.out.dice_stats.map{ _meta, dice -> dice }.flatten())
     )
     ch_multiqc_files_global = ch_multiqc_files_global.mix(QC.out.sc_values.map{ _meta, sc -> sc }.flatten())
-    if ( params.segmentation ) {
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.volume_lh)
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.volume_rh)
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.area_lh)
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.area_rh)
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_lh)
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.thickness_rh)
-        ch_multiqc_files_global = ch_multiqc_files_global.mix(SEGMENTATION.out.subcortical)
-    }
     if ( params.connectomics ) {
         ch_multiqc_files_global = ch_multiqc_files_global
             .mix(CONNECTIVITY_METRICS.out.metrics.map{ _meta, metrics -> metrics })
@@ -1184,7 +1277,6 @@ workflow SF_PEDIATRIC {
         }
         .map { _meta, files -> files }
     ch_multiqc_files_global = ch_multiqc_files_global.mix(ch_fd_files.flatten())
-        .mix(ch_atlas_lut)
 
     MULTIQC_GLOBAL (
         channel.of([meta:[id:"global"], qc_images:[]]),

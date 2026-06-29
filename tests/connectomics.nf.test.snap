@@ -25,7 +25,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf_pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.3.0"
                 }
             },
             [
@@ -159,7 +159,7 @@
                     "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf_pediatric": "v0.2.3"
+                    "scilus/sf_pediatric": "v0.3.0"
                 }
             },
             [

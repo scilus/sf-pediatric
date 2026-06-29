@@ -27,7 +27,6 @@ nextflow_pipeline {
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
             // All fastsurfer output.
             def fastsurfer_output = getAllFilesFromDir("$outputDir/../freesurfer/", relative: true, includeDir: true)
-            def mcribs_output = getAllFilesFromDir("$outputDir/../mcribs-2.1.0/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
@@ -115,7 +114,6 @@ nextflow_pipeline {
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
             // All fastsurfer output.
             def fastsurfer_output = getAllFilesFromDir("$outputDir/../freesurfer/", relative: true, includeDir: true)
-            def mcribs_output = getAllFilesFromDir("$outputDir/../mcribs-2.1.0/", relative: true, includeDir: true)
             // TemplateFlow output.
             def tfl_name = getAllFilesFromDir("$outputDir/../templateflow/", relative: true, includeDir: true)
             assertAll {
@@ -129,7 +127,6 @@ nextflow_pipeline {
                     stable_name,
                     // All fastsurfer output.
                     fastsurfer_output,
-                    mcribs_output,
                     // TemplateFlow output.
                     tfl_name
                 ).match()

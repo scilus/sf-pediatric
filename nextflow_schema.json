@@ -48,6 +48,23 @@
                     "help_text": "For a detailed description of the output files, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/).",
                     "fa_icon": "fas fa-folder-open"
                 },
+                "templates_url": {
+                    "type": "string",
+                    "description": "URL to download templates from.",
+                    "help_text": "This is the URL where the templates will be downloaded from if they are not found in the local cache. The templates will be cached for future runs. You can also manually download and extract the templates to the local cache directory or ask your sysadmin to place them there.",
+                    "format": "uri",
+                    "default": "https://osf.io/Kd8h7/download",
+                    "fa_icon": "fas fa-download",
+                    "hidden": true
+                },
+                "templates_download_path": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Path to the directory where templates will be downloaded and cached.",
+                    "help_text": "This is the directory where the templates will be downloaded and cached. If the templates are not found in this directory, they will be downloaded from the URL specified in `templates_url`. You can also manually download and extract the templates to this directory or ask your sysadmin to place them there.",
+                    "fa_icon": "fas fa-folder-open",
+                    "hidden": true
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",
@@ -159,14 +176,25 @@
             "description": "Options for atlases used in the pipeline.",
             "help_text": "These options are used to configure the atlases used in the pipeline. You can use these options to customise the behaviour of the atlases.",
             "properties": {
-                "utils_folder": {
+                "atlas_name": {
                     "type": "string",
-                    "description": "Path to the utils folder.",
-                    "fa_icon": "fas fa-folder",
-                    "help_text": "This folder contains the atlases used in the pipeline. Unless you know what you are doing, please do not change this.",
-                    "format": "directory-path",
-                    "exists": true,
-                    "hidden": true
+                    "description": "Name of the atlas to use. This will determine the BIDS atlas to use. Multiple values can be specified.",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "BrainnetomeChild",
+                    "hidden": false
+                },
+                "atlas_folder": {
+                    "type": "string",
+                    "description": "Path to the directory containing the atlases. This should be a directory containing the atlases in BIDS format. If not specified, will search in the default location ('$projectDir/assets/').",
+                    "fa_icon": "fas fa-folder-open",
+                    "hidden": false
+                },
+                "subcortical_rois": {
+                    "type": "string",
+                    "description": "Indexes of the subcortical ROIs in the atlas to use in the QC report. Will mostly be used to properly separate cortical and subcortical ROIs in the QC report. Should be provided as a string of comma-separated values or ranges (e.g. '189:224').",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "189:224",
+                    "hidden": false
                 }
             }
         },
