@@ -40,9 +40,9 @@ process ATLASES_FSAVERAGE2SUBJECT {
     if [ -f ${prefix}_fs/surf/lh.sphere.reg2 ]; then
         # Mapping directly subject -> fsaverage yields better results than going through the template
         mris_register -multi_scale 3 -max_degrees 135 -1 -inflated ${prefix}_fs/surf/lh.sphere \
-            ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.fsaverage.reg
+            ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.fsaverage.reg --threads $task.cpus
         mris_register -multi_scale 3 -max_degrees 135 -1 -inflated ${prefix}_fs/surf/rh.sphere \
-            ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.fsaverage.reg
+            ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.fsaverage.reg --threads $task.cpus
         args="--srcsurfreg sphere --trgsurfreg sphere.fsaverage.reg --cortex"
     else
         # surf to surf works well with adult data, so nothing to add here.
