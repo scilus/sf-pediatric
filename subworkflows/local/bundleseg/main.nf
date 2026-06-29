@@ -133,7 +133,7 @@ workflow BUNDLE_SEG {
             ch_compute_centroids = atlas_average
                 .map { folder ->
                     def meta = [id: "CustomAtlas"]
-                    def files = file("${folder}/centroids/*.trk")
+                    def files = files("${folder}/centroids/*.trk")
                     [meta, files]
                 }
             ch_transform_centroids = ch_fa
@@ -146,37 +146,37 @@ workflow BUNDLE_SEG {
             /* Using included centroids */
             ch_centroids_infant00 = ch_atlas_infant00.map { _meta, _anat, _conf, _folder, centroids ->
                 def meta = [id: "Infant00"]
-                def files = file("${centroids}/*.trk")
+                def files = files("${centroids}/*.trk")
                 [meta, files]
             }
             ch_centroids_infant03 = ch_atlas_infant03.map { _meta, _anat, _conf, _folder, centroids ->
                 def meta = [id: "Infant03"]
-                def files = file("${centroids}/*.trk")
+                def files = files("${centroids}/*.trk")
                 [meta, files]
             }
             ch_centroids_infant06 = ch_atlas_infant06.map { _meta, _anat, _conf, _folder, centroids ->
                 def meta = [id: "Infant06"]
-                def files = file("${centroids}/*.trk")
+                def files = files("${centroids}/*.trk")
                 [meta, files]
             }
             ch_centroids_infant12 = ch_atlas_infant12.map { _meta, _anat, _conf, _folder, centroids ->
                 def meta = [id: "Infant12"]
-                def files = file("${centroids}/*.trk")
+                def files = files("${centroids}/*.trk")
                 [meta, files]
             }
             ch_centroids_infant24 = ch_atlas_infant24.map { _meta, _anat, _conf, _folder, centroids ->
                 def meta = [id: "Infant24"]
-                def files = file("${centroids}/*.trk")
+                def files = files("${centroids}/*.trk")
                 [meta, files]
             }
             ch_centroids_infant24 = ch_atlas_infant24.map { _meta, _anat, _conf, _folder, centroids ->
                 def meta = [id: "Infant24"]
-                def files = file("${centroids}/*.trk")
+                def files = files("${centroids}/*.trk")
                 [meta, files]
             }
             ch_centroids_children = ch_atlas_children.map { _meta, _anat, _conf, _folder, centroids ->
                     def meta = [id: "Children"]
-                    def files = file("${centroids}/*.trk")
+                    def files = files("${centroids}/*.trk")
                     [meta, files]
             }
             ch_transform_centroids = ch_fa
