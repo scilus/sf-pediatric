@@ -171,6 +171,8 @@ workflow SF_PEDIATRIC {
     //
     reg_t1 = channel.empty()
 
+    println("Tracking: ${params.tracking}, Segmentation: ${params.segmentation}")
+
     if ( params.tracking || params.segmentation ) {
 
         // ** Run T1 preprocessing ** //
