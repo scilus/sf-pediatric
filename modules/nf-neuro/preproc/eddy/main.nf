@@ -139,12 +139,13 @@ process PREPROC_EDDY {
         rev_dwi=""
         if [[ -f "$rev_dwi" ]];
         then
-            mrcalc ${rev_dwi} -finite ${prefix}__rev_dwi_viz.nii.gz 0.0 -if ${prefix}__rev_dwi_viz.nii.gz
+            mrcalc ${rev_dwi} -finite ${rev_dwi} 0.0 -if ${prefix}__rev_dwi_viz.nii.gz
             scil_dwi_powder_average ${prefix}__rev_dwi_viz.nii.gz ${prefix}__dwi_eddy_corrected.bval ${prefix}__rev_dwi_powder_average.nii.gz
             scil_volume_math normalize_max ${prefix}__rev_dwi_powder_average.nii.gz ${prefix}__rev_dwi_powder_average_norm.nii.gz
             rev_dwi="rev_dwi"
         fi
-        scil_dwi_powder_average ${dwi} ${prefix}__dwi_eddy_corrected.bval ${prefix}__dwi_powder_average.nii.gz
+        mrcalc ${dwi} -finite ${dwi} 0.0 -if ${prefix}__dwi_viz.nii.gz
+        scil_dwi_powder_average ${prefix}__dwi_viz.nii.gz ${prefix}__dwi_eddy_corrected.bval ${prefix}__dwi_powder_average.nii.gz
         scil_dwi_powder_average ${prefix}__dwi_corrected.nii.gz ${prefix}__dwi_eddy_corrected.bval ${prefix}__dwi_corrected_powder_average.nii.gz
         scil_volume_math normalize_max ${prefix}__dwi_powder_average.nii.gz ${prefix}__dwi_powder_average_norm.nii.gz
         scil_volume_math normalize_max ${prefix}__dwi_corrected_powder_average.nii.gz ${prefix}__dwi_corrected_powder_average_norm.nii.gz

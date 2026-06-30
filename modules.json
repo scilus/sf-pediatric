@@ -137,7 +137,8 @@
                     "preproc/eddy": {
                         "branch": "main",
                         "git_sha": "d8b76bf2572247daced80a770df4bd36204480c1",
-                        "installed_by": ["topup_eddy"]
+                        "installed_by": ["topup_eddy"],
+                        "patch": "modules/nf-neuro/preproc/eddy/preproc-eddy.diff"
                     },
                     "preproc/gibbs": {
                         "branch": "main",
