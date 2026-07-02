@@ -1609,6 +1609,42 @@
                     "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
                 }
             }
+        },
+        "profiles": {
+            "title": "Pipeline profile",
+            "type": "object",
+            "fa_icon": "fas fa-cogs",
+            "description": "Pipeline profile options. This is a short list of options. For full description, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/usage/#choosing-a-profile)",
+            "properties": {
+                "tracking": {
+                    "type": "boolean",
+                    "description": "Perform tracking profile.",
+                    "fa_icon": "fas fa-map-marker",
+                    "default": false,
+                    "hidden": true
+                },
+                "bundling": {
+                    "type": "boolean",
+                    "description": "Perform bundle extraction profile.",
+                    "fa_icon": "fas fa-map-marker",
+                    "default": false,
+                    "hidden": true
+                },
+                "connectomics": {
+                    "type": "boolean",
+                    "description": "Perform connectomics profile.",
+                    "fa_icon": "fas fa-network-wired",
+                    "default": false,
+                    "hidden": true
+                },
+                "segmentation": {
+                    "type": "boolean",
+                    "description": "Perform segmentation profile.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                }
+            }
         }
     },
     "allOf": [
@@ -1680,6 +1716,9 @@
         },
         {
             "$ref": "#/$defs/generic_options"
+        },
+        {
+            "$ref": "#/$defs/profiles"
         }
     ]
 }
