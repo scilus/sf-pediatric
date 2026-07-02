@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Changed`
 
+- Move to parameter typing and bump minimal nextflow version to `26.04.0` ([#122](https://github.com/scilus/sf-pediatric/pull/122))
 - Update to nf-core template `4.0.2` ([#117](https://github.com/scilus/sf-pediatric/pull/117))
 
 ## [0.2.2] - [2026-02-09]
