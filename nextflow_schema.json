@@ -1622,9 +1622,6 @@
             "$ref": "#/$defs/atlases_options"
         },
         {
-            "$ref": "#/$defs/anat_processing_steps"
-        },
-        {
             "$ref": "#/$defs/t1_processing_options"
         },
         {
@@ -1677,9 +1674,6 @@
         },
         {
             "$ref": "#/$defs/template"
-        },
-        {
-            "$ref": "#/$defs/profiles"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
