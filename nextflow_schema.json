@@ -51,7 +51,6 @@
                 "templates_url": {
                     "type": "string",
                     "description": "URL to download templates from.",
-                    "help_text": "This is the URL where the templates will be downloaded from if they are not found in the local cache. The templates will be cached for future runs. You can also manually download and extract the templates to the local cache directory or ask your sysadmin to place them there.",
                     "format": "uri",
                     "default": "https://osf.io/Kd8h7/download",
                     "fa_icon": "fas fa-download",
@@ -61,9 +60,14 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "Path to the directory where templates will be downloaded and cached.",
-                    "help_text": "This is the directory where the templates will be downloaded and cached. If the templates are not found in this directory, they will be downloaded from the URL specified in `templates_url`. You can also manually download and extract the templates to this directory or ask your sysadmin to place them there.",
                     "fa_icon": "fas fa-folder-open",
                     "hidden": true
+                },
+                "gpu_type": {
+                    "type": "string",
+                    "description": "Type of GPU models (or MIG) to use when submitting GPU jobs to HPC clusters using `-profile slurm,gpu`. This should not be needed outside of HPC environments.",
+                    "fa_icon": "fas fa-microchip",
+                    "hidden": false
                 },
                 "email": {
                     "type": "string",
