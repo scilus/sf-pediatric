@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- Add GPU support via a config profile for module `eddy` and `localtracking` ([#121](https://github.com/scilus/sf-pediatric/pull/121))
 - Add support for user-defined external atlases in ‘fsLR‘ 32k space and simply mapping from template to subject space ([#120](https://github.com/scilus/sf-pediatric/pull/120))
 - Add RMSE and NRMSE maps to freewater and noddi output ([#118](https://github.com/scilus/sf-pediatric/pull/118))
 - Support for `nextflow` 26.04.0 ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
