@@ -65,7 +65,7 @@
                 },
                 "gpu_type": {
                     "type": "string",
-                    "description": "Type of GPU models (or MIG) to use when submitting GPU jobs to the cluster using the -profile gpu.",
+                    "description": "Type of GPU models (or MIG) to use when submitting GPU jobs to HPC clusters using `-profile slurm,gpu`. This should not be needed outside of HPC environments.",
                     "fa_icon": "fas fa-microchip",
                     "hidden": false
                 },
