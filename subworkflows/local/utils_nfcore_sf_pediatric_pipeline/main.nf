@@ -951,8 +951,8 @@ def buildMethodsDescription() {
             def parts = []
             parts << """<h5>Cortical and sub-cortical segmentation</h5>"""
             parts << "Cortical and subcortical segmentation was performed using ${params.method == "fastsurfer" ? "FastSurfer (Henschel et al., 2020)" : params.method == "recon-all" ? " recon-all from FreeSurfer (Fischl, 2012)" : "recon-all-clinical from Freesurfer (Fischl, 2012; Billot et al., 2023; Iglesias et al., 2023)"} on the T1w anatomical images."
-            parts << "For younger participants (< 3 months old), cortical and sub-cortical segmentation was performed using the M-CRIB-S pipeline (Adamson et al., 2020)."
-            parts << "Following segmentation, the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : params.atlas_name} was mapped from fsLR-32k space to subject-space using surface-based registration methods from FreeSurfer (Fischl, 2012) and then converted into voxel labels."
+            parts << "For younger participants (< 3 months old), cortical and subcortical segmentation was performed using the M-CRIB-S pipeline (Adamson et al., 2020)."
+            parts << "Following segmentation, the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : "${params.atlas_name} atlas"} was mapped from fsLR-32k space to subject-space using surface-based registration methods from FreeSurfer (Fischl, 2012) and then converted into voxel labels."
             parts << "Volume, surface area, and cortical thickness were measured for each parcel and outputted in tab-separated value files."
 
             return parts.findAll{ it }.join(' ')
@@ -961,7 +961,7 @@ def buildMethodsDescription() {
             if ( !enabled('connectomics') ) return ""
             def parts = []
             parts << """<h5>Connectomics</h5>"""
-            parts << "Structural connectivity matrices were generated using the scilpy toolbox (Renauld et al., 2026) based on the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : params.atlas_name}."
+            parts << "Structural connectivity matrices were generated using the scilpy toolbox (Renauld et al., 2026) based on the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : "${params.atlas_name} atlas"}."
             parts << "For each participant, labels in anatomical space were first registered in diffusion space using the already computed transformations with a ${params.labels_interpolation == "NearestNeighbor" ? "nearest neighbor interpolation method" : "${params.labels_interpolation}"}."
             parts << "Then, the final tractogram was decomposed into individual connections by extracting each streamline connecting a pair of parcels."
             if ( !enabled('decompose_no_pruning') ) {
