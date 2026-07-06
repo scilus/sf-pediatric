@@ -33,9 +33,8 @@ lint:
     - .github/CONTRIBUTING.md
     - .gitignore
   multiqc_config: false
-  nextflow_config:
-    - manifest.name
-    - manifest.homePage
+  nextflow_config: false # TODO: Until support is available for new type syntax
+  schema_params: false # TODO: Until support is available for new type syntax
   template_strings: false
   container_configs: false
 nf_core_version: 4.0.2

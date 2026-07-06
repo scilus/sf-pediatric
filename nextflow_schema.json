@@ -202,23 +202,6 @@
                 }
             }
         },
-        "anat_processing_steps": {
-            "title": "Processing steps to apply on anatomical images.",
-            "type": "object",
-            "fa_icon": "fas fa-brain",
-            "description": "Processing steps to apply on anatomical images. (NOTE: the same steps will be applied on both T1w/T2w if both are available).",
-            "help_text": "These options are used to configure the processing steps to apply on anatomical images. You can use these options to customise the behaviour of the processing steps.",
-            "properties": {
-                "synthstrip_weights": {
-                    "type": "string",
-                    "description": "Path to alternative weights for SynthStrip brain extraction.",
-                    "fa_icon": "fas fa-brain",
-                    "format": "file-path",
-                    "default": null,
-                    "hidden": false
-                }
-            }
-        },
         "t1_processing_options": {
             "title": "T1w Processing Options",
             "type": "object",
@@ -547,13 +530,6 @@
                     "fa_icon": "fas fa-brain",
                     "default": false,
                     "hidden": true
-                },
-                "dwi_synthstrip_weights": {
-                    "type": "string",
-                    "description": "Alternative weights used in the SynthStrip brain extraction step.",
-                    "fa_icon": "fas fa-brain",
-                    "default": null,
-                    "hidden": false
                 },
                 "dwi_bet_f_threshold": {
                     "type": "number",
@@ -1480,49 +1456,6 @@
                     "fa_icon": "fas fa-brain",
                     "default": "./templateflow",
                     "hidden": false
-                },
-                "use_template_t2w": {
-                    "type": "boolean",
-                    "description": "Use the T2w image from the template space (useful with infant data.).",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": false
-                }
-            }
-        },
-        "profiles": {
-            "title": "Pipeline profile",
-            "type": "object",
-            "fa_icon": "fas fa-cogs",
-            "description": "Pipeline profile options. This is a short list of options. For full description, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/usage/#choosing-a-profile)",
-            "properties": {
-                "tracking": {
-                    "type": "boolean",
-                    "description": "Perform tracking profile.",
-                    "fa_icon": "fas fa-map-marker",
-                    "default": false,
-                    "hidden": true
-                },
-                "bundling": {
-                    "type": "boolean",
-                    "description": "Perform bundle extraction profile.",
-                    "fa_icon": "fas fa-map-marker",
-                    "default": false,
-                    "hidden": true
-                },
-                "connectomics": {
-                    "type": "boolean",
-                    "description": "Perform connectomics profile.",
-                    "fa_icon": "fas fa-network-wired",
-                    "default": false,
-                    "hidden": true
-                },
-                "segmentation": {
-                    "type": "boolean",
-                    "description": "Perform segmentation profile.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": true
                 }
             }
         },
@@ -1676,6 +1609,42 @@
                     "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
                 }
             }
+        },
+        "profiles": {
+            "title": "Pipeline profile",
+            "type": "object",
+            "fa_icon": "fas fa-cogs",
+            "description": "Pipeline profile options. This is a short list of options. For full description, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/usage/#choosing-a-profile)",
+            "properties": {
+                "tracking": {
+                    "type": "boolean",
+                    "description": "Perform tracking profile.",
+                    "fa_icon": "fas fa-map-marker",
+                    "default": false,
+                    "hidden": true
+                },
+                "bundling": {
+                    "type": "boolean",
+                    "description": "Perform bundle extraction profile.",
+                    "fa_icon": "fas fa-map-marker",
+                    "default": false,
+                    "hidden": true
+                },
+                "connectomics": {
+                    "type": "boolean",
+                    "description": "Perform connectomics profile.",
+                    "fa_icon": "fas fa-network-wired",
+                    "default": false,
+                    "hidden": true
+                },
+                "segmentation": {
+                    "type": "boolean",
+                    "description": "Perform segmentation profile.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                }
+            }
         }
     },
     "allOf": [
@@ -1687,9 +1656,6 @@
         },
         {
             "$ref": "#/$defs/atlases_options"
-        },
-        {
-            "$ref": "#/$defs/anat_processing_steps"
         },
         {
             "$ref": "#/$defs/t1_processing_options"
@@ -1746,13 +1712,13 @@
             "$ref": "#/$defs/template"
         },
         {
-            "$ref": "#/$defs/profiles"
-        },
-        {
             "$ref": "#/$defs/institutional_config_options"
         },
         {
             "$ref": "#/$defs/generic_options"
+        },
+        {
+            "$ref": "#/$defs/profiles"
         }
     ]
 }

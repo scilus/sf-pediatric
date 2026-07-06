@@ -172,7 +172,6 @@ workflow SF_PEDIATRIC {
     reg_t1 = channel.empty()
 
     if ( params.tracking || params.segmentation ) {
-
         // ** Run T1 preprocessing ** //
         PREPROC_T1W (
             ch_t1_input,
