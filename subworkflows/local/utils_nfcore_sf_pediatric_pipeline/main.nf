@@ -952,7 +952,7 @@ def buildMethodsDescription() {
             parts << """<h5>Cortical and sub-cortical segmentation</h5>"""
             parts << "Cortical and subcortical segmentation was performed using ${params.method == "fastsurfer" ? "FastSurfer (Henschel et al., 2020)" : params.method == "recon-all" ? " recon-all from FreeSurfer (Fischl, 2012)" : "recon-all-clinical from Freesurfer (Fischl, 2012; Billot et al., 2023; Iglesias et al., 2023)"} on the T1w anatomical images."
             parts << "For younger participants (< 3 months old), cortical and sub-cortical segmentation was performed using the M-CRIB-S pipeline (Adamson et al., 2020)."
-            parts << "Following segmentation, the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : params.atlas_name} was mapped from fsLR 32k space to subject-space using surface-based registration methods from FreeSurfer (Fischl, 2012) and then converted into voxel labels."
+            parts << "Following segmentation, the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : params.atlas_name} was mapped from fsLR-32k space to subject-space using surface-based registration methods from FreeSurfer (Fischl, 2012) and then converted into voxel labels."
             parts << "Volume, surface area, and cortical thickness were measured for each parcel and outputted in tab-separated value files."
 
             return parts.findAll{ it }.join(' ')
