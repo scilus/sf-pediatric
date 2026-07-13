@@ -160,7 +160,8 @@
                     "preproc/topup": {
                         "branch": "main",
                         "git_sha": "2c6b000e9e4e1d882a6c2d3739c440596ca039dd",
-                        "installed_by": ["topup_eddy"]
+                        "installed_by": ["topup_eddy"],
+                        "patch": "modules/nf-neuro/preproc/topup/preproc-topup.diff"
                     },
                     "qc/multiqc": {
                         "branch": "main",
@@ -170,7 +171,8 @@
                     "qc/tractogram": {
                         "branch": "main",
                         "git_sha": "c67c63eff91d7bddc8060071b755a29784c619cd",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-neuro/qc/tractogram/qc-tractogram.diff"
                     },
                     "reconst/diffusivitypriors": {
                         "branch": "main",

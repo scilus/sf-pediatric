@@ -93,7 +93,7 @@ process QC_TRACTOGRAM {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     def values = meta.values() as List
-    prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
+    //prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
 
     """
     touch ${prefix}__tractogram_mask.nii.gz

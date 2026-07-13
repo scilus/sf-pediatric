@@ -4,6 +4,15 @@ Changes in component 'nf-neuro/preproc/eddy'
 Changes in 'preproc/eddy/main.nf':
 --- modules/nf-neuro/preproc/eddy/main.nf
 +++ modules/nf-neuro/preproc/eddy/main.nf
+@@ -27,7 +27,7 @@
+     def bet_topup_before_eddy_f = task.ext.bet_topup_before_eddy_f ?: ""
+     def prefix_topup = task.ext.prefix_topup ? task.ext.prefix_topup : ""
+     def b0_thr_extract_b0 = task.ext.b0_thr_extract_b0 ? task.ext.b0_thr_extract_b0 : ""
+-    def encoding = meta.dir ?: (task.ext.encoding ?: "")
++    def encoding = meta.pe ?: (task.ext.encoding ?: "")
+     def readout = meta.readout ?: (task.ext.readout ?: "")
+     def dilate_b0_mask_prelim_brain_extraction = task.ext.dilate_b0_mask_prelim_brain_extraction ? task.ext.dilate_b0_mask_prelim_brain_extraction : ""
+     def eddy_cmd = task.ext.eddy_cmd ? task.ext.eddy_cmd : "eddy_cpu"
 @@ -139,11 +139,13 @@
          rev_dwi=""
          if [[ -f "$rev_dwi" ]];
@@ -20,6 +29,15 @@ Changes in 'preproc/eddy/main.nf':
          scil_dwi_powder_average ${prefix}__dwi_corrected.nii.gz ${prefix}__dwi_eddy_corrected.bval ${prefix}__dwi_corrected_powder_average.nii.gz
          scil_volume_math normalize_max ${prefix}__dwi_powder_average.nii.gz ${prefix}__dwi_powder_average_norm.nii.gz
          scil_volume_math normalize_max ${prefix}__dwi_corrected_powder_average.nii.gz ${prefix}__dwi_corrected_powder_average_norm.nii.gz
+@@ -197,7 +199,7 @@
+     stub:
+     def prefix = task.ext.prefix ?: "${meta.id}"
+     def values = meta.values() as List
+-    prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
++    //prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
+ 
+     """
+     set +e
 
 'modules/nf-neuro/preproc/eddy/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/preproc/eddy/tests/tags.yml' is unchanged

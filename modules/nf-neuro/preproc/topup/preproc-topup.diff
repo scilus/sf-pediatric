@@ -1,0 +1,23 @@
+Changes in component 'nf-neuro/preproc/topup'
+'modules/nf-neuro/preproc/topup/environment.yml' is unchanged
+'modules/nf-neuro/preproc/topup/meta.yml' is unchanged
+Changes in 'preproc/topup/main.nf':
+--- modules/nf-neuro/preproc/topup/main.nf
++++ modules/nf-neuro/preproc/topup/main.nf
+@@ -26,8 +26,8 @@
+ 
+     def prefix_topup = task.ext.prefix_topup ?: ""
+     config_topup = config_topup ?: task.ext.default_config_topup
+-    def encoding = task.ext.encoding ?: ""
+-    def readout = task.ext.readout ?: ""
++    def encoding = meta.pe ?: (task.ext.encoding ?: "")
++    def readout = meta.readout ?: (task.ext.readout ?: "")
+     def b0_thr_extract_b0 = task.ext.b0_thr_extract_b0 ?: ""
+     def run_qc = task.ext.run_qc
+ 
+
+'modules/nf-neuro/preproc/topup/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/preproc/topup/tests/tags.yml' is unchanged
+'modules/nf-neuro/preproc/topup/tests/nextflow.config' is unchanged
+'modules/nf-neuro/preproc/topup/tests/main.nf.test' is unchanged
+************************************************************

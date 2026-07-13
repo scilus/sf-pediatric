@@ -1,0 +1,20 @@
+Changes in component 'nf-neuro/qc/tractogram'
+'modules/nf-neuro/qc/tractogram/meta.yml' is unchanged
+Changes in 'qc/tractogram/main.nf':
+--- modules/nf-neuro/qc/tractogram/main.nf
++++ modules/nf-neuro/qc/tractogram/main.nf
+@@ -93,7 +93,7 @@
+     stub:
+     def prefix = task.ext.prefix ?: "${meta.id}"
+     def values = meta.values() as List
+-    prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
++    //prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
+ 
+     """
+     touch ${prefix}__tractogram_mask.nii.gz
+
+'modules/nf-neuro/qc/tractogram/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/qc/tractogram/tests/tags.yml' is unchanged
+'modules/nf-neuro/qc/tractogram/tests/nextflow.config' is unchanged
+'modules/nf-neuro/qc/tractogram/tests/main.nf.test' is unchanged
+************************************************************
