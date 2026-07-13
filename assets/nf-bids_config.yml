@@ -1,57 +1,56 @@
-# Define BIDS entities to loop over
-loop_over:
-  - subject
-  - session
-  - run
+loop_over: [subject, session, run]
 
-# Define how each data type (suffix) should be handled.
 T1w:
   plain_set: {}
 
 T2w:
   plain_set: {}
 
-# Plain DWI (no phase encoding direction)
 dwi:
-  plain_set: {}
-  additional_extensions:
-    - bvec
-    - bval
+  sequential_set:
+    by_entity: "run"
+    additional_extensions: ["bval", "bvec"]
+  exclude_entities: ["dir"]
 
-dwi_ap_pa:
-  named_set:
-    ap:
-      direction: dir-AP
-    pa:
-      direction: dir-PA
-  required: ["ap", "pa"]
-  additional_extensions:
-    - bvec
-    - bval
+dwi_full:
   suffix_maps_to: "dwi"
-
-sbref:
-  plain_set:
-    exclude_entities:
-      - direction
-
-sbref_ap_pa:
-  named_set:
-    ap:
-      direction: dir-AP
-    pa:
-      direction: dir-PA
-  required: ["ap", "pa"]
-  suffix_maps_to: "sbref"
+  mixed_set:
+    named_dimension: direction
+    sequential_dimension: run
+    named_groups:
+      pa:
+        direction: dir-PA
+      ap:
+        direction: dir-AP
 
 epi:
-  plain_set: {}
+  sequential_set:
+    by_entity: "run"
+  exclude_entities: ["dir"]
 
-epi_ap_pa:
+epi_full:
   suffix_maps_to: "epi"
-  named_set:
-    ap:
-      direction: "dir-AP"
-    pa:
-      direction: "dir-PA"
-  required: ["ap", "pa"]
+  mixed_set:
+    named_dimension: direction
+    sequential_dimension: run
+    named_groups:
+      pa:
+        direction: dir-PA
+      ap:
+        direction: dir-AP
+
+sbref:
+  sequential_set:
+    by_entity: "run"
+  exclude_entities: ["dir"]
+
+sbref_full:
+  suffix_maps_to: "sbref"
+  mixed_set:
+    named_dimension: direction
+    sequential_dimension: run
+    named_groups:
+      pa:
+        direction: dir-PA
+      ap:
+        direction: dir-AP

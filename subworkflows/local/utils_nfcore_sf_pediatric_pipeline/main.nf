@@ -100,8 +100,7 @@ workflow PIPELINE_INITIALISATION {
         "Please provide a participants.tsv file with a column indicating the participants' " +
         "age. For any questions, please refer to the documentation at " +
         "https://scilus.github.io/sf-pediatric/ or open an issue!"
-    } else {
-        participant_data = readParticipantsTsv( file("$input_bids/participants.tsv") )
+    } else if ( input_bids ) {
         // Copy to the output directory the participants file.
         file("$input_bids/participants.tsv").copyTo(file("$outdir/participants.tsv"))
     }
@@ -109,161 +108,389 @@ workflow PIPELINE_INITIALISATION {
     //
     // Create channel from input file provided through params.input using nf-bids plugin
     //
-    ch_inputs = channel.fromBIDS(
-        input_bids,
-        "$projectDir/assets/nf-bids_config.yml",
-        [flatten_output: true]
-    )
-    .filter { item -> item.meta.subject in (params.participant_label ?: []) || (params.participant_label ?: []).isEmpty() }
-    .map { item ->
-        def id = item.meta.subject
-        def ses = item.meta.session == "NA" ? null : item.meta.session
-        def run = item.meta.run == "NA" ? null : item.meta.run
-        def age = getAge(participant_data, id, ses)
-        if ( age == 0.0 ) {
-            error "ERROR: Age not found for participant ${id}${ses ? " and session " + ses : ""} in participants.tsv file. Please validate."
-        }
-        // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
-        def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-        def priors = fetchPriors(tempAge)
-        def meta = [id: id, session: ses ?: "", age: age, run: run ?: "",
-                    fa: priors.fa, ad: priors.ad,
-                    rd: priors.rd, md: priors.md,
-                    rd_min: priors.rd_min, rd_max: priors.rd_max]
-
-        // T1w and T2w
-        def t1w = item.T1w?.nii ?: []
-        def t2w = item.T2w?.nii ?: []
-
-        // DWI and associated files
-        def dwi = item.dwi?.nii ?: []
-        def dwi_bval = item.dwi?.bval ?: []
-        def dwi_bvec = item.dwi?.bvec ?: []
-
-        // DWI AP/PA
-        def dwi_ap = item.dwi_ap_pa?.ap?.nii ?: []
-        def dwi_ap_bval = item.dwi_ap_pa?.ap?.bval ?: []
-        def dwi_ap_bvec = item.dwi_ap_pa?.ap?.bvec ?: []
-        def dwi_pa = item.dwi_ap_pa?.pa?.nii ?: []
-        def dwi_pa_bval = item.dwi_ap_pa?.pa?.bval ?: []
-        def dwi_pa_bvec = item.dwi_ap_pa?.pa?.bvec ?: []
-
-        // Sbref
-        def sbref = item.sbref?.nii ?: []
-
-        // Sbref AP/PA
-        def sbref_ap = item.sbref?.ap?.nii ?: []
-        def sbref_pa = item.sbref?.pa?.nii ?: []
-        // EPI
-        def epi = item.epi?.nii ?: []
-
-        // EPI AP/PA
-        def epi_ap = item.epi_ap_pa?.ap?.nii ?: []
-        def epi_pa = item.epi_ap_pa?.pa?.nii ?: []
-
-        return [
-            meta,
-            t1w,
-            t2w,
-            dwi,
-            dwi_bval,
-            dwi_bvec,
-            dwi_ap,
-            dwi_ap_bval,
-            dwi_ap_bvec,
-            dwi_pa,
-            dwi_pa_bval,
-            dwi_pa_bvec,
-            sbref,
-            sbref_ap,
-            sbref_pa,
-            epi,
-            epi_ap,
-            epi_pa
-        ]
-    }.view()
-
-    /* Legacy BIDS reading - to be removed once nf-bids is stable
     if ( input_bids ) {
-        ch_bids_script = channel.fromPath(bids_script)
-        ch_input_bids = channel.fromPath(input_bids)
+        // ** To support comma separated participant labels and list ** //
         def participant_ids = params.participant_label ?
             params.participant_label instanceof String ?
-            params.participant_label.tokenize(',') :
+            params.participant_label.tokenize(",") :
             params.participant_label : []
 
-        UTILS_BIDSLAYOUT( ch_input_bids, ch_bids_script )
-        ch_versions = ch_versions.mix(UTILS_BIDSLAYOUT.out.versions)
+        ch_inputs = channel.fromBIDS(
+            input_bids,
+            "$projectDir/assets/nf-bids_config.yml",
+            [flatten_output: true,
+            unpack_json_sidecar: true]
+        )
+        .filter { item -> participant_ids.isEmpty() || item.meta.subject in participant_ids }
+        .flatMap { item ->
+            def id = item.meta.subject
+            def ses = item.meta.session == "NA" ? null : item.meta.session
 
-        ch_inputs = UTILS_BIDSLAYOUT.out.layout
-            .flatMap{ layout ->
-                def json = new groovy.json.JsonSlurper().parseText(layout.getText())
-                json.collect { item ->
-                    def sid = "sub-" + item.subject
+            // Age is already fetched from the participants.tsv file, flag subjects with missing age and exit.
+            def age = item.meta.age ? item.meta.age.toFloat() : 0.0
+            if ( age == 0.0 ) {
+                error "ERROR: Age not found for participant ${id}${ses ? " and session " + ses : ""} in participants.tsv file. Please validate."
+            }
+            // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
+            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            def priors = fetchPriors(tempAge)
 
-                    def session = item.session ? "ses-" + item.session : ""
-                    def run = item.run ? "run-" + item.run : ""
-                    def age = item.age ?: ""
+            // ** Instantiate a variable that will collect prints related to BIDS file matching ** //
+            // ** to be printed in a log file later                                             ** //
+            def logs = []
 
-                    item.each { _key, value ->
-                        if (value == 'todo') {
-                            error "ERROR ~ $sid contains missing files, please check the BIDS layout for this subject."
+            // DWI and associated files
+            def dwi = item.dwi?.nii ?: []
+            def dwi_json = item.dwi?.json ?: []
+            def dwi_bval = item.dwi?.bval ?: []
+            def dwi_bvec = item.dwi?.bvec ?: []
+
+            // DWI AP/PA
+            def dwi_ap = item.dwi_full?.ap?.nii ?: []
+            def dwi_ap_json = item.dwi_full?.ap?.json ?: []
+            def dwi_ap_bval = item.dwi_full?.ap?.bval ?: []
+            def dwi_ap_bvec = item.dwi_full?.ap?.bvec ?: []
+            def dwi_pa = item.dwi_full?.pa?.nii ?: []
+            def dwi_pa_json = item.dwi_full?.pa?.json ?: []
+            def dwi_pa_bval = item.dwi_full?.pa?.bval ?: []
+            def dwi_pa_bvec = item.dwi_full?.pa?.bvec ?: []
+
+            // ** Figuring out which DWI to use for the pipeline ** //
+            // ** dwi should be mutually exclusive with dwi_ap and dwi_pa ** //
+            // ** but taking the PA/AP if available **//
+            def use_ap_pa = dwi_ap || dwi_pa
+            if ( dwi && use_ap_pa ) {
+                logs << "[${id}${ses ? "/" + ses : ""}] Both single DWI and AP/PA DWI found. Using AP/PA DWI " +
+                        "for processing. Use .bidsignore to override."
+            }
+
+            // Sbref
+            def sbref = item.sbref?.nii ?: []
+            def sbref_json = item.sbref?.json ?: []
+
+            // Sbref AP/PA
+            def sbref_ap = item.sbref_full?.ap?.nii ?: []
+            def sbref_ap_json = item.sbref_full?.ap?.json ?: []
+            def sbref_pa = item.sbref_full?.pa?.nii ?: []
+            def sbref_pa_json = item.sbref_full?.pa?.json ?: []
+
+            // EPI
+            def epi = item.epi?.nii ?: []
+            def epi_json = item.epi?.json ?: []
+
+            // EPI AP/PA
+            def epi_ap = item.epi_full?.ap?.nii ?: []
+            def epi_ap_json = item.epi_full?.ap?.json ?: []
+            def epi_pa = item.epi_full?.pa?.nii ?: []
+            def epi_pa_json = item.epi_full?.pa?.json ?: []
+
+            // T1w and T2w
+            // ** Note: we don't need the JSON files for T1w/T2w ** //
+            def t1w = item.T1w?.nii ?: []
+            def t2w = item.T2w?.nii ?: []
+
+            if ( t1w && t1w.size() > 1 ) {
+                logs << "[${id}${ses ? "/" + ses : ""}] Multiple T1w images found. Using the last one for processing. Use .bidsignore to override."
+                t1w = [t1w[-1]]
+            }
+
+            if ( t2w && t2w.size() > 1) {
+                logs << "[${id}${ses ? "/" + ses : ""}] Multiple T2w images found. Using the last one for processing. Use .bidsignore to override."
+                t2w = [t2w[-1]]
+            }
+
+            // ** Starting with AP/PA, look if there are multiple runs ** //
+            def files = []
+            if ( use_ap_pa ) {
+                // ** We might get only one of the two, so assume AP by default, if absent, use PA ** //
+                def primary_nii = []
+                def primary_json = []
+                def primary_bval = []
+                def primary_bvec = []
+                def reverse_nii = []
+                def reverse_json = []
+                def reverse_bval = []
+                def reverse_bvec = []
+                if (dwi_ap) {
+                    primary_nii = normalizeToList(dwi_ap)
+                    primary_json = normalizeToList(dwi_ap_json)
+                    primary_bval = normalizeToList(dwi_ap_bval)
+                    primary_bvec = normalizeToList(dwi_ap_bvec)
+                    reverse_nii = normalizeToList(dwi_pa)
+                    reverse_json = normalizeToList(dwi_pa_json)
+                    reverse_bval = normalizeToList(dwi_pa_bval)
+                    reverse_bvec = normalizeToList(dwi_pa_bvec)
+                } else {
+                    primary_nii = normalizeToList(dwi_pa)
+                    primary_json = normalizeToList(dwi_pa_json)
+                    primary_bval = normalizeToList(dwi_pa_bval)
+                    primary_bvec = normalizeToList(dwi_pa_bvec)
+                    reverse_nii = normalizeToList(dwi_ap)
+                    reverse_json = normalizeToList(dwi_ap_json)
+                    reverse_bval = normalizeToList(dwi_ap_bval)
+                    reverse_bvec = normalizeToList(dwi_ap_bvec)
+                }
+
+                primary_nii.eachWithIndex { nii, idx ->
+                    def run_id = extractRunFromFilename(nii) ?: (primary_nii.size() > 1 ? "${idx + 1}" : "")
+                    def rev_idx = findMatchingReverseFile(nii, reverse_nii)
+
+                    // ** Before mixing the AP/PA, check if the PhaseEncodingDirection are opposite ** //
+                    def pe_check = [matched: true, warnings: [], pe: null]
+                    if (rev_idx != null) {
+                        pe_check = areOppositePhaseEncoding(pe_check, primary_json[idx], reverse_json[rev_idx])
+                        if (!pe_check.matched) {
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] ${pe_check.warnings.join(" ")}"
+                        }
+                    }
+                    def readout = primary_json[idx]?.TotalReadoutTime ?: primary_json[idx]?.EstimatedTotalReadoutTime ?: params.dwi_susceptibility_readout
+
+                    // ** Finding possible sbref and epi candidates for this DWI run ** //
+                    def sbref_candidates = []
+                    [
+                        [sbref_ap, sbref_ap_json, "AP"], [sbref_pa, sbref_pa_json, "PA"], [sbref, sbref_json, "NA"]
+                    ].each { group ->
+                        def nii_list = normalizeToList(group[0])
+                        def json_list = normalizeToList(group[1])
+                        nii_list.eachWithIndex { snii, sidx ->
+                            sbref_candidates << [nii: snii, json: json_list[sidx], direction: group[2]]
+                        }
+                    }
+                    def epi_candidates = []
+                    [
+                        [epi_ap, epi_ap_json, "AP"], [epi_pa, epi_pa_json, "PA"], [epi, epi_json, "NA"]
+                    ].each { group ->
+                        def nii_list = normalizeToList(group[0])
+                        def json_list = normalizeToList(group[1])
+                        nii_list.eachWithIndex { enii, eidx ->
+                            epi_candidates << [nii: enii, json: json_list[eidx], direction: group[2]]
                         }
                     }
 
-                    if ( age == "nan" || age == "" ) {
-                        error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
-                    }
+                    // ** Inspecting the JSON metadata to find matches ** //
+                    def sbref_match = []
+                    sbref_candidates.each { candidate ->
+                        def match = matchFilesToDWI(
+                            primary_json[idx],
+                            nii,
+                            candidate.json       // JSON file
+                        )
 
-                    // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
-                    def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-                    def priors = fetchPriors(tempAge)
-
-                    // Add a check that b-values are within the params.dti_max_shell_value and params.fodf_min_shell_value, and if not, throw an error.
-                    if ( item.bval && !params.dti_shells && !params.fodf_shells && params.tracking ) {
-                        def bvals = file(item.bval).text.trim().split(/\s+/).findAll { it -> it }.collect { it -> it as Double }.toSet()
-                            .findAll { it -> !(it >= 0 - params.dwi_b0_threshold) || !(it <= 0 + params.dwi_b0_threshold) }
-
-                        // Check if any values fits the threshold for DTI fitting (shells under the threshold)
-                        def belowDTI = bvals.findAll { it -> it <= params.dti_max_shell_value }
-                        if ( belowDTI.size() == 0) {
-                            error "ERROR: No b-values are below the dti_max_shell_value threshold of ${params.dti_max_shell_value} for subject ${sid}. " +
-                                "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
-                                "Please check your acquisition protocol and provide the shells to use for DTI fitting using --dti_shells. " +
-                                "Alternatively, you can increase this threshold using --dti_max_shell_value."
+                        if (match.matched) {
+                            sbref_match << [nii: candidate.nii, json: candidate.json]
                         }
-
-                        // Check if any values fits the threshold for fODF fitting (shells over the threshold)
-                        def aboveFODF = bvals.findAll { it -> it >= params.fodf_min_shell_value }
-                        if ( aboveFODF.size() == 0) {
-                            error "ERROR: No b-values are above the fodf_min_shell_value threshold of ${params.fodf_min_shell_value} for subject ${sid}. " +
-                                "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
-                                "Please check your acquisition protocol and provide the shells to use for fODF fitting using --fodf_shells. " +
-                                "Alternatively, you can decrease this threshold using --fodf_min_shell_value."
+                        match.warnings.each { w ->
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] WARN (sbref) ${w}"
                         }
                     }
 
-                    return [
-                        [id: sid, session: session, run: run, age: age.toFloat(), fa: priors.fa, ad: priors.ad,
-                        rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max],
-                        item.t1 ? file(item.t1) : [],
-                        item.t2 ? file(item.t2) : [],
-                        item.dwi ? file(item.dwi) : [],
-                        item.bval ? file(item.bval) : [],
-                        item.bvec ? file(item.bvec) : [],
-                        item.rev_dwi ? file(item.rev_dwi) : [],
-                        item.rev_bval ? file(item.rev_bval) : [],
-                        item.rev_bvec ? file(item.rev_bvec) : [],
-                        item.rev_topup ? file(item.rev_topup) : []
+                    def epi_match = []
+                    epi_candidates.each { candidate ->
+                        def match = matchFilesToDWI(
+                            primary_json[idx],
+                            nii,
+                            candidate.json       // JSON file
+                        )
+
+                        if (match.matched) {
+                            epi_match << [nii: candidate.nii, json: candidate.json]
+                        }
+                        match.warnings.each { w ->
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] WARN (epi) ${w}"
+                        }
+                    }
+
+                    if (!sbref_match && !epi_match) {
+                        logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] No matching sbref or epi found for this DWI run."
+                    }
+
+                    // ** Organize the matched sbref/epi files by alignment with main DWI PE ** //
+                    def sbref_split = splitByPEDirection(sbref_match, primary_json[idx])
+                    def epi_split = splitByPEDirection(epi_match, primary_json[idx])
+
+
+
+                    files << [
+                        [
+                            id: id, session: ses ?: "", run: run_id,
+                            readout: readout, pe: pe_check.pe,
+                            age: age,
+                            fa: priors.fa, ad: priors.ad,
+                            rd: priors.rd, md: priors.md,
+                            rd_min: priors.rd_min, rd_max: priors.rd_max
+                        ],
+                        t1w,
+                        t2w,
+                        nii,
+                        primary_bval[idx],
+                        primary_bvec[idx],
+                        rev_idx != null ? reverse_nii[rev_idx] : [],
+                        rev_idx != null ? reverse_bval[rev_idx] : [],
+                        rev_idx != null ? reverse_bvec[rev_idx] : [],
+                        sbref_split.same ? sbref_split.same[0].nii : [],
+                        sbref_split.opposite ? sbref_split.opposite[0].nii : [],
+                        epi_split.same ? epi_split.same[0].nii : [],
+                        epi_split.opposite ? epi_split.opposite[0].nii : [],
                     ]
                 }
+            } else if (dwi) {
+                // ** In this case, we have a DWI without the dir- entity, but we may have runs ** //
+                def dwi_list = normalizeToList(dwi)
+                def dwi_json_list = normalizeToList(dwi_json)
+                def dwi_bval_list = normalizeToList(dwi_bval)
+                def dwi_bvec_list = normalizeToList(dwi_bvec)
+                dwi_list.eachWithIndex { nii, idx ->
+                    def run_id = extractRunFromFilename(nii) ?: (dwi_list.size() > 1 ? "${idx + 1}" : "")
+                    def readout = dwi_json_list[idx]?.TotalReadoutTime ?: dwi_json_list[idx]?.EstimatedTotalReadoutTime ?: params.dwi_susceptibility_readout
+                    def axisMap = [j: "y"]
+                    def pe = axisMap[dwi_json_list[idx]?.PhaseEncodingDirection]
+
+
+                    // ** Finding possible sbref and epi candidates for this DWI run ** //
+                    def sbref_candidates = []
+                    [
+                        [sbref_ap, sbref_ap_json, "AP"], [sbref_pa, sbref_pa_json, "PA"], [sbref, sbref_json, "NA"]
+                    ].each { group ->
+                        def nii_list = normalizeToList(group[0])
+                        def json_list = normalizeToList(group[1])
+                        nii_list.eachWithIndex { snii, sidx ->
+                            sbref_candidates << [nii: snii, json: json_list[sidx], direction: group[2]]
+                        }
+                    }
+
+                    def epi_candidates = []
+                    [
+                        [epi_ap, epi_ap_json, "AP"], [epi_pa, epi_pa_json, "PA"], [epi, epi_json, "NA"]
+                    ].each { group ->
+                        def nii_list = normalizeToList(group[0])
+                        def json_list = normalizeToList(group[1])
+                        nii_list.eachWithIndex { enii, eidx ->
+                            epi_candidates << [nii: enii, json: json_list[eidx], direction: group[2]]
+                        }
+                    }
+
+                    // ** Now matching them via the metadata ** //
+                    def sbref_match = []
+                    sbref_candidates.each { candidate ->
+                        def match = matchFilesToDWI(
+                            dwi_json_list[idx],
+                            nii,
+                            candidate.json       // JSON file
+                        )
+
+                        if (match.matched) {
+                            sbref_match << [nii: candidate.nii, json: candidate.json]
+                        }
+                        match.warnings.each { w ->
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] WARN (sbref) ${w}"
+                        }
+                    }
+
+                    def epi_match = []
+                    epi_candidates.each { candidate ->
+                        def match = matchFilesToDWI(
+                            dwi_json_list[idx],
+                            nii,
+                            candidate.json       // JSON file
+                        )
+
+                        if (match.matched) {
+                            epi_match << [nii: candidate.nii, json: candidate.json]
+                        }
+                        match.warnings.each { w ->
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] WARN (epi) ${w}"
+                        }
+                    }
+
+                    if (!sbref_match && !epi_match) {
+                        logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] No matching sbref or epi found for this DWI run."
+                    }
+
+                    // ** Organize by PE direction matching the PE of the main DWI file ** //
+                    def sbref_split = splitByPEDirection(sbref_match, dwi_json_list[idx])
+                    def epi_split = splitByPEDirection(epi_match, dwi_json_list[idx])
+
+                    files << [
+                        [
+                            id: id, session: ses ?: "", run: run_id,
+                            readout: readout, pe: pe,
+                            age: age,
+                            fa: priors.fa, ad: priors.ad,
+                            rd: priors.rd, md: priors.md,
+                            rd_min: priors.rd_min, rd_max: priors.rd_max
+                        ],
+                        t1w,
+                        t2w,
+                        nii,
+                        dwi_bval_list[idx],
+                        dwi_bvec_list[idx],
+                        [],
+                        [],
+                        [],
+                        sbref_split.same ? sbref_split.same[0].nii : [],
+                        sbref_split.opposite ? sbref_split.opposite[0].nii : [],
+                        epi_split.same ? epi_split.same[0].nii : [],
+                        epi_split.opposite ? epi_split.opposite[0].nii : []
+                    ]
+                }
+            } else {
+                files << [
+                    [
+                        id: id, session: ses ?: "", run: "",
+                        readout: "", pe: "",
+                        age: age,
+                        fa: priors.fa, ad: priors.ad,
+                        rd: priors.rd, md: priors.md,
+                        rd_min: priors.rd_min, rd_max: priors.rd_max
+                    ],
+                    t1w,
+                    t2w,
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                ]
             }
-            .filter { meta, _t1, _t2, _dwi, _bval, _bvec, _rev_dwi, _rev_bval, _rev_bvec, _rev_topup ->
-                participant_ids.isEmpty() || meta.id in participant_ids
+
+            // ** Save the logs into ${params.outdir}/pipeline_info/BIDS_logs.txt ** //
+            file("${params.outdir}/pipeline_info/BIDS_logs.txt") << logs.join("\n") + "\n"
+
+            // Add a check that b-values are within the params.dti_max_shell_value and params.fodf_min_shell_value, and if not, throw an error.
+            if ( files[0][4] && !params.dti_shells && !params.fodf_shells && params.tracking ) {
+
+                def bvals = file(files[0][4]).text.trim().split(/\s+/).findAll { it -> it }.collect { it -> it as Double }.toSet()
+                    .findAll { it -> !(it >= 0 - params.dwi_b0_threshold) || !(it <= 0 + params.dwi_b0_threshold) }
+
+                // Check if any values fits the threshold for DTI fitting (shells under the threshold)
+                def belowDTI = bvals.findAll { it -> it <= params.dti_max_shell_value }
+                if ( belowDTI.size() == 0) {
+                    error "ERROR: No b-values are below the dti_max_shell_value threshold of ${params.dti_max_shell_value} for subject ${id}. " +
+                        "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
+                        "Please check your acquisition protocol and provide the shells to use for DTI fitting using --dti_shells. " +
+                        "Alternatively, you can increase this threshold using --dti_max_shell_value."
+                }
+
+                // Check if any values fits the threshold for fODF fitting (shells over the threshold)
+                def aboveFODF = bvals.findAll { it -> it >= params.fodf_min_shell_value }
+                if ( aboveFODF.size() == 0) {
+                    error "ERROR: No b-values are above the fodf_min_shell_value threshold of ${params.fodf_min_shell_value} for subject ${id}. " +
+                        "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
+                        "Please check your acquisition protocol and provide the shells to use for fODF fitting using --fodf_shells. " +
+                        "Alternatively, you can decrease this threshold using --fodf_min_shell_value."
+                }
             }
+
+            return files
+        }
     } else {
         ch_inputs = channel.empty()
-    } */
+    }
 
     emit:
     input_bids      = ch_inputs
@@ -326,40 +553,166 @@ workflow PIPELINE_COMPLETION {
 */
 
 //
-// Read participants.tsv file
+// Function to format a list from null, string, or list.
 //
-def readParticipantsTsv(file) {
-    def participantData = []
-
-    file.splitCsv(sep: '\t', header: true).each { row ->
-        if (!row.age) {
-            error "ERROR: Age is not entered correctly in the participants.tsv file. Please validate."
-        }
-
-        def sessionId = (row.session_id == null || row.session_id.toString().trim() == "") ? "" : row.session_id.toString()
-
-        participantData.add([
-            participant_id: row.participant_id.toString(),
-            session_id: sessionId,
-            age: row.age.toFloat()
-        ])
-    }
-
-    return participantData
+def normalizeToList(value) {
+    if (value == null) return []
+    if (value instanceof List) return value
+    return [value]
 }
 
 //
-// Get age for a specific participant from the participants.tsv data
+// Function to extract run number from a BIDS filename.
 //
-def getAge(participant_data, participant_id, session_id) {
-    def searchParticipantId = participant_id.toString()
-    def searchSessionId = (session_id == null || session_id.toString().trim() == "") ? "" : session_id.toString()
+def extractRunFromFilename(filepath) {
+    def filename = filepath instanceof Path ? filepath.name : filepath.toString().split('/')[-1]
+    def matcher = (filename =~ /run-([a-zA-Z0-9]+)/)
+    return matcher ? matcher[0][1] : null
+}
 
-    def match = participant_data.find { row ->
-        return row.participant_id == searchParticipantId && row.session_id == searchSessionId
+//
+// Function to find the matching reverse file in the case of DWI AP/PA
+//
+def findMatchingReverseFile(primaryFile, List reverseList) {
+    if (!reverseList) return null
+
+    def primaryRun = extractRunFromFilename(primaryFile)
+
+    // 1. match by run entity first
+    if (primaryRun) {
+        def match = reverseList.findIndexOf { rev ->
+            extractRunFromFilename(rev) == primaryRun
+        }
+        if (match >= 0) return match
     }
 
-    return match ? match.age : 0.0  // Return 0.0 instead of empty string
+    // 2. If reverse has only one file, use it
+    if (reverseList.size() == 1) return 0
+
+    // 3. nothing to match at this point
+    return null
+}
+
+//
+// Function to assess whether phase encoding direction are opposite for a pair of JSON sidecar files
+//
+def areOppositePhaseEncoding(Map results, Map json1, Map json2) {
+    def pe1 = json1?.PhaseEncodingDirection
+    def pe2 = json2?.PhaseEncodingDirection
+
+    if (!pe1 || !pe2) {
+        results.warnings << "Missing PhaseEncodingDirection in one of the JSON sidecar files. Cannot determine if they are opposite."
+        results.matched = false
+        return results
+    }
+
+    // ** Currently only support j/j- pair ** //
+    def axis1 = pe1.replaceAll("-", "")
+    def axis2 = pe2.replaceAll("-", "")
+    if (axis1 != axis2) {
+        results.warnings << "PhaseEncodingDirection axes do not match: ${pe1} vs ${pe2}. Cannot determine if they are opposite."
+        results.matched = false
+    }
+
+    def neg1 = pe1.contains("-")
+    def neg2 = pe2.contains("-")
+    results.matched = (neg1 != neg2) ? true : false
+
+    // ** Convert j/j- into y/y- for clarity ** //
+    def axisMap = [j: "y"]
+    results.pe = axisMap[axis1]
+    if (results.pe == null) {
+        results.warnings << "PhaseEncodingDirection axes are not j/j- pair: ${pe1} vs ${pe2}. Cannot determine if they are opposite."
+        results.matched = false
+    }
+
+    return results
+}
+
+//
+// Function to match sbref and epi files to DWI
+//
+def matchFilesToDWI(Map dwiJson, dwiFilename, Map assocJson) {
+    def result = [matched: false, warnings: []]
+
+    def dwiName = (dwiFilename instanceof Path ? dwiFilename.name :
+                  dwiFilename.toString().split('/')[-1])
+
+    // Trying to find a match between B0FieldSource and B0FieldIdentifier
+    def dwiFieldSource = dwiJson?.B0FieldSource
+    def assocFieldId = assocJson?.B0FieldIdentifier
+
+    if (dwiFieldSource && assocFieldId) {
+        if (normalizeToList(dwiFieldSource).intersect(normalizeToList(assocFieldId))) {
+            result.matched = true
+        } else {
+            result.warnings << "B0FieldSource and B0FieldIdentifier do not match: ${dwiFieldSource} vs ${assocFieldId}. Cannot determine if they are opposite."
+            return result
+        }
+    }
+
+    // Checking the reverse association in case it happens
+    def dwiFieldId = dwiJson?.B0FieldIdentifier
+    def assocFieldSource = assocJson?.B0FieldSource
+
+    if (dwiFieldId && assocFieldSource) {
+        if (normalizeToList(dwiFieldId).intersect(normalizeToList(assocFieldSource))) {
+            result.matched = true
+        } else {
+            result.warnings << "B0FieldIdentifier and B0FieldSource do not match: ${dwiFieldId} vs ${assocFieldSource}. Cannot determine if they are opposite."
+            return result
+        }
+    }
+
+    // If no B0Field* are present, check for IntendedFor
+    def intendedFor = assocJson?.IntendedFor
+    if (intendedFor) {
+        def matches = intendedFor.any { target ->
+            def targetName = target.toString().replaceAll("^bids::", "").split('/')[-1]
+
+            // target name must match the DWI filename
+            return targetName == dwiName
+        }
+
+        if ( matches ) {
+            result.matched = true
+        } else {
+            return result
+        }
+    }
+    return result
+}
+
+//
+// Function sort if matched sbref/epi files are the same direction as the main DWI or not.
+//
+def splitByPEDirection(List matches, Map dwiJson) {
+    def dwiPE = dwiJson?.PhaseEncodingDirection
+    def samePE = []
+    def oppositePE = []
+
+    matches.each { m ->
+        def assocPE = m.json?.PhaseEncodingDirection
+        if (!dwiPE || !assocPE) {
+            // Can't determine, so put in oppositePE for safety
+            oppositePE << m
+        } else if (arePEDirectionOpposite(dwiPE, assocPE)) {
+            oppositePE << m
+        } else {
+            samePE << m
+        }
+    }
+    return [same: samePE, opposite: oppositePE]
+}
+
+//
+// Small function to check if two PE strings are in the opposite direction
+//
+def arePEDirectionOpposite(String pe1, String pe2) {
+    def axis1 = pe1.replaceAll("-", "")
+    def axis2 = pe2.replaceAll("-", "")
+    if (axis1 != axis2) return false
+    return pe1.contains("-") != pe2.contains("-")
 }
 
 //
