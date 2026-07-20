@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - main
-  pull_request_target:
+  pull_request:
     branches:
       - main
       - dev
 
 jobs:
   build-only:
-    if: github.event_name == 'pull_request_target'
+    if: github.event_name == 'pull_request'
     uses: scilus/sf-pediatric-documentation/.github/workflows/deploy.yml@main
     with:
       deploy: false
