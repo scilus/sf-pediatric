@@ -132,7 +132,8 @@ workflow PIPELINE_INITIALISATION {
                 error "ERROR: Age not found for participant ${id}${ses ? " and session " + ses : ""} in participants.tsv file. Please validate."
             }
             // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
+            // ** Setting to a minimum of 0.04 (~ 2 weeks) to avoid negative values for the priors prediction ** //
+            def tempAge = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
             def priors = fetchPriors(tempAge)
 
             // ** Instantiate a variable that will collect prints related to BIDS file matching ** //
@@ -307,8 +308,6 @@ workflow PIPELINE_INITIALISATION {
                     // ** Organize the matched sbref/epi files by alignment with main DWI PE ** //
                     def sbref_split = splitByPEDirection(sbref_match, primary_json[idx])
                     def epi_split = splitByPEDirection(epi_match, primary_json[idx])
-
-
 
                     files << [
                         [
