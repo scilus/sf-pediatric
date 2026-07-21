@@ -33,14 +33,6 @@
                     "description": "Path to the derivatives directory to use as input.",
                     "fa_icon": "fas fa-folder-open"
                 },
-                "bids_script": {
-                    "type": "string",
-                    "format": "file-path",
-                    "description": "Path to the BIDS script.",
-                    "help_text": "This is a script that will be used to generate the BIDS directory structure from the raw data. Unless you know what you are doing, this should not be changed. Will be removed in a future release.",
-                    "fa_icon": "fas fa-file-code",
-                    "hidden": true
-                },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",

@@ -1,2 +1,0 @@
-subject,t1,t2,dwi,bval,bvec,rev_b0,labels,wmparc,trk,peaks,fodf,mat,warp,metrics
-sub-1000,/input/sub-1000/t1.nii.gz,/input/sub-1000/t2.nii.gz,/input/sub-1000/dwi.nii.gz,/input/sub-1000/dwi.bval,/input/sub-1000/dwi.bvec,/input/sub-1000/rev_b0.nii.gz,/input/sub-1000/labels.nii.gz,/input/sub-1000/wmparc.nii.gz,/input/sub-1000/tractogram.trk,/input/sub-1000/peaks.nii.gz,/input/sub-1000/fodf.nii.gz,/input/sub-1000/0GenericAffine.mat,/input/sub-1000/output1Warp.nii.gz,/input/sub-1000/metrics/
