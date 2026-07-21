@@ -16,7 +16,7 @@ process CONNECTIVITY_METRICS {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def atlas = (meta.age < 0.5 || meta.age > 18) ? "DK" : "BrainnetomeChild"
+    def atlas = task.ext.atlas ?: "BrainnetomeChild"
 
     if ( metrics ) {
         metrics_list = metrics.join(", ").replace(',', '')
@@ -120,7 +120,7 @@ process CONNECTIVITY_METRICS {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def atlas = (meta.age < 2.5 || meta.age > 18) ? "DK" : "BrainnetomeChild"
+    def atlas = task.ext.atlas ?: "BrainnetomeChild"
 
     if ( metrics ) {
         metrics_list = metrics.join(", ").replace(',', '')

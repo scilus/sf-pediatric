@@ -27,7 +27,7 @@ process PREPROC_EDDY {
     def bet_topup_before_eddy_f = task.ext.bet_topup_before_eddy_f ?: ""
     def prefix_topup = task.ext.prefix_topup ? task.ext.prefix_topup : ""
     def b0_thr_extract_b0 = task.ext.b0_thr_extract_b0 ? task.ext.b0_thr_extract_b0 : ""
-    def encoding = meta.dir ?: (task.ext.encoding ?: "")
+    def encoding = meta.pe ?: (task.ext.encoding ?: "")
     def readout = meta.readout ?: (task.ext.readout ?: "")
     def dilate_b0_mask_prelim_brain_extraction = task.ext.dilate_b0_mask_prelim_brain_extraction ? task.ext.dilate_b0_mask_prelim_brain_extraction : ""
     def eddy_cmd = task.ext.eddy_cmd ? task.ext.eddy_cmd : "eddy_cpu"
@@ -199,7 +199,7 @@ process PREPROC_EDDY {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     def values = meta.values() as List
-    prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
+    //prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
 
     """
     set +e

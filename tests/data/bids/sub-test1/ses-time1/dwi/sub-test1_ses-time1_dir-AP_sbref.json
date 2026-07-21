@@ -4,7 +4,6 @@
     "PhaseEncodingDirection": "j-",
     "TotalReadoutTime": 0.062,
     "IntendedFor": [
-        "dwi/sub-test2_run-01_dwi.nii.gz",
-        "dwi/sub-test2_run-02_dwi.nii.gz"
+        "dwi/sub-test1_ses-time1_dir-PA_dwi.nii.gz"
     ]
 }

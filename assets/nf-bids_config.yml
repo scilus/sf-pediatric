@@ -1,0 +1,56 @@
+loop_over: [subject, session, run]
+
+T1w:
+  plain_set: {}
+
+T2w:
+  plain_set: {}
+
+dwi:
+  sequential_set:
+    by_entity: "run"
+    additional_extensions: ["bval", "bvec"]
+  exclude_entities: ["dir"]
+
+dwi_full:
+  suffix_maps_to: "dwi"
+  mixed_set:
+    named_dimension: direction
+    sequential_dimension: run
+    named_groups:
+      pa:
+        direction: dir-PA
+      ap:
+        direction: dir-AP
+
+epi:
+  sequential_set:
+    by_entity: "run"
+  exclude_entities: ["dir"]
+
+epi_full:
+  suffix_maps_to: "epi"
+  mixed_set:
+    named_dimension: direction
+    sequential_dimension: run
+    named_groups:
+      pa:
+        direction: dir-PA
+      ap:
+        direction: dir-AP
+
+sbref:
+  sequential_set:
+    by_entity: "run"
+  exclude_entities: ["dir"]
+
+sbref_full:
+  suffix_maps_to: "sbref"
+  mixed_set:
+    named_dimension: direction
+    sequential_dimension: run
+    named_groups:
+      pa:
+        direction: dir-PA
+      ap:
+        direction: dir-AP

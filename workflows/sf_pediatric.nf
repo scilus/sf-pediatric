@@ -12,6 +12,7 @@ include { softwareVersionsToYAML            } from '../subworkflows/nf-core/util
 include { methodsDescriptionText            } from '../subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
 include { FETCH_DERIVATIVES                 } from '../subworkflows/local/utils/fetch_derivatives.nf'
 include { generateDatasetJson               } from '../subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
+include { joinBy                            } from 'plugin/nf-bids'
 
 // ** Prepare templates ** //
 include { TEMPLATES                         } from '../subworkflows/local/templates/main.nf'
@@ -102,15 +103,16 @@ workflow SF_PEDIATRIC {
     TEMPLATES ( )
 
     //
-    // Decomposing the samplesheet into individual channels
+    // Decomposing the BIDS input into channels
     //
     ch_inputs = ch_input_bids
-        .multiMap{ meta, t1, t2, dwi, bval, bvec, rev_dwi, rev_bval, rev_bvec, rev_b0 ->
+        .multiMap{ meta, t1, t2, dwi, bval, bvec, rev_dwi, rev_bval, rev_bvec, sbref, sbref_rev, epi, epi_rev ->
             t1: [meta, t1]
             t2: [meta, t2]
             dwi_bval_bvec: [meta, dwi, bval, bvec]
-            rev_b0: [meta, rev_b0]
             rev_dwi_bval_bvec: [meta, rev_dwi, rev_bval, rev_bvec]
+            b0: [meta, sbref ?: epi]
+            b0_rev: [meta, sbref_rev ?: epi_rev]
         }
 
     // Check if any T1w or T2w images are provided
@@ -421,8 +423,8 @@ workflow SF_PEDIATRIC {
             ch_inputs.rev_dwi_bval_bvec.filter {
                 _meta, dwi, _bval, _bvec -> dwi != []
              },
-            channel.empty(),
-            ch_inputs.rev_b0,
+            ch_inputs.b0,
+            ch_inputs.b0_rev,
             ch_dwi_sample_weights,
             ch_topup_config,
             [
@@ -827,6 +829,15 @@ workflow SF_PEDIATRIC {
             } else {
                 FETCH_DERIVATIVES ( params.input_deriv )
                 ch_labels = FETCH_DERIVATIVES.out.labels
+
+                // ** ch_labels misses the readout and pe fields in the meta map, we need to append ** //
+                // ** it, otherwise, joining with existing derivs won't work                        ** //
+                ch_labels = ch_trk.joinBy( ch_labels ) { it ->
+                    [it[0].id, it[0].session, it[0].run, it[0].age]
+                }
+                .map{
+                    it -> it[4] ? [it[0], it[3], it[4]] : [it[0], it[3]]
+                }
             }
         }
     }
