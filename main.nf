@@ -58,9 +58,6 @@ params {
     // Path to the derivatives directory to use as input.
     input_deriv: String?
 
-    // Path to the BIDS script.
-    bids_script: String = "${projectDir}/bin/BIDSLayout.py"
-
     // The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.
     outdir: String
 
@@ -210,7 +207,6 @@ workflow {
         args,
         params.outdir,
         params.input,
-        params.bids_script,
         params.help,
         params.help_full,
         params.show_hidden

@@ -16,7 +16,6 @@ include { completionEmail                   } from '../../nf-core/utils_nfcore_p
 include { completionSummary                 } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE             } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NEXTFLOW_PIPELINE           } from '../../nf-core/utils_nextflow_pipeline'
-include { UTILS_BIDSLAYOUT          } from '../../../modules/local/utils/bidslayout'
 include { fromBIDS                          } from 'plugin/nf-bids'
 
 /*
@@ -34,7 +33,6 @@ workflow PIPELINE_INITIALISATION {
     nextflow_cli_args //   array: List of positional nextflow CLI args
     outdir            //  string: The output directory where the results will be saved
     input_bids        //  string: Path to input samplesheet
-    bids_script       //  string: Path to BIDS layout script
     help              // boolean: Display help message and exit
     help_full         // boolean: Show the full help message
     show_hidden       // boolean: Show hidden parameters in the help message
@@ -187,8 +185,8 @@ workflow PIPELINE_INITIALISATION {
 
             // T1w and T2w
             // ** Note: we don't need the JSON files for T1w/T2w ** //
-            def t1w = item.T1w?.nii ?: []
-            def t2w = item.T2w?.nii ?: []
+            def t1w = item.T1w?.nii ? [item.T1w?.nii] : []
+            def t2w = item.T2w?.nii ? [item.T2w?.nii] : []
 
             if ( t1w && t1w.size() > 1 ) {
                 logs << "[${id}${ses ? "/" + ses : ""}] Multiple T1w images found. Using the last one for processing. Use .bidsignore to override."
@@ -274,6 +272,8 @@ workflow PIPELINE_INITIALISATION {
                         def match = matchFilesToDWI(
                             primary_json[idx],
                             nii,
+                            reverse_json[rev_idx] ?: [],
+                            reverse_nii[rev_idx] ?: [],
                             candidate.json       // JSON file
                         )
 
@@ -290,6 +290,8 @@ workflow PIPELINE_INITIALISATION {
                         def match = matchFilesToDWI(
                             primary_json[idx],
                             nii,
+                            reverse_json[rev_idx] ?: [],
+                            reverse_nii[rev_idx] ?: [],
                             candidate.json       // JSON file
                         )
 
@@ -374,7 +376,9 @@ workflow PIPELINE_INITIALISATION {
                         def match = matchFilesToDWI(
                             dwi_json_list[idx],
                             nii,
-                            candidate.json       // JSON file
+                            [],                     // No reverse file in this case
+                            [],
+                            candidate.json          // JSON file
                         )
 
                         if (match.matched) {
@@ -390,7 +394,9 @@ workflow PIPELINE_INITIALISATION {
                         def match = matchFilesToDWI(
                             dwi_json_list[idx],
                             nii,
-                            candidate.json       // JSON file
+                            [],                     // No reverse file in this case
+                            [],
+                            candidate.json          // JSON file
                         )
 
                         if (match.matched) {
@@ -631,11 +637,13 @@ def areOppositePhaseEncoding(Map results, Map json1, Map json2) {
 //
 // Function to match sbref and epi files to DWI
 //
-def matchFilesToDWI(Map dwiJson, dwiFilename, Map assocJson) {
+def matchFilesToDWI(Map dwiJson, dwiFilename, Map revJson, revFilename, Map assocJson) {
     def result = [matched: false, warnings: []]
 
     def dwiName = (dwiFilename instanceof Path ? dwiFilename.name :
                   dwiFilename.toString().split('/')[-1])
+    def revName = (revFilename instanceof Path ? revFilename.name :
+                  revFilename.toString().split('/')[-1])
 
     // Trying to find a match between B0FieldSource and B0FieldIdentifier
     def dwiFieldSource = dwiJson?.B0FieldSource
@@ -663,6 +671,30 @@ def matchFilesToDWI(Map dwiJson, dwiFilename, Map assocJson) {
         }
     }
 
+    // Check in the reverse DWI file, if present, for B0FieldSource and B0FieldIdentifier
+    if (revJson) {
+        def revFieldSource = revJson?.B0FieldSource
+        def revFieldId = revJson?.B0FieldIdentifier
+
+        if (revFieldSource && assocFieldId) {
+            if (normalizeToList(revFieldSource).intersect(normalizeToList(assocFieldId))) {
+                result.matched = true
+            } else {
+                result.warnings << "Reverse B0FieldSource and B0FieldIdentifier do not match: ${revFieldSource} vs ${assocFieldId}. Cannot determine if they are opposite."
+                return result
+            }
+        }
+
+        if (revFieldId && assocFieldSource) {
+            if (normalizeToList(revFieldId).intersect(normalizeToList(assocFieldSource))) {
+                result.matched = true
+            } else {
+                result.warnings << "Reverse B0FieldIdentifier and B0FieldSource do not match: ${revFieldId} vs ${assocFieldSource}. Cannot determine if they are opposite."
+                return result
+            }
+        }
+    }
+
     // If no B0Field* are present, check for IntendedFor
     def intendedFor = assocJson?.IntendedFor
     if (intendedFor) {
@@ -670,7 +702,7 @@ def matchFilesToDWI(Map dwiJson, dwiFilename, Map assocJson) {
             def targetName = target.toString().replaceAll("^bids::", "").split('/')[-1]
 
             // target name must match the DWI filename
-            return targetName == dwiName
+            return targetName == dwiName || targetName == revName
         }
 
         if ( matches ) {
