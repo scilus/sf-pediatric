@@ -42,6 +42,13 @@ workflow PIPELINE_INITIALISATION {
     ch_versions = channel.empty()
 
     //
+    // Check if the gpu profile is used and validate if a gpu type is provided.
+    //
+    if ( workflow.profile.contains('gpu') && !params.gpu_type ) {
+        error "ERROR: The 'gpu' profile is used but no GPU type is provided. Please provide a GPU type using --gpu_type."
+    }
+
+    //
     // Print version and exit if required and dump pipeline parameters to JSON file
     //
     UTILS_NEXTFLOW_PIPELINE (
