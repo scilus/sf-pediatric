@@ -120,3 +120,9 @@ ENV LANG="C.UTF-8" \
     FSLMACHINELIST="" \
     FSLREMOTECALL="" \
     FSLGECUDAQ="cuda.q"
+
+# Fix MCRIBS scripts for new nibabel 4D handling.
+RUN sed -i \
+    -e 's/ASEGIMG = numpy.asanyarray(ASEGNII.dataobj)/ASEGIMG = numpy.squeeze(numpy.asanyarray(ASEGNII.dataobj))/g' \
+    -e 's/DrawEMLabelsIMG = numpy.asanyarray(DrawEMLabelsNII.dataobj)/DrawEMLabelsIMG = numpy.squeeze(numpy.asanyarray(DrawEMLabelsNII.dataobj))/g' \
+    /opt/MCRIBS/bin/APARC2ASEGCSFRestoreDrawEM
