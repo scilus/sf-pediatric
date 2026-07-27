@@ -9,7 +9,7 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "This section will detail how to set the inputs and outputs of the pipeline.",
+            "description": "Define where the pipeline should find input data and save output data.",
             "required": ["outdir"],
             "properties": {
                 "input": {
@@ -1635,6 +1635,18 @@
                     "fa_icon": "fas fa-brain",
                     "default": false,
                     "hidden": true
+                },
+                "help": {
+                    "type": ["boolean", "string"],
+                    "description": "Display the help message."
+                },
+                "help_full": {
+                    "type": "boolean",
+                    "description": "Display the full detailed help message."
+                },
+                "show_hidden": {
+                    "type": "boolean",
+                    "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
                 }
             }
         }

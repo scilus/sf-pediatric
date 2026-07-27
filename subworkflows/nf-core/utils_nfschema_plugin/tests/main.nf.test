@@ -97,7 +97,10 @@ nextflow_workflow {
                 input[6] = ""
                 input[7] = ""
                 input[8] = ""
+<<<<<<< HEAD
                 input[9] = null
+=======
+>>>>>>> TEMPLATE
                 """
             }
         }
