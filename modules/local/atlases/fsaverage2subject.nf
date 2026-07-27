@@ -43,7 +43,7 @@ process ATLASES_FSAVERAGE2SUBJECT {
             ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.fsaverage.reg --threads $task.cpus
         mris_register -multi_scale 3 -max_degrees 135 -1 -inflated ${prefix}_fs/surf/rh.sphere \
             ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.fsaverage.reg --threads $task.cpus
-        args="--srcsurfreg sphere --trgsurfreg sphere.fsaverage.reg --cortex"
+        args="--srcsurfreg sphere --trgsurfreg sphere.fsaverage.reg"
     else
         # surf to surf works well with adult data, so nothing to add here.
         args=""
@@ -95,7 +95,7 @@ process ATLASES_FSAVERAGE2SUBJECT {
         --tablefile=${prefix}__area_rh.${atlas_name}.tsv
 
     # Compute stats for subcortical regions
-    mri_segstats --seg $subcortical \
+    mri_segstats --seg ${atlas_name}_subcortical_warped.nii.gz \
         --ctab ${atlas_name}_LUT.txt \
         --excludeid 0 \
         --o ${prefix}_fs/stats/subcortical.${atlas_name}.stats \

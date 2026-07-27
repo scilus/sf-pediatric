@@ -360,6 +360,7 @@ workflow SF_PEDIATRIC {
         // Collate all segmentation tsv files and output them.
         // We need to filter files to collate based on metric and hemisphere
         // Iterate over the expected metrics and hemispheres, and collate files matching those patterns
+        def expectedHeaders = [:]
         ch_merged_tsvs = SEGMENTATION.out.tsv
             .map { _meta, tsvs -> tsvs }
             .flatten()
@@ -375,6 +376,17 @@ workflow SF_PEDIATRIC {
 
                 // Find columns to keep (not containing "???")
                 def keepIdx = header.indices.findAll { i -> !header[i].contains('???') }
+                def filteredHeader = keepIdx.collect { i -> header[i] }
+
+                if (!expectedHeaders.containsKey(match)) {
+                    expectedHeaders[match] = filteredHeader
+                } else {
+                    // Validate that the current header matches the expected header for this metric/hemisphere
+                    // Let's throw a warning instead of an error to allow the workflow to continue, but log the issue
+                    if (filteredHeader != expectedHeaders[match]) {
+                        log.warn "Header mismatch for ${tsv.name}: expected ${expectedHeaders[match]}, found ${filteredHeader}. This may indicate missing cortical/subcortical ROIs for some subjects."
+                    }
+                }
 
                 // Rename first column to "sample", filter columns
                 def newHeader = keepIdx.collect { i ->
