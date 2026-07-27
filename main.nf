@@ -1,13 +1,11 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf/pediatricflow
+    scilus/sf_pediatric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf/pediatricflow
+    Github : https://github.com/scilus/sf_pediatric
 ----------------------------------------------------------------------------------------
 */
-
-nextflow.enable.dsl = 2
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,10 +13,9 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { PEDIATRICFLOW  } from './workflows/pediatricflow'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_pediatricflow_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_pediatricflow_pipeline'
-
+include { SF_PEDIATRIC  } from './workflows/sf_pediatric'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sf_pediatric_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -28,7 +25,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_pedi
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NF_PEDIATRICFLOW {
+workflow SCILUS_SF_PEDIATRIC {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -38,13 +35,15 @@ workflow NF_PEDIATRICFLOW {
     //
     // WORKFLOW: Run pipeline
     //
-    PEDIATRICFLOW (
-        samplesheet
+    SF_PEDIATRIC (
+        samplesheet,
+        params.multiqc_config,
+        params.multiqc_logo,
+        params.multiqc_methods_description,
+        params.outdir,
     )
-
     emit:
-    multiqc_report = PEDIATRICFLOW.out.multiqc_report // channel: /path/to/multiqc_report.html
-
+    multiqc_report = SF_PEDIATRIC.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,27 +54,27 @@ workflow NF_PEDIATRICFLOW {
 workflow {
 
     main:
-
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
     PIPELINE_INITIALISATION (
         params.version,
-        params.help,
         params.validate_params,
         params.monochrome_logs,
         args,
         params.outdir,
-        params.input
+        params.input,
+        params.help,
+        params.help_full,
+        params.show_hidden
     )
 
     //
     // WORKFLOW: Run main workflow
     //
-    NF_PEDIATRICFLOW (
+    SCILUS_SF_PEDIATRIC (
         PIPELINE_INITIALISATION.out.samplesheet
     )
-
     //
     // SUBWORKFLOW: Run completion tasks
     //
@@ -85,8 +84,7 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
-        NF_PEDIATRICFLOW.out.multiqc_report
+        SCILUS_SF_PEDIATRIC.out.multiqc_report
     )
 }
 
