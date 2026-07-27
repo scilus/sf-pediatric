@@ -126,7 +126,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("ERROR: No b-values are below the dti_max_shell_value threshold of 1200 for subject sub-test2. Current protocol (excluding b0s) contains the following shells: 1500.0, 2000.0. Please check your acquisition protocol and provide the shells to use for DTI fitting using --dti_shells. Alternatively, you can increase this threshold using --dti_max_shell_value.")
+            assert workflow.stdout.contains("ERROR: No b-values are below the dti_max_shell_value threshold of 1200 for subject sub-test1. Current protocol (excluding b0s) contains the following shells: 1500.0, 2000.0. Please check your acquisition protocol and provide the shells to use for DTI fitting using --dti_shells. Alternatively, you can increase this threshold using --dti_max_shell_value.")
         }
     }
 
@@ -147,7 +147,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("ERROR: No b-values are above the fodf_min_shell_value threshold of 2500 for subject sub-test2. Current protocol (excluding b0s) contains the following shells: 1500.0, 2000.0. Please check your acquisition protocol and provide the shells to use for fODF fitting using --fodf_shells. Alternatively, you can decrease this threshold using --fodf_min_shell_value.")
+            assert workflow.stdout.contains("ERROR: No b-values are above the fodf_min_shell_value threshold of 2500 for subject sub-test1. Current protocol (excluding b0s) contains the following shells: 1500.0, 2000.0. Please check your acquisition protocol and provide the shells to use for fODF fitting using --fodf_shells. Alternatively, you can decrease this threshold using --fodf_min_shell_value.")
         }
     }
 }
