@@ -2,7 +2,7 @@ process SEGMENTATION_MCRIBS {
     tag "$meta.id"
     label 'process_high'
 
-    container 'gagnonanthony/nf-pediatric-mcribs:2.1.0'
+    container 'gagnonanthony/nf-pediatric-mcribs:2.1.1'
 
     input:
     tuple val(meta), path(t2), path(fs_license), path(t1) // ** T1 is optional ** //
