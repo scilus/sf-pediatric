@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Issues when multiple anatomical runs were found and not linked with the DWI acquisition(s) + tests for bidsignore ([#126](https://github.com/scilus/sf-pediatric/pull/126))
 - Issues where `reconst_fw_noddi` would use too much RAM causing java heap errors ([#118](https://github.com/scilus/sf-pediatric/pull/118))
 - Issues where `NaN` values would appear following `eddy` and were making `amico` models fail due to invalid voxels. `NaN` values are now quantified, reported, and converted to 0.
 
