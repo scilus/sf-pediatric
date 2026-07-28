@@ -9,7 +9,7 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "This section will detail how to set the inputs and outputs of the pipeline.",
+            "description": "Define where the pipeline should find input data and save output data.",
             "required": ["outdir"],
             "properties": {
                 "input": {
