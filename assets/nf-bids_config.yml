@@ -1,10 +1,12 @@
-loop_over: [subject, session, run]
+loop_over: [subject, session]
 
 T1w:
-  plain_set: {}
+  sequential_set:
+    by_entity: "run"
 
 T2w:
-  plain_set: {}
+  sequential_set:
+    by_entity: "run"
 
 dwi:
   sequential_set:
