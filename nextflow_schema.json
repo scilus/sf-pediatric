@@ -135,33 +135,6 @@
                     "help_text": "Default location will be alongside `--outdir`. For more information, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/)",
                     "format": "directory-path",
                     "hidden": false
-                },
-                "mcribs_jointhresh": {
-                    "type": "number",
-                    "description": "Join threshold used in the MCRIBS surface reconstruction step.",
-                    "fa_icon": "fas fa-brain",
-                    "hidden": true
-                },
-                "mcribs_fastcollision": {
-                    "type": "boolean",
-                    "description": "Use deformable fast collision test in the MCRIBS surface reconstruction step.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": true
-                },
-                "mcribs_nopialoutside": {
-                    "type": "boolean",
-                    "description": "Do not ensure pial is outside of WM in the MCRIBS surface reconstruction step.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": true
-                },
-                "mcribs_seed": {
-                    "type": "number",
-                    "description": "Seed used in the MCRIBS surface reconstruction step.",
-                    "fa_icon": "fas fa-brain",
-                    "default": 1234,
-                    "hidden": true
                 }
             }
         },
