@@ -124,24 +124,15 @@ workflow SF_PEDIATRIC {
         .filter { _meta, t2 -> t2 != null && (!(t2 instanceof List) || !t2.isEmpty()) }
         .map { meta, t2 -> [meta, t2] }
 
-    // Create specific channel for infant subjects, useful for segmentation subworkflow
-    ch_infant_t1 = ch_t1.filter { meta, _t1 -> meta.age < 0.25 || meta.age > 18 }
-    ch_infant_t2 = ch_t2.filter { meta, _t2 -> meta.age < 0.25 || meta.age > 18 }
-
     // Fetch infant synthstrip weights
     ch_synthstrip_weights_infant = channel.fromPath(
         "$projectDir/assets/synthstrip.infant.1.pt",
         checkIfExists: true
     )
 
-    // Condition representing which channel to pass to PREPROC T1w/T2w depending
-    // on selected profiles
-    ch_t1_input = !params.tracking ? ch_infant_t1 : ch_t1
-    ch_t2_input = !params.tracking ? ch_infant_t2 : ch_t2
-
     // Create per subject channels for synthstrip weights to ensure infant weights
     // are matched with infant subjects, else, use default weights (automatically handled in module)
-    ch_t1_sample_weights = ch_t1_input
+    ch_t1_sample_weights = ch_t1
         .combine(ch_synthstrip_weights_infant)
         .map { item ->
             def tuple = (item instanceof List) ? item : [item]
@@ -150,7 +141,7 @@ workflow SF_PEDIATRIC {
             [meta, (meta.age < 2.5 || meta.age > 18) ? weight : []]
         }
 
-    ch_t2_sample_weights = ch_t2_input
+    ch_t2_sample_weights = ch_t2
         .combine(ch_synthstrip_weights_infant)
         .map { item ->
             def tuple = (item instanceof List) ? item : [item]
@@ -171,12 +162,10 @@ workflow SF_PEDIATRIC {
     //
     // SUBWORKFLOW: Run preprocessing on anatomical images.
     //
-    reg_t1 = channel.empty()
-
-    if ( params.tracking || params.segmentation ) {
+    if ( params.tracking ) {
         // ** Run T1 preprocessing ** //
         PREPROC_T1W (
-            ch_t1_input,
+            ch_t1,
             channel.empty(),
             channel.empty(),
             channel.empty(),
@@ -198,7 +187,7 @@ workflow SF_PEDIATRIC {
 
         // ** T2 Preprocessing ** //
         PREPROC_T2W (
-            ch_t2_input,
+            ch_t2,
             channel.empty(),
             channel.empty(),
             channel.empty(),
@@ -239,7 +228,6 @@ workflow SF_PEDIATRIC {
         COREG ( ch_coreg_input )
         ch_versions = ch_versions.mix(COREG.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(COREG.out.zip.collect{it[1]})
-        reg_t1 = COREG.out.image_warped ?: channel.empty()
 
     }
 
@@ -254,32 +242,6 @@ workflow SF_PEDIATRIC {
             ? channel.fromPath(params.fs_license, checkIfExists: true, followLinks: true)
             : channel.empty().ifEmpty { error "No license file path provided. Please specify the path using --fs_license parameter." }
 
-        // ** Assemble T1w/T2w channels using derivatives for < 0.25 years, ** //
-        // ** otherwise, raw images.                                        ** //
-        ch_t1_seg = ch_t1
-            .branch { tuple ->
-                fs: tuple[0].age >= 0.25 && tuple[0].age <= 18
-                    return tuple
-            }
-        ch_t1_seg_proc = PREPROC_T1W.out.t1_final
-            .branch { tuple ->
-                mcribs: tuple[0].age < 0.25 || tuple[0].age > 18
-                    return tuple
-            }
-        ch_t1_seg = ch_t1_seg.fs.mix(ch_t1_seg_proc.mcribs)
-
-        ch_t2_seg = ch_t2
-            .branch { tuple ->
-                fs: tuple[0].age >= 0.25 && tuple[0].age <= 18
-                    return tuple
-            }
-        ch_t2_seg_proc = PREPROC_T2W.out.t1_final
-            .branch { tuple ->
-                mcribs: tuple[0].age < 0.25 || tuple[0].age > 18
-                    return tuple
-            }
-        ch_t2_seg = ch_t2_seg.fs.mix(ch_t2_seg_proc.mcribs)
-
         // ** Set up the intermediate template based on the subject's age **
         ch_tpl0 = TEMPLATES.out.UNCBCPInfant0.map{ tuple -> tuple[1..2, 6] }
         ch_tpl3 = TEMPLATES.out.UNCBCPInfant3.map{ tuple -> tuple[1..2, 6] }
@@ -287,8 +249,8 @@ workflow SF_PEDIATRIC {
         ch_tpl12 = TEMPLATES.out.UNCBCPInfant12.map{ tuple -> tuple[1..2, 6] }
         ch_tpl24 = TEMPLATES.out.UNCBCPInfant24.map{ tuple -> tuple[1..2, 6] }
 
-        ch_intermediate_template = ch_t1_seg
-            .join(ch_t2_seg, remainder: true)
+        ch_intermediate_template = ch_t1
+            .join(ch_t2, remainder: true)
             .combine(ch_tpl0)
             .combine(ch_tpl3)
             .combine(ch_tpl6)
@@ -338,9 +300,8 @@ workflow SF_PEDIATRIC {
 
 
         SEGMENTATION (
-            ch_t1_seg,
-            ch_t2_seg,
-            reg_t1,
+            ch_t1,
+            ch_t2,
             channel.fromPath("${params.atlas_folder}/${params.atlas_name}", checkIfExists: true),
             ch_fs_license,
             channel.fromPath("$params.templates_download_path/templates/tpl-fsLR/tpl-MNI152NLin6Asym_res-01_desc-brain_T1w.nii.gz", checkIfExists: true),
@@ -352,8 +313,7 @@ workflow SF_PEDIATRIC {
                 .mix(ch_intermediate_template.infant24)
                 .mix(ch_intermediate_template.other),
             channel.fromPath("$params.templates_download_path/templates/tpl-fsLR", checkIfExists: true),
-            channel.fromPath("$params.templates_download_path/templates/fsaverage", checkIfExists: true),
-            channel.fromPath("$params.templates_download_path/templates/fsaverage_alt", checkIfExists: true)
+            channel.fromPath("$params.templates_download_path/templates/fsaverage", checkIfExists: true)
         )
         ch_versions = ch_versions.mix(SEGMENTATION.out.versions)
 
