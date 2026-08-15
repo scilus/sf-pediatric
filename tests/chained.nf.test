@@ -4,7 +4,7 @@ nextflow_pipeline {
 
     name "Test sf-pediatric all profiles chained"
     script "../main.nf"
-/*
+
     test("Segmentation + connectomics profiles - should run successfully") {
 
         when {
@@ -42,7 +42,7 @@ nextflow_pipeline {
             }
         }
     }
-*/
+
     test("Connectomics + tracking profiles - should run successfully") {
 
         when {

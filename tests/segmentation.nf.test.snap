@@ -1,7 +1,7 @@
 {
     "Segmentation profile - should run successfully": {
         "content": [
-            31,
+            18,
             {
                 "ATLASES_FSAVERAGE2SUBJECT": {
                     "freesurfer": "8.2.0",
@@ -12,20 +12,11 @@
                     "freesurfer": "8.2.0",
                     "workbench": "2.1.0"
                 },
-                "COREG": {
-                    "ants": "2.6.2",
-                    "imagemagick": "6.9.12-98",
-                    "mrtrix": "3.0.7",
-                    "scilpy": "2.2.2"
+                "BIBSNET": {
+                    "bibsnet": "3.7.0"
                 },
-                "DENOISING_NLMEANS": {
-                    "scilpy": "2.2.2"
-                },
-                "MCRIBS": {
-                    "mcribs": "2.1.0",
-                    "ants": "2.5.3-g98bf76d",
-                    "fsl": 6.0,
-                    "freesurfer": "7.1.1"
+                "INFANTFS": {
+                    "freesurfer": "8.2.0"
                 },
                 "RECONALLCLINICAL": {
                     "freesurfer": "8.0.0"
@@ -75,23 +66,10 @@
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_hemi-right_stat-thickness.tsv",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_hemi-right_stat-volume.tsv",
                 "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_seg-BrainnetomeChild_stat-subcortical.tsv",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T1w_desc-brain_mask.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T1w_desc-brain_mask.nii.gz",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T1w_desc-preproc_T1w.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T1w_desc-preproc_T1w.nii.gz",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-brain_mask.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-brain_mask.nii.gz",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T1w.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T1w.nii.gz",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T2w.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-T2w_desc-preproc_T2w.nii.gz",
                 "sub-test1/ses-baseline/multiqc",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
                 "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_report.html",
-                "sub-test1/ses-baseline/xfm",
-                "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T1w_to-T2w_mode-image_desc-affine_xfm.mat",
-                "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/anat",
                 "sub-test1/ses-time1/anat/sub-test1_ses-time1_seg-BrainnetomeChild_desc-labels_dseg.tsv",
@@ -171,10 +149,10 @@
                 "sub-test3/touch"
             ]
         ],
-        "timestamp": "2026-07-13T16:03:41.251369",
+        "timestamp": "2026-08-13T08:47:51.197943",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     }
 }
