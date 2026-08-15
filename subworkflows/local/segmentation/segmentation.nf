@@ -2,7 +2,8 @@
 include { SEGMENTATION_FASTSURFER as FASTSURFER } from '../../../modules/nf-neuro/segmentation/fastsurfer/main'
 include { SEGMENTATION_FSRECONALL as RECONALL } from '../../../modules/nf-neuro/segmentation/fsreconall/main'
 include { SEGMENTATION_RECONALLCLINICAL as RECONALLCLINICAL } from '../../../modules/local/segmentation/reconallclinical/main'
-include { SEGMENTATION_MCRIBS as MCRIBS } from '../../../modules/local/segmentation/mcribs'
+include { SEGMENTATION_BIBSNET as BIBSNET } from '../../../modules/local/segmentation/bibsnet'
+include { SEGMENTATION_INFANTFS as INFANTFS } from '../../../modules/local/segmentation/infantfs'
 
 include { ATLASES_FSLR2FSAVERAGE as ATLASES_FSLR2FSAVERAGE } from '../../../modules/local/atlases/fslr2fsaverage'
 include { ATLASES_FSAVERAGE2SUBJECT as ATLASES_FSAVERAGE2SUBJECT } from '../../../modules/local/atlases/fsaverage2subject'
@@ -14,14 +15,12 @@ workflow SEGMENTATION {
     take:
     ch_t1                       // channel: [ val(meta), [ t1 ] ]
     ch_t2                       // channel: [ val(meta), [ t2 ] ]
-    ch_coreg                    // channel: [ val(meta), [ anat ] ]
     ch_atlas                    // channel: [ atlas ]
     ch_fs_license               // channel: [ fs_license ]
     ch_mni152                   // channel: [ mni152 ]
     ch_intermediate_template    // channel: [ val(meta), [ intermediate_template ], [ transformations ] ]
     ch_fslr                     // channel: [ fslr ]
     ch_fsaverage                // channel: [ fsaverage ]
-    ch_fsaverage_alt            // channel: [ fsaverage_alt ]
 
     main:
 
@@ -32,17 +31,16 @@ workflow SEGMENTATION {
     //
     ch_seg = ch_t1
         .join(ch_t2, remainder: true)
-        .join(ch_coreg, remainder: true)
         .combine(ch_fs_license)
         .branch { it ->
             fastsurfer: it[0].age >= 5 && it[0].age <= 18 && params.method == 'fastsurfer'
-                return [it[0], it[1], it[4]]
+                return [it[0], it[1], it[3]]
             freesurfer: it[0].age >= 5 && it[0].age <= 18 && params.method == "recon-all"
-                return [it[0], it[1], it[4]]
+                return [it[0], it[1], it[3]]
             clinical: it[0].age >= 0.25 && it[0].age <= 18 && params.method == "recon-all-clinical"
-                return [it[0], it[1] ?: it[2], it[4]]
+                return [it[0], it[1] ?: it[2], it[3]]
             infant: true
-                return [it[0], it[2], it[4], it[3] ?: []]
+                return [it[0], it[1] ?: [], it[2] ?: []]
         }
 
     // ** FastSurfer ** //
@@ -57,20 +55,39 @@ workflow SEGMENTATION {
     RECONALLCLINICAL ( ch_seg.clinical )
     ch_versions = ch_versions.mix(RECONALLCLINICAL.out.versions)
 
-    // ** For infant, it's a bit trickier, as MCRIBS do not  ** //
-    // ** perform preprocessing, so we need to do it (done in pediatric.nf).   ** //
-    // ** Run MCRIBS ** //
-    MCRIBS ( ch_seg.infant )
-    ch_versions = ch_versions.mix(MCRIBS.out.versions)
-    // ch_multiqc_files = ch_multiqc_files.mix(MCRIBS.out.zip.collect{it[1]})
+    // ** output the final t1w image ** //
+    ch_t1w = channel.empty()
+        .mix(FASTSURFER.out.final_t1)
+        .mix(RECONALL.out.final_t1)
+        .mix(RECONALLCLINICAL.out.final_t1)
+        .join(ch_t1, remainder: true)
+        .map{ meta, final_t1, t1 ->
+            return [meta, final_t1 ?: t1]
+        }
+
+    // ** Use BIBSNet for infant segmentation as a prior for infant freesurfer ** //
+    BIBSNET ( ch_seg.infant )
+
+    // ** Run infant freesurfer using segmentation from BIBSNet ** //
+    ch_infantfs = ch_seg.infant
+        .join(BIBSNET.out.t1_dseg, remainder: true)
+        .join(BIBSNET.out.t1_brain_mask, remainder: true)
+        .join(BIBSNET.out.t2_dseg, remainder: true)
+        .join(BIBSNET.out.t2_brain_mask, remainder: true)
+        .combine(ch_fs_license)
+        .map{ meta, t1, t2, t1_dseg, t1_brain_mask, t2_dseg, t2_brain_mask, license ->
+            return [meta, t2 ?: t1, t2_dseg ?: t1_dseg, t2_brain_mask ?: t1_brain_mask, license]
+        }
+
+    INFANTFS ( ch_infantfs )
 
     // ** T2w outputs ** //
-    // ** Keeping the MCRIBS output if available, otherwise mix in the ch_t2 ** //
+    // ** Keeping the INFANTFS output if available, otherwise mix in the ch_t2 ** //
     ch_t2w = ch_t2
-        .join(MCRIBS.out.anat, remainder: true)
+        .join(INFANTFS.out.image, remainder: true)
         .map{
-            meta, t2, mcribs ->
-                return [meta, mcribs ?: t2]
+            meta, t2, image ->
+                return [meta, image ?: t2]
         }
 
     //
@@ -81,7 +98,7 @@ workflow SEGMENTATION {
     ch_register = FASTSURFER.out.final_t1
         .mix(RECONALL.out.final_t1)
         .mix(RECONALLCLINICAL.out.final_t1)
-        .mix(MCRIBS.out.anat)
+        .mix(INFANTFS.out.image)
         .combine(ch_mni152)
         .join(ch_intermediate_template, remainder: true)
         .branch { meta, anat, mni152, int_template, _int_transfo ->
@@ -103,15 +120,9 @@ workflow SEGMENTATION {
         .combine(ch_fslr)
         .combine(ch_fsaverage)
         .combine(ch_fs_license)
-        .map{ atlas, fslr, fsaverage, license -> [[id: "fsaverage"], atlas, fslr, fsaverage, license] }
-    ch_fslr2fsaverage_alt = ch_atlas
-        .combine(ch_fslr)
-        .combine(ch_fsaverage_alt)
-        .combine(ch_fs_license)
-        .map{ atlas, fslr, fsaverage, license -> [[id: "fsaverage_alt"], atlas, fslr, fsaverage, license] }
-    ch_fslr2fsaverage = ch_fslr2fsaverage
-        .mix(ch_fslr2fsaverage_alt)
-        .filter{ it -> it[3] } // Filter out if alternative fsaverage is not provided
+        .map{ atlas, fslr, fsaverage, license ->
+            [[id: "fsaverage"], atlas, fslr, fsaverage, license]
+        }
 
     ATLASES_FSLR2FSAVERAGE ( ch_fslr2fsaverage )
     ch_versions = ch_versions.mix(ATLASES_FSLR2FSAVERAGE.out.versions)
@@ -122,7 +133,7 @@ workflow SEGMENTATION {
     ch_temp_transforms = FASTSURFER.out.final_t1
         .mix(RECONALL.out.final_t1)
         .mix(RECONALLCLINICAL.out.final_t1)
-        .mix(MCRIBS.out.anat)
+        .mix(INFANTFS.out.image)
         .join(REGISTRATION_ANTS.out.backward_image_transform)
         .combine(ATLASES_FSLR2FSAVERAGE.out.subcortical.map{ it -> it[1] }.first())  // extract the path from the emitted tuple
         .join(ch_intermediate_template, remainder: true)
@@ -141,29 +152,22 @@ workflow SEGMENTATION {
     //
     // MODULE: Run FSAVERAGE2SUBJECT mapping
     //
-    ch_fsaverage2subject_fs = RECONALLCLINICAL.out.folder
+    ch_fsaverage2subject = channel.empty()
+        .mix(RECONALLCLINICAL.out.folder)
         .mix(RECONALL.out.recon_all_out_folder)
         .mix(FASTSURFER.out.fastsurferdirectory)
+        .mix(INFANTFS.out.folder)
         .combine(ATLASES_FSLR2FSAVERAGE.out.fsaverage
-            .filter{ meta, _fsaverage -> meta.id == "fsaverage" }
             .map{ it -> it[1] })  // extract the path from the emitted tuple
         .join(REGISTRATION_ANTSAPPLYTRANSFORMS.out.warped_image)
         .combine(ch_fs_license)
-    ch_fsaverage2subject_alt = MCRIBS.out.folder
-        .combine(ATLASES_FSLR2FSAVERAGE.out.fsaverage
-            .filter{ meta, _fsaverage -> meta.id == "fsaverage_alt" }
-            .map{ it -> it[1] })  // extract the path from the emitted tuple
-        .join(REGISTRATION_ANTSAPPLYTRANSFORMS.out.warped_image)
-        .combine(ch_fs_license)
-    ch_fsaverage2subject = ch_fsaverage2subject_fs
-        .mix(ch_fsaverage2subject_alt)
 
     ATLASES_FSAVERAGE2SUBJECT ( ch_fsaverage2subject, ATLASES_FSLR2FSAVERAGE.out.atlas_name.first() )
     ch_versions = ch_versions.mix(ATLASES_FSAVERAGE2SUBJECT.out.versions)
 
     emit:
     // ** Processed anatomical image ** //
-    t1              = ch_t1                                                 // channel: [ val(meta), [ t1 ] ]
+    t1              = ch_t1w                                                // channel: [ val(meta), [ t1 ] ]
     t2              = ch_t2w                                                // channel: [ val(meta), [ t2 ] ]
 
     // ** Segmentation ** //
