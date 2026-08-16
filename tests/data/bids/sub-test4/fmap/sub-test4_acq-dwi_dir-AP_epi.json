@@ -3,7 +3,5 @@
     "MagneticFieldStrength": 3,
     "PhaseEncodingDirection": "j-",
     "TotalReadoutTime": 0.062,
-    "IntendedFor": [
-        "dwi/sub-test4_dwi.nii.gz"
-    ]
+    "B0FieldIdentifier": "dwi"
 }

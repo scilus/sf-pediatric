@@ -703,7 +703,7 @@ def matchFilesToDWI(Map dwiJson, dwiFilename, Map revJson, revFilename, Map asso
     }
 
     // If no B0Field* are present, check for IntendedFor
-    def intendedFor = assocJson?.IntendedFor
+    def intendedFor = normalizeToList(assocJson?.IntendedFor)
     if (intendedFor) {
         def matches = intendedFor.any { target ->
             def targetName = target.toString().replaceAll("^bids::", "").split('/')[-1]
