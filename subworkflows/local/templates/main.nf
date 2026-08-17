@@ -17,11 +17,15 @@ def createCohortChannel(channel, cohort) {
 // Function to compute md5 checksum of a folder //
 def computeDirMd5(dirPath) {
     def md = java.security.MessageDigest.getInstance('MD5')
+    def baseDir = file(dirPath)
     def all_files = []
-    file(dirPath).eachFileRecurse { f ->
+    baseDir.eachFileRecurse { f ->
         if (f.isFile()) { all_files << f }
     }
-    all_files.sort { a, b -> a.toString() <=> b.toString() }
+    // Sort by path relative to the base directory — filesystem-location-independent
+    all_files.sort { a, b ->
+        baseDir.relativize(a).toString() <=> baseDir.relativize(b).toString()
+    }
     all_files.each { f ->
         md.update(f.bytes)
     }
@@ -34,7 +38,7 @@ workflow TEMPLATES {
 
     ch_versions = channel.empty()
     def templates_path = "${params.templates_download_path}/templates"
-    def expected_md5 = "c37db8b926b27d4e2efbea3f98333794"
+    def expected_md5 = "8c74f1635d69969a6b67f098d569a0b7"
 
     // Compute a deterministic md5 checksum of the templates folder to check if it has changed
     def needs_download = true

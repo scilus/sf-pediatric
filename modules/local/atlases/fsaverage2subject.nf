@@ -105,7 +105,7 @@ process ATLASES_FSAVERAGE2SUBJECT {
                 ;;
         esac
         outfile="tmp/\$((10#\$id - offset)).nii.gz"
-        scil_volume_math subtraction \$file \$offset \$outfile --data_type uint16 --exclude_background -f # TODO: REMOVE
+        scil_volume_math subtraction \$file \$offset \$outfile --data_type uint16 --exclude_background
         rm \$file
     done
 
