@@ -65,8 +65,8 @@ workflow FETCH_DERIVATIVES {
                 def session = parts.find { it.startsWith('ses-') } ?: ""
                 def run = parts.find { it.startsWith('run-') } ?: ""
                 def age = getAge(id, participantData, session)
-                def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-                def priors = fetchPriors(tempAge)
+                age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+                def priors = fetchPriors(age)
                 def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
                 return [metadata, file]
@@ -99,8 +99,8 @@ workflow FETCH_DERIVATIVES {
             def session = parts.find { it.startsWith('ses-') } ?: ""
             def run = parts.find { it.startsWith('run-') } ?: ""
             def age = getAge(id, participantData, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
             def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
             def type = file.name.contains('T1w') ? 'T1w' : 'T2w'
 
@@ -124,8 +124,8 @@ workflow FETCH_DERIVATIVES {
             def session = parts.find { it.startsWith('ses-') } ?: ""
             def run = parts.find { it.startsWith('run-') } ?: ""
             def age = getAge(id, participantData, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
             def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
             def type = file.name.contains('warp') ? 'warp' : 'affine'
 
@@ -157,8 +157,8 @@ workflow FETCH_DERIVATIVES {
             def session = parts.find { it.startsWith('ses-') } ?: ""
             def run = parts.find { it.startsWith('run-') } ?: ""
             def age = getAge(id, participantData, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
             def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
@@ -173,8 +173,8 @@ workflow FETCH_DERIVATIVES {
             def session = parts.find { it.startsWith('ses-') } ?: ""
             def run = parts.find { it.startsWith('run-') } ?: ""
             def age = getAge(id, participantData, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
             def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
@@ -192,8 +192,8 @@ workflow FETCH_DERIVATIVES {
             def session = parts.find { it.startsWith('ses-') } ?: ""
             def run = parts.find { it.startsWith('run-') } ?: ""
             def age = getAge(id, participantData, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
             def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
@@ -227,8 +227,8 @@ workflow FETCH_DERIVATIVES {
             def session = parts.find { it.startsWith('ses-') } ?: ""
             def run = parts.find { it.startsWith('run-') } ?: ""
             def age = getAge(id, participantData, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
             def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
@@ -256,8 +256,8 @@ workflow FETCH_DERIVATIVES {
             def session = parts.find { it.startsWith('ses-') } ?: ""
             def run = parts.find { it.startsWith('run-') } ?: ""
             def age = getAge(id, participantData, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
             def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
@@ -276,8 +276,8 @@ workflow FETCH_DERIVATIVES {
             def session = parts.find { it -> it.startsWith('ses-') } ?: ""
             def run = parts.find { it -> it.startsWith('run-') } ?: ""
             def age = getAge(id, participantData, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
             def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
