@@ -41,7 +41,8 @@ process SEGMENTATION_BIBSNET {
         ./ \
         participant \
         --fsl-bin-path ${fsl_bin_path} \
-        --nnUNet ${nnunet_path}
+        --nnUNet ${nnunet_path} \
+        --work-dir ./work
 
     # Copy the output to work dir.
     mv bibsnet/${prefix}/anat/*aseg_dseg.nii.gz ./
