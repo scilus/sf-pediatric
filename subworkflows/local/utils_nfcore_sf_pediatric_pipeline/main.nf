@@ -138,8 +138,8 @@ workflow PIPELINE_INITIALISATION {
             }
             // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
             // ** Setting to a minimum of 0.04 (~ 2 weeks) to avoid negative values for the priors prediction ** //
-            def tempAge = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
 
             // ** Instantiate a variable that will collect prints related to BIDS file matching ** //
             // ** to be printed in a log file later                                             ** //

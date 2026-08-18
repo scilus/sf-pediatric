@@ -37,7 +37,7 @@ workflow SEGMENTATION {
                 return [it[0], it[1], it[3]]
             freesurfer: it[0].age >= 5 && it[0].age <= 18 && params.method == "recon-all"
                 return [it[0], it[1], it[3]]
-            clinical: it[0].age >= 0.25 && it[0].age <= 18 && params.method == "recon-all-clinical"
+            clinical: it[0].age >= 1 && it[0].age <= 18 && params.method == "recon-all-clinical"
                 return [it[0], it[1] ?: it[2], it[3]]
             infant: true
                 return [it[0], it[1] ?: [], it[2] ?: []]
