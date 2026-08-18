@@ -192,17 +192,21 @@ workflow PIPELINE_INITIALISATION {
 
             // T1w and T2w
             // ** Note: we don't need the JSON files for T1w/T2w ** //
-            def t1w = item.T1w?.nii ? [item.T1w?.nii] : []
-            def t2w = item.T2w?.nii ? [item.T2w?.nii] : []
+            def t1w = item.T1w?.nii ?: []
+            def t2w = item.T2w?.nii ?: []
 
             if ( t1w && t1w.size() > 1 ) {
                 logs << "[${id}${ses ? "/" + ses : ""}] Multiple T1w images found. Using the last one for processing. Use .bidsignore to override."
-                t1w = [t1w[-1]]
+                t1w = t1w[-1]
+            } else if ( t1w ) {
+                t1w = t1w[0]
             }
 
             if ( t2w && t2w.size() > 1) {
                 logs << "[${id}${ses ? "/" + ses : ""}] Multiple T2w images found. Using the last one for processing. Use .bidsignore to override."
-                t2w = [t2w[-1]]
+                t2w = t2w[-1]
+            } else if ( t2w ) {
+                t2w = t2w[0]
             }
 
             // ** Starting with AP/PA, look if there are multiple runs ** //

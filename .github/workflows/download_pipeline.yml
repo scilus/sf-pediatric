@@ -23,16 +23,16 @@ jobs:
   configure:
     runs-on: ubuntu-latest
     outputs:
+      REPO_LOWERCASE: ${{ steps.get_repo_properties.outputs.REPO_LOWERCASE }}
       REPOTITLE_LOWERCASE: ${{ steps.get_repo_properties.outputs.REPOTITLE_LOWERCASE }}
-      PR_FORK_REPO: ${{ steps.get_repo_properties.outputs.PR_FORK_REPO }}
-      PR_BRANCH: ${{ steps.get_repo_properties.outputs.PR_BRANCH }}
+      REPO_BRANCH: ${{ steps.get_repo_properties.outputs.REPO_BRANCH }}
     steps:
       - name: Get the repository name and current branch
         id: get_repo_properties
         run: |
+          echo "REPO_LOWERCASE=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
           echo "REPOTITLE_LOWERCASE=$(basename ${GITHUB_REPOSITORY,,})" >> "$GITHUB_OUTPUT"
-          echo "PR_FORK_REPO=${{ github.event.pull_request.head.repo.full_name }}" >> "$GITHUB_OUTPUT"
-          echo "PR_BRANCH=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_OUTPUT"
+          echo "REPO_BRANCH=${{ github.event.inputs.testbranch || 'dev' }}" >> "$GITHUB_OUTPUT"
 
   download:
     runs-on: ubuntu-latest
@@ -75,14 +75,14 @@ jobs:
         env:
           NXF_SINGULARITY_CACHEDIR: ./singularity_container_images
         run: |
-          nf-core pipelines download ${{ needs.configure.outputs.PR_FORK_REPO }} \
-          --revision ${{ needs.configure.outputs.PR_BRANCH }} \
+          nf-core pipelines download ${{ needs.configure.outputs.REPO_LOWERCASE }} \
+          --revision ${{ needs.configure.outputs.REPO_BRANCH }} \
           --outdir ./${{ needs.configure.outputs.REPOTITLE_LOWERCASE }} \
           --compress "none" \
           --container-system 'singularity' \
-          --container-library "docker.io" \
+          --container-library "quay.io" -l "docker.io" -l "community.wave.seqera.io/library/" \
           --container-cache-utilisation 'amend' \
-          --download-configuration 'no'
+          --download-configuration 'yes'
 
       - name: Inspect download
         run: tree ./${{ needs.configure.outputs.REPOTITLE_LOWERCASE }}

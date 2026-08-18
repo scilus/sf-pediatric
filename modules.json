@@ -1,5 +1,5 @@
 {
-    "name": "scilus/sf-pediatric",
+    "name": "scilus/sf_pediatric",
     "homePage": "https://github.com/scilus/sf-pediatric",
     "repos": {
         "https://github.com/nf-core/modules.git": {

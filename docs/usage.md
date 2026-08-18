@@ -98,7 +98,7 @@ Mandatory files per subject:
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run scilus/sf-pediatric -r main --input <BIDS_directory> --outdir ./results -profile docker,tracking
+nextflow run scilus/sf_pediatric --input ./samplesheet.csv --outdir ./results  -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. There is only 2 parameters that need to be supplied at runtime: `--input`: for the path to your BIDS directory and `--outdir`: path to the output directory. A single or a subset of participants can be specified using `--participant-label`; this will constrain the pipeline to run only on those specified subjects. See below for more information about profiles.
@@ -122,7 +122,7 @@ Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run scilus/sf-pediatric -r main -profile docker -params-file params.yaml
+nextflow run scilus/sf_pediatric -profile docker -params-file params.yaml
 ```
 
 with:

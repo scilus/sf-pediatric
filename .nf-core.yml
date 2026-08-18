@@ -1,4 +1,5 @@
 lint:
+  container_configs: false
   files_exist:
     - CODE_OF_CONDUCT.md
     - assets/nf-core-sf_pediatric_logo_light.png
@@ -33,17 +34,18 @@ lint:
     - .github/CONTRIBUTING.md
     - .gitignore
   multiqc_config: false
-  nextflow_config: false # TODO: Until support is available for new type syntax
-  schema_params: false # TODO: Until support is available for new type syntax
+  nextflow_config: false
+  schema_params: false
   template_strings: false
   container_configs: false
   nf_test_content:
     - tests/gpu.nf.test
-nf_core_version: 4.0.2
+nf_core_version: 4.0.3
 repository_type: pipeline
 template:
   author: Anthony Gagnon
-  description: sf-pediatric is a neuroimaging pipeline to process pediatric MRI data (dMRI, and sMRI) ranging from 0-18 years old.
+  description: sf-pediatric is a neuroimaging pipeline to process pediatric MRI data
+    (dMRI, and sMRI) ranging from 0-18 years old.
   force: false
   is_nfcore: false
   name: sf_pediatric

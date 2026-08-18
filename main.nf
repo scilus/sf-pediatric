@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    scilus/sf-pediatric
+    scilus/sf_pediatric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Github : https://github.com/scilus/sf-pediatric
 ----------------------------------------------------------------------------------------
@@ -37,7 +37,6 @@ workflow SCILUS_SF_PEDIATRIC {
     SF_PEDIATRIC (
         input_bids
     )
-
     emit:
     multiqc_report = SF_PEDIATRIC.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
