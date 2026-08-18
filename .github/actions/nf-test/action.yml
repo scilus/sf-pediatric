@@ -74,7 +74,7 @@ runs:
         # Increase the java memory
         export _JAVA_OPTIONS="-Xmx4g"
         nf-test test \
-          --profile=${PROFILE},test \
+          --profile=+${PROFILE} \
           $(if [ -n "${{ inputs.tags }}" ]; then echo "--tag ${{ inputs.tags }}"; fi) \
           --ci \
           --changed-since HEAD^ \
