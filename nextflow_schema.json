@@ -87,12 +87,12 @@
             "title": "Segmentation Options",
             "type": "object",
             "fa_icon": "fas fa-brain",
-            "description": "Options for FreeSurfer, FastSurfer, and/or M-CRIB-S processing. Only relevant if you select the segmentation profile.",
-            "help_text": "These options are used to configure the FreeSurfer, FastSurfer and/or M-CRIB-S processing steps in the pipeline.",
+            "description": "Options for FreeSurfer or FastSurfer processing. Only relevant if you select the segmentation profile.",
+            "help_text": "These options are used to configure the FreeSurfer or FastSurfer processing steps in the pipeline.",
             "properties": {
                 "method": {
                     "type": "string",
-                    "description": "Method to use to perform surface reconstruction and cortical/subcortical segmentation. Will only affect subjects > 3 months of age. Recon-all-clinical is highly recommended for subjects between 3 months and 5 years old. Options include recon-all, recon-all-clinical, or FastSurfer.",
+                    "description": "Method to use to perform surface reconstruction and cortical/subcortical segmentation. Will only affect subjects > 1 year of age. Recon-all-clinical is highly recommended for subjects between 1 year and 5 years old (and above). Options include recon-all, recon-all-clinical, or FastSurfer.",
                     "fa_icon": "fas fa-brain",
                     "default": "recon-all-clinical",
                     "enum": ["recon-all-clinical", "recon-all", "fastsurfer"],
@@ -130,7 +130,7 @@
                 },
                 "fs_output_dir": {
                     "type": "string",
-                    "description": "Path to FreeSurfer/FastSurfer/M-CRIB-S output directory.",
+                    "description": "Path to FreeSurfer/FastSurfer output directory.",
                     "fa_icon": "fas fa-folder-open",
                     "help_text": "Default location will be alongside `--outdir`. For more information, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/)",
                     "format": "directory-path",

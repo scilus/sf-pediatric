@@ -233,7 +233,7 @@ workflow SF_PEDIATRIC {
 
     //
     // SUBWORKFLOW: Run FastSurfer, recon-all, or recon-all-clinical T1 reconstruction with BrainnetomeChild atlas
-    // Additionally, if infant data is provided, run MCRIBS segmentation.
+    // Additionally, if infant data is provided, run BIBSNET + infant freesurfer.
     //
     if ( params.segmentation ) {
 
