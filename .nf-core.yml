@@ -1,5 +1,4 @@
 lint:
-  container_configs: false
   files_exist:
     - CODE_OF_CONDUCT.md
     - assets/nf-core-sf_pediatric_logo_light.png
