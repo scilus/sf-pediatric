@@ -11,1561 +11,1563 @@
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
             "required": ["outdir"],
-            "input": {
-                "description": "Path to the BIDS directory location.",
-                "help_text": "Ensure the BIDS data structure is respected. For more information, see the [documentation](https://scilus.github.io/sf-pediatric/guides/inputs/)",
-                "fa_icon": "fas fa-file-csv"
-            },
-            "participant_label": {
-                "type": ["array", "string"],
-                "description": "List of participant IDs or a single participant ID.",
-                "help_text": "This will be used to select the specific participants to process. The best way to provide them is in a params.yml file, see the [documentation](https://scilus.github.io/sf-pediatric/guides/usage/#using-the-paramsyml-file) for more information.",
-                "uniqueItems": true,
-                "fa_icon": "fas id-badge"
-            },
-            "input_deriv": {
-                "type": "string",
-                "format": "directory-path",
-                "description": "Path to the derivatives directory to use as input.",
-                "fa_icon": "fas fa-folder-open"
-            },
-            "outdir": {
-                "type": "string",
-                "format": "directory-path",
-                "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                "help_text": "For a detailed description of the output files, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/).",
-                "fa_icon": "fas fa-folder-open"
-            },
-            "templates_url": {
-                "type": "string",
-                "description": "URL to download templates from.",
-                "format": "uri",
-                "default": "https://osf.io/Kd8h7/download",
-                "fa_icon": "fas fa-download",
-                "hidden": true
-            },
-            "templates_download_path": {
-                "type": "string",
-                "format": "directory-path",
-                "description": "Path to the directory where templates will be downloaded and cached.",
-                "fa_icon": "fas fa-folder-open",
-                "hidden": true
-            },
-            "gpu_type": {
-                "type": "string",
-                "description": "Type of GPU models (or MIG) to use when submitting GPU jobs to HPC clusters using `-profile slurm,gpu`. This should not be needed outside of HPC environments.",
-                "fa_icon": "fas fa-microchip",
-                "hidden": false
-            },
-            "email": {
-                "type": "string",
-                "description": "Email address for completion summary.",
-                "fa_icon": "fas fa-envelope",
-                "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
-                "hidden": true
-            },
-            "multiqc_title_subject": {
-                "type": "string",
-                "description": "MultiQC report title for subject report. Printed as page header, used for filename if not otherwise specified.",
-                "fa_icon": "fas fa-file-signature",
-                "hidden": true
-            },
-            "multiqc_title_global": {
-                "type": "string",
-                "description": "MultiQC report title for global report. Printed as page header, used for filename if not otherwise specified.",
-                "fa_icon": "fas fa-file-signature",
-                "hidden": true
+            "properties": {
+                "input": {
+                    "description": "Path to the BIDS directory location.",
+                    "help_text": "Ensure the BIDS data structure is respected. For more information, see the [documentation](https://scilus.github.io/sf-pediatric/guides/inputs/)",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "participant_label": {
+                    "type": ["array", "string"],
+                    "description": "List of participant IDs or a single participant ID.",
+                    "help_text": "This will be used to select the specific participants to process. The best way to provide them is in a params.yml file, see the [documentation](https://scilus.github.io/sf-pediatric/guides/usage/#using-the-paramsyml-file) for more information.",
+                    "uniqueItems": true,
+                    "fa_icon": "fas id-badge"
+                },
+                "input_deriv": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Path to the derivatives directory to use as input.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "outdir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+                    "help_text": "For a detailed description of the output files, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/).",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "templates_url": {
+                    "type": "string",
+                    "description": "URL to download templates from.",
+                    "format": "uri",
+                    "default": "https://osf.io/Kd8h7/download",
+                    "fa_icon": "fas fa-download",
+                    "hidden": true
+                },
+                "templates_download_path": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Path to the directory where templates will be downloaded and cached.",
+                    "fa_icon": "fas fa-folder-open",
+                    "hidden": true
+                },
+                "gpu_type": {
+                    "type": "string",
+                    "description": "Type of GPU models (or MIG) to use when submitting GPU jobs to HPC clusters using `-profile slurm,gpu`. This should not be needed outside of HPC environments.",
+                    "fa_icon": "fas fa-microchip",
+                    "hidden": false
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Email address for completion summary.",
+                    "fa_icon": "fas fa-envelope",
+                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
+                    "hidden": true
+                },
+                "multiqc_title_subject": {
+                    "type": "string",
+                    "description": "MultiQC report title for subject report. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature",
+                    "hidden": true
+                },
+                "multiqc_title_global": {
+                    "type": "string",
+                    "description": "MultiQC report title for global report. Printed as page header, used for filename if not otherwise specified.",
+                    "fa_icon": "fas fa-file-signature",
+                    "hidden": true
+                }
             }
-        }
-    },
-    "freesurfer_options": {
-        "title": "Segmentation Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for FreeSurfer or FastSurfer processing. Only relevant if you select the segmentation profile.",
-        "help_text": "These options are used to configure the FreeSurfer or FastSurfer processing steps in the pipeline.",
-        "properties": {
-            "method": {
-                "type": "string",
-                "description": "Method to use to perform surface reconstruction and cortical/subcortical segmentation. Will only affect subjects > 1 year of age. Recon-all-clinical is highly recommended for subjects between 1 year and 5 years old (and above). Options include recon-all, recon-all-clinical, or FastSurfer.",
-                "fa_icon": "fas fa-brain",
-                "default": "recon-all-clinical",
-                "enum": ["recon-all-clinical", "recon-all", "fastsurfer"],
-                "hidden": false,
-                "errorMessage": "Invalid method. Must be one of: recon-all-clinical, recon-all, fastsurfer."
-            },
-            "fs_license": {
-                "type": "string",
-                "description": "Path to FreeSurfer license file.",
-                "fa_icon": "fas fa-file-signature",
-                "help_text": "This is required to run the segmentation profile. You can obtain a FreeSurfer license from the [FreeSurfer website here](https://surfer.nmr.mgh.harvard.edu/registration.html).",
-                "format": "file-path",
-                "exists": true
-            },
-            "cerebnet": {
-                "type": "boolean",
-                "description": "Use CerebNet for cerebellum segmentation in FastSurfer.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
-            },
-            "hypvinn": {
-                "type": "boolean",
-                "description": "Use HypVINN for hypothalamus sub-segmentation in FastSurfer.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
-            },
-            "acq3T": {
-                "type": "boolean",
-                "description": "Use 3T acquisition parameters.",
-                "fa_icon": "fas fa-magnet",
-                "default": true,
-                "hidden": true
-            },
-            "fs_output_dir": {
-                "type": "string",
-                "description": "Path to FreeSurfer/FastSurfer output directory.",
-                "fa_icon": "fas fa-folder-open",
-                "help_text": "Default location will be alongside `--outdir`. For more information, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/)",
-                "format": "directory-path",
-                "hidden": false
+        },
+        "freesurfer_options": {
+            "title": "Segmentation Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for FreeSurfer or FastSurfer processing. Only relevant if you select the segmentation profile.",
+            "help_text": "These options are used to configure the FreeSurfer or FastSurfer processing steps in the pipeline.",
+            "properties": {
+                "method": {
+                    "type": "string",
+                    "description": "Method to use to perform surface reconstruction and cortical/subcortical segmentation. Will only affect subjects > 1 year of age. Recon-all-clinical is highly recommended for subjects between 1 year and 5 years old (and above). Options include recon-all, recon-all-clinical, or FastSurfer.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "recon-all-clinical",
+                    "enum": ["recon-all-clinical", "recon-all", "fastsurfer"],
+                    "hidden": false,
+                    "errorMessage": "Invalid method. Must be one of: recon-all-clinical, recon-all, fastsurfer."
+                },
+                "fs_license": {
+                    "type": "string",
+                    "description": "Path to FreeSurfer license file.",
+                    "fa_icon": "fas fa-file-signature",
+                    "help_text": "This is required to run the segmentation profile. You can obtain a FreeSurfer license from the [FreeSurfer website here](https://surfer.nmr.mgh.harvard.edu/registration.html).",
+                    "format": "file-path",
+                    "exists": true
+                },
+                "cerebnet": {
+                    "type": "boolean",
+                    "description": "Use CerebNet for cerebellum segmentation in FastSurfer.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "hypvinn": {
+                    "type": "boolean",
+                    "description": "Use HypVINN for hypothalamus sub-segmentation in FastSurfer.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "acq3T": {
+                    "type": "boolean",
+                    "description": "Use 3T acquisition parameters.",
+                    "fa_icon": "fas fa-magnet",
+                    "default": true,
+                    "hidden": true
+                },
+                "fs_output_dir": {
+                    "type": "string",
+                    "description": "Path to FreeSurfer/FastSurfer output directory.",
+                    "fa_icon": "fas fa-folder-open",
+                    "help_text": "Default location will be alongside `--outdir`. For more information, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/)",
+                    "format": "directory-path",
+                    "hidden": false
+                }
             }
-        }
-    },
-    "atlases_options": {
-        "title": "Atlases Options",
-        "type": "object",
-        "fa_icon": "fas fa-map-marked-alt",
-        "description": "Options for atlases used in the pipeline.",
-        "help_text": "These options are used to configure the atlases used in the pipeline. You can use these options to customise the behaviour of the atlases.",
-        "properties": {
-            "atlas_name": {
-                "type": "string",
-                "description": "Name of the atlas to use. This will determine the BIDS atlas to use. Multiple values can be specified.",
-                "fa_icon": "fas fa-map-marked-alt",
-                "default": "BrainnetomeChild",
-                "hidden": false
-            },
-            "atlas_folder": {
-                "type": "string",
-                "description": "Path to the directory containing the atlases. This should be a directory containing the atlases in BIDS format. If not specified, will search in the default location ('$projectDir/assets/').",
-                "fa_icon": "fas fa-folder-open",
-                "hidden": false
-            },
-            "subcortical_rois": {
-                "type": "string",
-                "description": "Indexes of the subcortical ROIs in the atlas to use in the QC report. Will mostly be used to properly separate cortical and subcortical ROIs in the QC report. Should be provided as a string of comma-separated values or ranges (e.g. '189:224').",
-                "fa_icon": "fas fa-map-marked-alt",
-                "default": "189:224",
-                "hidden": false
+        },
+        "atlases_options": {
+            "title": "Atlases Options",
+            "type": "object",
+            "fa_icon": "fas fa-map-marked-alt",
+            "description": "Options for atlases used in the pipeline.",
+            "help_text": "These options are used to configure the atlases used in the pipeline. You can use these options to customise the behaviour of the atlases.",
+            "properties": {
+                "atlas_name": {
+                    "type": "string",
+                    "description": "Name of the atlas to use. This will determine the BIDS atlas to use. Multiple values can be specified.",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "BrainnetomeChild",
+                    "hidden": false
+                },
+                "atlas_folder": {
+                    "type": "string",
+                    "description": "Path to the directory containing the atlases. This should be a directory containing the atlases in BIDS format. If not specified, will search in the default location ('$projectDir/assets/').",
+                    "fa_icon": "fas fa-folder-open",
+                    "hidden": false
+                },
+                "subcortical_rois": {
+                    "type": "string",
+                    "description": "Indexes of the subcortical ROIs in the atlas to use in the QC report. Will mostly be used to properly separate cortical and subcortical ROIs in the QC report. Should be provided as a string of comma-separated values or ranges (e.g. '189:224').",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "189:224",
+                    "hidden": false
+                }
             }
-        }
-    },
-    "t1_processing_options": {
-        "title": "T1w Processing Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for T1w processing. In the case where you do not have a T1w image, you can ignore those options.",
-        "help_text": "These options are used to configure the T1w processing steps in the pipeline. You can use these options to customise the behaviour of the T1w processing steps.",
-        "properties": {
-            "run_t1_denoising": {
-                "type": "boolean",
-                "description": "Run denoising on the T1w images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "run_t1_n4": {
-                "type": "boolean",
-                "description": "Run N4 bias correction on the T1w images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "run_t1_resampling": {
-                "type": "boolean",
-                "description": "Run resampling on the T1w images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "run_t1_crop": {
-                "type": "boolean",
-                "description": "Run cropping on the T1w images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "t1_denoise_number_of_coils": {
-                "type": "integer",
-                "description": "Number of coils used in the T1w denoising step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "t1_bias_bspline_knot_per_voxel": {
-                "type": "number",
-                "description": "Number of B-spline knots per voxel used in the T1w bias correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 8,
-                "hidden": true
-            },
-            "t1_bias_shrink_factor": {
-                "type": "integer",
-                "description": "Shrink factor used in the T1w bias correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 4,
-                "hidden": true
-            },
-            "t1_resample_voxel_size": {
-                "type": "integer",
-                "description": "Voxel size used in the T1w resampling step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "t1_resample_interp": {
-                "type": "string",
-                "description": "Interpolation method used in the T1w resampling step.",
-                "fa_icon": "fas fa-brain",
-                "default": "lin",
-                "hidden": true
-            },
-            "t1_synthstrip_border": {
-                "type": "integer",
-                "description": "Mask border threshold used in the SynthStrip brain extraction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "t1_synthstrip_nocsf": {
-                "type": "boolean",
-                "description": "Exclude CSF from the border in the SynthStrip brain extraction step.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
+        },
+        "t1_processing_options": {
+            "title": "T1w Processing Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for T1w processing. In the case where you do not have a T1w image, you can ignore those options.",
+            "help_text": "These options are used to configure the T1w processing steps in the pipeline. You can use these options to customise the behaviour of the T1w processing steps.",
+            "properties": {
+                "run_t1_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_n4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_crop": {
+                    "type": "boolean",
+                    "description": "Run cropping on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "t1_denoise_number_of_coils": {
+                    "type": "integer",
+                    "description": "Number of coils used in the T1w denoising step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t1_bias_bspline_knot_per_voxel": {
+                    "type": "number",
+                    "description": "Number of B-spline knots per voxel used in the T1w bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 8,
+                    "hidden": true
+                },
+                "t1_bias_shrink_factor": {
+                    "type": "integer",
+                    "description": "Shrink factor used in the T1w bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 4,
+                    "hidden": true
+                },
+                "t1_resample_voxel_size": {
+                    "type": "integer",
+                    "description": "Voxel size used in the T1w resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t1_resample_interp": {
+                    "type": "string",
+                    "description": "Interpolation method used in the T1w resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "lin",
+                    "hidden": true
+                },
+                "t1_synthstrip_border": {
+                    "type": "integer",
+                    "description": "Mask border threshold used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t1_synthstrip_nocsf": {
+                    "type": "boolean",
+                    "description": "Exclude CSF from the border in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                }
             }
-        }
-    },
-    "t2_preprocessing_options": {
-        "title": "T2w Preprocessing Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for T2w preprocessing. In the case where you do not have a T2w image, you can ignore those options.",
-        "help_text": "These options are used to configure the T2w preprocessing steps in the pipeline. You can use these options to customise the behaviour of the T2w preprocessing steps.",
-        "properties": {
-            "run_t2_denoising": {
-                "type": "boolean",
-                "description": "Run denoising on the T2w images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "run_t2_n4": {
-                "type": "boolean",
-                "description": "Run N4 bias correction on the T2w images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "run_t2_resampling": {
-                "type": "boolean",
-                "description": "Run resampling on the T2w images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "run_t2_crop": {
-                "type": "boolean",
-                "description": "Run cropping on the T2w images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "t2_denoise_number_of_coils": {
-                "type": "integer",
-                "description": "Number of coils used in the T2w denoising step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "t2_bias_bspline_knot_per_voxel": {
-                "type": "number",
-                "description": "Number of B-spline knots per voxel used in the T2w bias correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 8,
-                "hidden": true
-            },
-            "t2_bias_shrink_factor": {
-                "type": "integer",
-                "description": "Shrink factor used in the T2w bias correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 4,
-                "hidden": true
-            },
-            "t2_resample_voxel_size": {
-                "type": "integer",
-                "description": "Voxel size used in the T2w resampling step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "t2_resample_interp": {
-                "type": "string",
-                "description": "Interpolation method used in the T2w resampling step.",
-                "fa_icon": "fas fa-brain",
-                "default": "lin",
-                "hidden": true
-            },
-            "t2_synthstrip_border": {
-                "type": "integer",
-                "description": "Mask border threshold used in the SynthStrip brain extraction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "t2_synthstrip_nocsf": {
-                "type": "boolean",
-                "description": "Exclude CSF from the border in the SynthStrip brain extraction step.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
+        },
+        "t2_preprocessing_options": {
+            "title": "T2w Preprocessing Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for T2w preprocessing. In the case where you do not have a T2w image, you can ignore those options.",
+            "help_text": "These options are used to configure the T2w preprocessing steps in the pipeline. You can use these options to customise the behaviour of the T2w preprocessing steps.",
+            "properties": {
+                "run_t2_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_n4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_crop": {
+                    "type": "boolean",
+                    "description": "Run cropping on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "t2_denoise_number_of_coils": {
+                    "type": "integer",
+                    "description": "Number of coils used in the T2w denoising step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t2_bias_bspline_knot_per_voxel": {
+                    "type": "number",
+                    "description": "Number of B-spline knots per voxel used in the T2w bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 8,
+                    "hidden": true
+                },
+                "t2_bias_shrink_factor": {
+                    "type": "integer",
+                    "description": "Shrink factor used in the T2w bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 4,
+                    "hidden": true
+                },
+                "t2_resample_voxel_size": {
+                    "type": "integer",
+                    "description": "Voxel size used in the T2w resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t2_resample_interp": {
+                    "type": "string",
+                    "description": "Interpolation method used in the T2w resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "lin",
+                    "hidden": true
+                },
+                "t2_synthstrip_border": {
+                    "type": "integer",
+                    "description": "Mask border threshold used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "t2_synthstrip_nocsf": {
+                    "type": "boolean",
+                    "description": "Exclude CSF from the border in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                }
             }
-        }
-    },
-    "coreg_options": {
-        "title": "Anatomical Co-registration Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for anatomical co-registration. Will only be performed if both T2w and T1w images are available.",
-        "help_text": "These options are used to configure the anatomical co-registration steps in the pipeline. You can use these options to customise the behaviour of the anatomical co-registration steps.",
-        "properties": {
-            "coreg_dimensionality": {
-                "type": "integer",
-                "description": "Dimensionality of the registered images.",
-                "fa_icon": "fas fa-brain",
-                "default": 3,
-                "hidden": true
-            },
-            "coreg_transform": {
-                "type": "string",
-                "description": "Transform used in the coregistration step. t: translation (1 stage), r: rigid (1 stage), a: rigid + affine (2 stages), s: rigid + affine + deformable syn (3 stages)",
-                "fa_icon": "fas fa-brain",
-                "errorMessage": "Invalid method. Must be one of: t, r, a, or s.",
-                "default": "a",
-                "enum": ["t", "r", "a", "s"],
-                "hidden": false
-            },
-            "coreg_quick": {
-                "type": "boolean",
-                "description": "Use antsRegistrationSyNQuick for the coregistration step.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": false
+        },
+        "coreg_options": {
+            "title": "Anatomical Co-registration Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for anatomical co-registration. Will only be performed if both T2w and T1w images are available.",
+            "help_text": "These options are used to configure the anatomical co-registration steps in the pipeline. You can use these options to customise the behaviour of the anatomical co-registration steps.",
+            "properties": {
+                "coreg_dimensionality": {
+                    "type": "integer",
+                    "description": "Dimensionality of the registered images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 3,
+                    "hidden": true
+                },
+                "coreg_transform": {
+                    "type": "string",
+                    "description": "Transform used in the coregistration step. t: translation (1 stage), r: rigid (1 stage), a: rigid + affine (2 stages), s: rigid + affine + deformable syn (3 stages)",
+                    "fa_icon": "fas fa-brain",
+                    "errorMessage": "Invalid method. Must be one of: t, r, a, or s.",
+                    "default": "a",
+                    "enum": ["t", "r", "a", "s"],
+                    "hidden": false
+                },
+                "coreg_quick": {
+                    "type": "boolean",
+                    "description": "Use antsRegistrationSyNQuick for the coregistration step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                }
             }
-        }
-    },
-    "dwi_preprocessing_options": {
-        "title": "DWI Preprocessing Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for DWI preprocessing. You can use these options to customise the behaviour of the DWI preprocessing steps.",
-        "help_text": "These options are used to configure the DWI preprocessing steps in the pipeline. You can use these options to customise the behaviour of the DWI preprocessing steps.",
-        "properties": {
-            "dwi_b0_threshold": {
-                "type": "integer",
-                "description": "B0 threshold used in the DWI preprocessing steps.",
-                "fa_icon": "fas fa-brain",
-                "default": 20,
-                "hidden": false
-            },
-            "dwi_shell_tolerance": {
-                "type": "integer",
-                "description": "Shell tolerance used in the DWI preprocessing steps.",
-                "fa_icon": "fas fa-brain",
-                "default": 50,
-                "hidden": false
-            },
-            "run_dwi_denoising": {
-                "type": "boolean",
-                "description": "Run denoising on the DWI images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "dwi_denoise_patch_size": {
-                "type": "integer",
-                "description": "Patch size used in the DWI denoising step.",
-                "fa_icon": "fas fa-brain",
-                "default": 7,
-                "hidden": true
-            },
-            "run_dwi_degibbs": {
-                "type": "boolean",
-                "description": "Run Gibbs ringing correction on the DWI images.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": false
-            },
-            "run_dwi_topup": {
-                "type": "boolean",
-                "description": "Run topup in the susceptibility distortion correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "dwi_susceptibility_config_file": {
-                "type": "string",
-                "description": "Path to the susceptibility distortion correction config file.",
-                "fa_icon": "fas fa-brain",
-                "default": "b02b0.cnf",
-                "hidden": true
-            },
-            "dwi_susceptibility_output_prefix": {
-                "type": "string",
-                "description": "Prefix used in the susceptibility distortion correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": "topup_results",
-                "hidden": true
-            },
-            "dwi_susceptibility_readout": {
-                "type": "number",
-                "description": "Readout time used in the susceptibility distortion correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.04,
-                "hidden": true
-            },
-            "dwi_susceptibility_encoding_dir": {
-                "type": "string",
-                "description": "Encoding direction used in the susceptibility distortion correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": "y",
-                "hidden": true
-            },
-            "run_dwi_eddy": {
-                "type": "boolean",
-                "description": "Run eddy in the eddy current correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "dwi_motion_and_eddy_command": {
-                "type": "string",
-                "description": "Command used in the motion and eddy correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": "eddy_cpu",
-                "hidden": true
-            },
-            "dwi_motion_and_eddy_bet_f_threshold": {
-                "type": "number",
-                "description": "Bet f threshold used in the motion and eddy correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.16,
-                "hidden": true
-            },
-            "dwi_motion_and_eddy_restore_slices": {
-                "type": "boolean",
-                "description": "Restore slices in the motion and eddy correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": true
-            },
-            "dwi_pwdavg_shells": {
-                "type": "string",
-                "description": "Shells used in the PowderAverage step.",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
-            },
-            "dwi_synthstrip_border": {
-                "type": "integer",
-                "description": "Brain border used in the SynthStrip brain extraction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "dwi_synthstrip_nocsf": {
-                "type": "boolean",
-                "description": "Exclude CSF from the border in the SynthStrip brain extraction step.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
-            },
-            "dwi_bet_f_threshold": {
-                "type": "number",
-                "description": "Bet f threshold used in the brain extraction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.16,
-                "hidden": true
-            },
-            "run_dwi_n4": {
-                "type": "boolean",
-                "description": "Run N4 bias correction on the DWI images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "dwi_bias_bspline_knot_per_voxel": {
-                "type": "number",
-                "description": "Number of B-spline knots per voxel used in the DWI bias correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 8,
-                "hidden": true
-            },
-            "dwi_bias_shrink_factor": {
-                "type": "integer",
-                "description": "Shrink factor used in the DWI bias correction step.",
-                "fa_icon": "fas fa-brain",
-                "default": 4,
-                "hidden": true
-            },
-            "run_dwi_normalize": {
-                "type": "boolean",
-                "description": "Run normalization on the DWI images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "dwi_normalize_fa_mask_threshold": {
-                "type": "number",
-                "description": "FA mask threshold used in the normalization step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.4,
-                "hidden": false
-            },
-            "run_dwi_resampling": {
-                "type": "boolean",
-                "description": "Run resampling on the DWI images.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "dwi_resample_voxel_size": {
-                "type": "integer",
-                "description": "Voxel size used in the DWI resampling step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "dwi_resample_interp": {
-                "type": "string",
-                "description": "Interpolation method used in the DWI resampling step.",
-                "fa_icon": "fas fa-brain",
-                "default": "lin",
-                "hidden": true
-            },
-            "dwi_resample_mask_voxel_size": {
-                "type": "integer",
-                "description": "Voxel size used in the DWI mask resampling step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
-            },
-            "dwi_resample_mask_interp": {
-                "type": "string",
-                "description": "Interpolation method used in the DWI mask resampling step.",
-                "fa_icon": "fas fa-brain",
-                "default": "nn",
-                "hidden": true
+        },
+        "dwi_preprocessing_options": {
+            "title": "DWI Preprocessing Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for DWI preprocessing. You can use these options to customise the behaviour of the DWI preprocessing steps.",
+            "help_text": "These options are used to configure the DWI preprocessing steps in the pipeline. You can use these options to customise the behaviour of the DWI preprocessing steps.",
+            "properties": {
+                "dwi_b0_threshold": {
+                    "type": "integer",
+                    "description": "B0 threshold used in the DWI preprocessing steps.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": false
+                },
+                "dwi_shell_tolerance": {
+                    "type": "integer",
+                    "description": "Shell tolerance used in the DWI preprocessing steps.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 50,
+                    "hidden": false
+                },
+                "run_dwi_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "dwi_denoise_patch_size": {
+                    "type": "integer",
+                    "description": "Patch size used in the DWI denoising step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 7,
+                    "hidden": true
+                },
+                "run_dwi_degibbs": {
+                    "type": "boolean",
+                    "description": "Run Gibbs ringing correction on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "run_dwi_topup": {
+                    "type": "boolean",
+                    "description": "Run topup in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "dwi_susceptibility_config_file": {
+                    "type": "string",
+                    "description": "Path to the susceptibility distortion correction config file.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "b02b0.cnf",
+                    "hidden": true
+                },
+                "dwi_susceptibility_output_prefix": {
+                    "type": "string",
+                    "description": "Prefix used in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "topup_results",
+                    "hidden": true
+                },
+                "dwi_susceptibility_readout": {
+                    "type": "number",
+                    "description": "Readout time used in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.04,
+                    "hidden": true
+                },
+                "dwi_susceptibility_encoding_dir": {
+                    "type": "string",
+                    "description": "Encoding direction used in the susceptibility distortion correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "y",
+                    "hidden": true
+                },
+                "run_dwi_eddy": {
+                    "type": "boolean",
+                    "description": "Run eddy in the eddy current correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "dwi_motion_and_eddy_command": {
+                    "type": "string",
+                    "description": "Command used in the motion and eddy correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "eddy_cpu",
+                    "hidden": true
+                },
+                "dwi_motion_and_eddy_bet_f_threshold": {
+                    "type": "number",
+                    "description": "Bet f threshold used in the motion and eddy correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.16,
+                    "hidden": true
+                },
+                "dwi_motion_and_eddy_restore_slices": {
+                    "type": "boolean",
+                    "description": "Restore slices in the motion and eddy correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": true
+                },
+                "dwi_pwdavg_shells": {
+                    "type": "string",
+                    "description": "Shells used in the PowderAverage step.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "dwi_synthstrip_border": {
+                    "type": "integer",
+                    "description": "Brain border used in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "dwi_synthstrip_nocsf": {
+                    "type": "boolean",
+                    "description": "Exclude CSF from the border in the SynthStrip brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "dwi_bet_f_threshold": {
+                    "type": "number",
+                    "description": "Bet f threshold used in the brain extraction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.16,
+                    "hidden": true
+                },
+                "run_dwi_n4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "dwi_bias_bspline_knot_per_voxel": {
+                    "type": "number",
+                    "description": "Number of B-spline knots per voxel used in the DWI bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 8,
+                    "hidden": true
+                },
+                "dwi_bias_shrink_factor": {
+                    "type": "integer",
+                    "description": "Shrink factor used in the DWI bias correction step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 4,
+                    "hidden": true
+                },
+                "run_dwi_normalize": {
+                    "type": "boolean",
+                    "description": "Run normalization on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "dwi_normalize_fa_mask_threshold": {
+                    "type": "number",
+                    "description": "FA mask threshold used in the normalization step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.4,
+                    "hidden": false
+                },
+                "run_dwi_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "dwi_resample_voxel_size": {
+                    "type": "integer",
+                    "description": "Voxel size used in the DWI resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "dwi_resample_interp": {
+                    "type": "string",
+                    "description": "Interpolation method used in the DWI resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "lin",
+                    "hidden": true
+                },
+                "dwi_resample_mask_voxel_size": {
+                    "type": "integer",
+                    "description": "Voxel size used in the DWI mask resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                },
+                "dwi_resample_mask_interp": {
+                    "type": "string",
+                    "description": "Interpolation method used in the DWI mask resampling step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "nn",
+                    "hidden": true
+                }
             }
-        }
-    },
-    "dti_options": {
-        "title": "DTI Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for diffusion tensor fitting.",
-        "help_text": "These options are used to configure the DTI processing steps in the pipeline. You can use these options to customise the behaviour of the DTI processing steps.",
-        "properties": {
-            "dti_max_shell_value": {
-                "type": "integer",
-                "description": "Maximum shell value used in the DTI processing step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1200,
-                "hidden": false
-            },
-            "dti_shells": {
-                "type": "string",
-                "description": "Shells used in the DTI processing step.",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
+        },
+        "dti_options": {
+            "title": "DTI Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for diffusion tensor fitting.",
+            "help_text": "These options are used to configure the DTI processing steps in the pipeline. You can use these options to customise the behaviour of the DTI processing steps.",
+            "properties": {
+                "dti_max_shell_value": {
+                    "type": "integer",
+                    "description": "Maximum shell value used in the DTI processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1200,
+                    "hidden": false
+                },
+                "dti_shells": {
+                    "type": "string",
+                    "description": "Shells used in the DTI processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                }
             }
-        }
-    },
-    "frf_options": {
-        "title": "FRF Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for fiber response function (FRF) processing. The FRF is derived from normative curves in function of each participant's age. The current options are mostly if you want to override this default behavior.",
-        "help_text": "These options are used to configure the FRF processing steps in the pipeline. You can use these options to customise the behaviour of the FRF processing steps.",
-        "properties": {
-            "frf_fa": {
-                "type": "number",
-                "description": "Initial minimum FA threshold to use to compute the FRF.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.7,
-                "hidden": true
-            },
-            "frf_min_fa": {
-                "type": "number",
-                "description": "If frf_fa does not extract enough voxels, this is the minimum FA threshold that will be tried.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.5,
-                "hidden": true
-            },
-            "frf_nvox_min": {
-                "type": "integer",
-                "description": "Minimum number of voxels to include in the computation of the FRF.",
-                "fa_icon": "fas fa-brain",
-                "default": 300,
-                "hidden": true
-            },
-            "frf_roi_radius": {
-                "type": "integer",
-                "description": "Radius of the ROI used to compute the FRF.",
-                "fa_icon": "fas fa-brain",
-                "default": 20,
-                "hidden": true
-            },
-            "frf_set_method": {
-                "type": "string",
-                "description": "Method used to compute the FRF.",
-                "fa_icon": "fas fa-brain",
-                "default": "ssst",
-                "enum": ["ssst"],
-                "errorMessage": "Invalid choice. Must be 'ssst', 'msmt' will come in future releases.",
-                "hidden": false
-            },
-            "frf_manual_frf": {
-                "type": "string",
-                "description": "Manual FRF values.(e.g. '15,4,4'). This is set from the normative curves. Use this option only to apply a single FRF to every participants. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
+        },
+        "frf_options": {
+            "title": "FRF Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for fiber response function (FRF) processing. The FRF is derived from normative curves in function of each participant's age. The current options are mostly if you want to override this default behavior.",
+            "help_text": "These options are used to configure the FRF processing steps in the pipeline. You can use these options to customise the behaviour of the FRF processing steps.",
+            "properties": {
+                "frf_fa": {
+                    "type": "number",
+                    "description": "Initial minimum FA threshold to use to compute the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.7,
+                    "hidden": true
+                },
+                "frf_min_fa": {
+                    "type": "number",
+                    "description": "If frf_fa does not extract enough voxels, this is the minimum FA threshold that will be tried.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "frf_nvox_min": {
+                    "type": "integer",
+                    "description": "Minimum number of voxels to include in the computation of the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 300,
+                    "hidden": true
+                },
+                "frf_roi_radius": {
+                    "type": "integer",
+                    "description": "Radius of the ROI used to compute the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "frf_set_method": {
+                    "type": "string",
+                    "description": "Method used to compute the FRF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "ssst",
+                    "enum": ["ssst"],
+                    "errorMessage": "Invalid choice. Must be 'ssst', 'msmt' will come in future releases.",
+                    "hidden": false
+                },
+                "frf_manual_frf": {
+                    "type": "string",
+                    "description": "Manual FRF values.(e.g. '15,4,4'). This is set from the normative curves. Use this option only to apply a single FRF to every participants. For more information, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/priors/).",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                }
             }
-        }
-    },
-    "fodf_options": {
-        "title": "FODF Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for FODF processing.",
-        "help_text": "These options are used to configure the FODF processing steps in the pipeline. You can use these options to customise the behaviour of the FODF processing steps.",
-        "properties": {
-            "fodf_min_shell_value": {
-                "type": "integer",
-                "description": "Minimum FODF shell value used.",
-                "fa_icon": "fas fa-brain",
-                "default": 700,
-                "hidden": false
-            },
-            "fodf_shells": {
-                "type": "string",
-                "description": "Shells used in the FODF processing step.",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
-            },
-            "fodf_sh_order": {
-                "type": "integer",
-                "description": "Spherical harmonics order used in the FODF processing step.",
-                "fa_icon": "fas fa-brain",
-                "default": 8,
-                "hidden": false
-            },
-            "fodf_sh_basis": {
-                "type": "string",
-                "description": "Spherical harmonics basis used in the FODF processing step. Choices: descoteaux07 or tournier07.",
-                "fa_icon": "fas fa-brain",
-                "default": "descoteaux07",
-                "enum": ["descoteaux07", "tournier07"],
-                "errorMessage": "Invalid basis. Must be either 'descoteaux07' or 'tournier07'.",
-                "hidden": false
-            },
-            "fodf_set_method": {
-                "type": "string",
-                "description": "Method used to compute the FODF.",
-                "fa_icon": "fas fa-brain",
-                "default": "ssst",
-                "enum": ["ssst"],
-                "errorMessage": "Invalid choice. Must be 'ssst', 'msmt' will come in future releases.",
-                "hidden": false
-            },
-            "fodf_relative_threshold": {
-                "type": "number",
-                "description": "Relative threshold used in the FODF processing step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.1,
-                "hidden": true
-            },
-            "fodf_a_factor": {
-                "type": "number",
-                "description": "FODF a factor used in the FODF processing step.",
-                "fa_icon": "fas fa-brain",
-                "default": 2.0,
-                "hidden": true
-            },
-            "fodf_max_fa_threshold": {
-                "type": "number",
-                "description": "Maximum FA threshold used in the FODF processing step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.1,
-                "hidden": true
-            },
-            "fodf_min_md_threshold": {
-                "type": "number",
-                "description": "Minimum MD threshold used in the FODF processing step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.002,
-                "hidden": true
+        },
+        "fodf_options": {
+            "title": "FODF Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for FODF processing.",
+            "help_text": "These options are used to configure the FODF processing steps in the pipeline. You can use these options to customise the behaviour of the FODF processing steps.",
+            "properties": {
+                "fodf_min_shell_value": {
+                    "type": "integer",
+                    "description": "Minimum FODF shell value used.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 700,
+                    "hidden": false
+                },
+                "fodf_shells": {
+                    "type": "string",
+                    "description": "Shells used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "fodf_sh_order": {
+                    "type": "integer",
+                    "description": "Spherical harmonics order used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 8,
+                    "hidden": false
+                },
+                "fodf_sh_basis": {
+                    "type": "string",
+                    "description": "Spherical harmonics basis used in the FODF processing step. Choices: descoteaux07 or tournier07.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "descoteaux07",
+                    "enum": ["descoteaux07", "tournier07"],
+                    "errorMessage": "Invalid basis. Must be either 'descoteaux07' or 'tournier07'.",
+                    "hidden": false
+                },
+                "fodf_set_method": {
+                    "type": "string",
+                    "description": "Method used to compute the FODF.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "ssst",
+                    "enum": ["ssst"],
+                    "errorMessage": "Invalid choice. Must be 'ssst', 'msmt' will come in future releases.",
+                    "hidden": false
+                },
+                "fodf_relative_threshold": {
+                    "type": "number",
+                    "description": "Relative threshold used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.1,
+                    "hidden": true
+                },
+                "fodf_a_factor": {
+                    "type": "number",
+                    "description": "FODF a factor used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 2.0,
+                    "hidden": true
+                },
+                "fodf_max_fa_threshold": {
+                    "type": "number",
+                    "description": "Maximum FA threshold used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.1,
+                    "hidden": true
+                },
+                "fodf_min_md_threshold": {
+                    "type": "number",
+                    "description": "Minimum MD threshold used in the FODF processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.002,
+                    "hidden": true
+                }
             }
-        }
-    },
-    "pft_tracking_options": {
-        "title": "PFT Tracking Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for Particle Filter Tracking (PFT).",
-        "help_text": "These options are used to configure the PFT tracking steps in the pipeline. You can use these options to customise the behaviour of the PFT tracking steps.",
-        "properties": {
-            "run_pft_tracking": {
-                "type": "boolean",
-                "description": "Run PFT tracking.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "pft_seeding_mask_type": {
-                "type": "string",
-                "description": "Seeding mask type used in the PFT tracking step. Choices: wm, fa, or interface.",
-                "fa_icon": "fas fa-brain",
-                "default": "wm",
-                "enum": ["wm", "fa", "interface"],
-                "errorMessage": "Invalid choice. Must be either 'wm', 'fa', or 'interface'.",
-                "hidden": false
-            },
-            "pft_fa_threshold": {
-                "type": "number",
-                "description": "FA threshold to use on FA map to generate seeding mask.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.2,
-                "hidden": true
-            },
-            "pft_random_seed": {
-                "type": "integer",
-                "description": "Random seed used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1234,
-                "hidden": true
-            },
-            "pft_compress": {
-                "type": "boolean",
-                "description": "If true, compress the streamlines.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": true
-            },
-            "pft_compress_value": {
-                "type": "number",
-                "description": "Compression value for the streamlines' compression.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.2,
-                "hidden": true
-            },
-            "pft_algo": {
-                "type": "string",
-                "description": "Algorithm used in the PFT tracking step. Choices: prob or det",
-                "fa_icon": "fas fa-brain",
-                "default": "prob",
-                "enum": ["prob", "det"],
-                "errorMessage": "Invalid choice. Must be either 'prob' or 'det'.",
-                "hidden": false
-            },
-            "pft_nbr_seeds": {
-                "type": "integer",
-                "description": "Number of seeds used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 10,
-                "hidden": false
-            },
-            "pft_seeding_type": {
-                "type": "string",
-                "description": "Seeding type used in the PFT tracking step. Choices: npv or nt.",
-                "fa_icon": "fas fa-brain",
-                "default": "npv",
-                "enum": ["npv", "nt"],
-                "errorMessage": "Invalid choice. Must be either 'npv' or 'nt'.",
-                "hidden": false
-            },
-            "pft_step": {
-                "type": "number",
-                "description": "Step value used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.5,
-                "hidden": true
-            },
-            "pft_theta": {
-                "type": "number",
-                "description": "Theta value used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 20,
-                "hidden": true
-            },
-            "pft_sfthres": {
-                "type": "number",
-                "description": "SF threshold used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.1,
-                "hidden": true
-            },
-            "pft_sfthres_init": {
-                "type": "number",
-                "description": "Initial SF threshold used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.5,
-                "hidden": true
-            },
-            "pft_min_len": {
-                "type": "number",
-                "description": "Minimum length used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 20,
-                "hidden": false
-            },
-            "pft_max_len": {
-                "type": "number",
-                "description": "Maximum length used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 200,
-                "hidden": false
-            },
-            "pft_particles": {
-                "type": "integer",
-                "description": "Number of particles used in the PFT tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 15,
-                "hidden": true
-            },
-            "pft_back": {
-                "type": "integer",
-                "description": "Length of PFT back tracking (mm)",
-                "fa_icon": "fas fa-brain",
-                "default": 2,
-                "hidden": true
-            },
-            "pft_front": {
-                "type": "integer",
-                "description": "Length of PFT forward tracking (mm).",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": true
+        },
+        "pft_tracking_options": {
+            "title": "PFT Tracking Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for Particle Filter Tracking (PFT).",
+            "help_text": "These options are used to configure the PFT tracking steps in the pipeline. You can use these options to customise the behaviour of the PFT tracking steps.",
+            "properties": {
+                "run_pft_tracking": {
+                    "type": "boolean",
+                    "description": "Run PFT tracking.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "pft_seeding_mask_type": {
+                    "type": "string",
+                    "description": "Seeding mask type used in the PFT tracking step. Choices: wm, fa, or interface.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "wm",
+                    "enum": ["wm", "fa", "interface"],
+                    "errorMessage": "Invalid choice. Must be either 'wm', 'fa', or 'interface'.",
+                    "hidden": false
+                },
+                "pft_fa_threshold": {
+                    "type": "number",
+                    "description": "FA threshold to use on FA map to generate seeding mask.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.2,
+                    "hidden": true
+                },
+                "pft_random_seed": {
+                    "type": "integer",
+                    "description": "Random seed used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1234,
+                    "hidden": true
+                },
+                "pft_compress": {
+                    "type": "boolean",
+                    "description": "If true, compress the streamlines.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": true
+                },
+                "pft_compress_value": {
+                    "type": "number",
+                    "description": "Compression value for the streamlines' compression.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.2,
+                    "hidden": true
+                },
+                "pft_algo": {
+                    "type": "string",
+                    "description": "Algorithm used in the PFT tracking step. Choices: prob or det",
+                    "fa_icon": "fas fa-brain",
+                    "default": "prob",
+                    "enum": ["prob", "det"],
+                    "errorMessage": "Invalid choice. Must be either 'prob' or 'det'.",
+                    "hidden": false
+                },
+                "pft_nbr_seeds": {
+                    "type": "integer",
+                    "description": "Number of seeds used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 10,
+                    "hidden": false
+                },
+                "pft_seeding_type": {
+                    "type": "string",
+                    "description": "Seeding type used in the PFT tracking step. Choices: npv or nt.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "npv",
+                    "enum": ["npv", "nt"],
+                    "errorMessage": "Invalid choice. Must be either 'npv' or 'nt'.",
+                    "hidden": false
+                },
+                "pft_step": {
+                    "type": "number",
+                    "description": "Step value used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "pft_theta": {
+                    "type": "number",
+                    "description": "Theta value used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "pft_sfthres": {
+                    "type": "number",
+                    "description": "SF threshold used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.1,
+                    "hidden": true
+                },
+                "pft_sfthres_init": {
+                    "type": "number",
+                    "description": "Initial SF threshold used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "pft_min_len": {
+                    "type": "number",
+                    "description": "Minimum length used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": false
+                },
+                "pft_max_len": {
+                    "type": "number",
+                    "description": "Maximum length used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 200,
+                    "hidden": false
+                },
+                "pft_particles": {
+                    "type": "integer",
+                    "description": "Number of particles used in the PFT tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 15,
+                    "hidden": true
+                },
+                "pft_back": {
+                    "type": "integer",
+                    "description": "Length of PFT back tracking (mm)",
+                    "fa_icon": "fas fa-brain",
+                    "default": 2,
+                    "hidden": true
+                },
+                "pft_front": {
+                    "type": "integer",
+                    "description": "Length of PFT forward tracking (mm).",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": true
+                }
             }
-        }
-    },
-    "local_tracking_options": {
-        "title": "Local Tracking Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for local tracking.",
-        "help_text": "These options are used to configure the local tracking steps in the pipeline. You can use these options to customise the behaviour of the local tracking steps.",
-        "properties": {
-            "run_local_tracking": {
-                "type": "boolean",
-                "description": "Run local tracking.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "local_seeding_mask_type": {
-                "type": "string",
-                "description": "Seeding mask type used in the local tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": "wm",
-                "enum": ["wm", "fa"],
-                "errorMessage": "Invalid choice. Must be either 'wm' or 'fa'.",
-                "hidden": false
-            },
-            "local_fa_tracking_mask_threshold": {
-                "type": "number",
-                "description": "FA threshold used for the tracking mask.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.4,
-                "hidden": true
-            },
-            "local_fa_seeding_mask_threshold": {
-                "type": "number",
-                "description": "FA threshold used for the seeding mask.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.4,
-                "hidden": true
-            },
-            "local_tracking_mask_type": {
-                "type": "string",
-                "description": "Tracking mask type used in the local tracking step. Choices: wm, fa, or interface.",
-                "fa_icon": "fas fa-brain",
-                "default": "wm",
-                "enum": ["wm", "fa"],
-                "errorMessage": "Invalid choice. Must be either 'wm' or 'fa'.",
-                "hidden": false
-            },
-            "local_random_seed": {
-                "type": "integer",
-                "description": "Random seed used in the local tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 1234,
-                "hidden": true
-            },
-            "local_compress": {
-                "type": "boolean",
-                "description": "If true, compress the streamlines.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": true
-            },
-            "local_compress_value": {
-                "type": "number",
-                "description": "Compression value for the streamlines' compression.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.2,
-                "hidden": true
-            },
-            "local_algo": {
-                "type": "string",
-                "description": "Algorithm used in the local tracking step. Choices: prob or det",
-                "fa_icon": "fas fa-brain",
-                "default": "prob",
-                "enum": ["prob", "det"],
-                "errorMessage": "Invalid choice. Must be either 'prob' or 'det'.",
-                "hidden": false
-            },
-            "local_nbr_seeds": {
-                "type": "integer",
-                "description": "Number of seeds used in the local tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 10,
-                "hidden": false
-            },
-            "local_seeding_type": {
-                "type": "string",
-                "description": "Seeding type used in the local tracking step. Choices: npv or nt.",
-                "fa_icon": "fas fa-brain",
-                "default": "npv",
-                "enum": ["npv", "nt"],
-                "errorMessage": "Invalid choice. Must be either 'npv' or 'nt'.",
-                "hidden": false
-            },
-            "local_step": {
-                "type": "number",
-                "description": "Step value used in the local tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.5,
-                "hidden": true
-            },
-            "local_theta": {
-                "type": "number",
-                "description": "Theta value used in the local tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 20,
-                "hidden": true
-            },
-            "local_sfthres": {
-                "type": "number",
-                "description": "SF threshold used in the local tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.1,
-                "hidden": true
-            },
-            "local_min_len": {
-                "type": "number",
-                "description": "Minimum length used in the local tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 20,
-                "hidden": false
-            },
-            "local_max_len": {
-                "type": "number",
-                "description": "Maximum length used in the local tracking step.",
-                "fa_icon": "fas fa-brain",
-                "default": 200,
-                "hidden": false
+        },
+        "local_tracking_options": {
+            "title": "Local Tracking Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for local tracking.",
+            "help_text": "These options are used to configure the local tracking steps in the pipeline. You can use these options to customise the behaviour of the local tracking steps.",
+            "properties": {
+                "run_local_tracking": {
+                    "type": "boolean",
+                    "description": "Run local tracking.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "local_seeding_mask_type": {
+                    "type": "string",
+                    "description": "Seeding mask type used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "wm",
+                    "enum": ["wm", "fa"],
+                    "errorMessage": "Invalid choice. Must be either 'wm' or 'fa'.",
+                    "hidden": false
+                },
+                "local_fa_tracking_mask_threshold": {
+                    "type": "number",
+                    "description": "FA threshold used for the tracking mask.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.4,
+                    "hidden": true
+                },
+                "local_fa_seeding_mask_threshold": {
+                    "type": "number",
+                    "description": "FA threshold used for the seeding mask.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.4,
+                    "hidden": true
+                },
+                "local_tracking_mask_type": {
+                    "type": "string",
+                    "description": "Tracking mask type used in the local tracking step. Choices: wm, fa, or interface.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "wm",
+                    "enum": ["wm", "fa"],
+                    "errorMessage": "Invalid choice. Must be either 'wm' or 'fa'.",
+                    "hidden": false
+                },
+                "local_random_seed": {
+                    "type": "integer",
+                    "description": "Random seed used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1234,
+                    "hidden": true
+                },
+                "local_compress": {
+                    "type": "boolean",
+                    "description": "If true, compress the streamlines.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": true
+                },
+                "local_compress_value": {
+                    "type": "number",
+                    "description": "Compression value for the streamlines' compression.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.2,
+                    "hidden": true
+                },
+                "local_algo": {
+                    "type": "string",
+                    "description": "Algorithm used in the local tracking step. Choices: prob or det",
+                    "fa_icon": "fas fa-brain",
+                    "default": "prob",
+                    "enum": ["prob", "det"],
+                    "errorMessage": "Invalid choice. Must be either 'prob' or 'det'.",
+                    "hidden": false
+                },
+                "local_nbr_seeds": {
+                    "type": "integer",
+                    "description": "Number of seeds used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 10,
+                    "hidden": false
+                },
+                "local_seeding_type": {
+                    "type": "string",
+                    "description": "Seeding type used in the local tracking step. Choices: npv or nt.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "npv",
+                    "enum": ["npv", "nt"],
+                    "errorMessage": "Invalid choice. Must be either 'npv' or 'nt'.",
+                    "hidden": false
+                },
+                "local_step": {
+                    "type": "number",
+                    "description": "Step value used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "local_theta": {
+                    "type": "number",
+                    "description": "Theta value used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": true
+                },
+                "local_sfthres": {
+                    "type": "number",
+                    "description": "SF threshold used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.1,
+                    "hidden": true
+                },
+                "local_min_len": {
+                    "type": "number",
+                    "description": "Minimum length used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": false
+                },
+                "local_max_len": {
+                    "type": "number",
+                    "description": "Maximum length used in the local tracking step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 200,
+                    "hidden": false
+                }
             }
-        }
-    },
-    "diffusivities": {
-        "title": "Diffusivities Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Parameters for tuning diffusivities used in models fitting",
-        "help_text": "These options are used to configure the diffusivities used in the various diffusion models (fODF, NODDI, Freewater, COMMIT). If not set, they are automatically taken from the normative growth curves, as described here: https://scilus.github.io/sf-pediatric/guides/priors/",
-        "properties": {
-            "average_diff_priors": {
-                "type": "boolean",
-                "description": "If set to true, will compute the average diffusivities for the NODDI/Freewater models and average them across all subjects to use as fixed diffusivities for all subjects.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": false
-            },
-            "para_diff": {
-                "type": "number",
-                "description": "Parallel diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
-            },
-            "iso_diff": {
-                "type": "number",
-                "description": "Isotropic diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
-            },
-            "perp_diff": {
-                "type": "number",
-                "description": "Perpendicular diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
-            },
-            "perp_diff_min": {
-                "type": "number",
-                "description": "Minimum perpendicular diffusivity value (in mm^2/s) to use in models fitting. If not set, it will be derived from normative growth curves based on participant's age",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
-            },
-            "perp_diff_max": {
-                "type": "number",
-                "description": "Maximum perpendicular diffusivity value (in mm^2/s) to use in models fitting. If not set, it will be derived from normative growth curves based on participant's age",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
+        },
+        "diffusivities": {
+            "title": "Diffusivities Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Parameters for tuning diffusivities used in models fitting",
+            "help_text": "These options are used to configure the diffusivities used in the various diffusion models (fODF, NODDI, Freewater, COMMIT). If not set, they are automatically taken from the normative growth curves, as described here: https://scilus.github.io/sf-pediatric/guides/priors/",
+            "properties": {
+                "average_diff_priors": {
+                    "type": "boolean",
+                    "description": "If set to true, will compute the average diffusivities for the NODDI/Freewater models and average them across all subjects to use as fixed diffusivities for all subjects.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "para_diff": {
+                    "type": "number",
+                    "description": "Parallel diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "iso_diff": {
+                    "type": "number",
+                    "description": "Isotropic diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "perp_diff": {
+                    "type": "number",
+                    "description": "Perpendicular diffusivity value to use in models fitting (in mm^2/s). If not set, it will be derived from normative growth curves based on participant's age.",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "perp_diff_min": {
+                    "type": "number",
+                    "description": "Minimum perpendicular diffusivity value (in mm^2/s) to use in models fitting. If not set, it will be derived from normative growth curves based on participant's age",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "perp_diff_max": {
+                    "type": "number",
+                    "description": "Maximum perpendicular diffusivity value (in mm^2/s) to use in models fitting. If not set, it will be derived from normative growth curves based on participant's age",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                }
             }
-        }
-    },
-    "noddi_options": {
-        "title": "NODDI Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for NODDI model fitting.",
-        "help_text": "These options are used to configure the NODDI model fitting steps in the pipeline.",
-        "properties": {
-            "run_noddi": {
-                "type": "boolean",
-                "description": "Whether to run the NODDI processing step. If selected, the resulting metric maps will be added to the list used in the bundling and connectomics profile. NODDI is only available for multi-shell acquisitions, for single-shell acquisitions, please consider using Freewater model instead.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": false
-            },
-            "noddi_lambda1": {
-                "type": "number",
-                "description": "Value to use as the first regularization parameter (lambda1) in the NODDI fitting process.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.5,
-                "hidden": true
-            },
-            "noddi_lambda2": {
-                "type": "number",
-                "description": "Value to use as the second regularization parameter (lambda2) in the NODDI fitting process.",
-                "fa_icon": "fas fa-brain",
-                "default": 1e-3,
-                "hidden": true
+        },
+        "noddi_options": {
+            "title": "NODDI Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for NODDI model fitting.",
+            "help_text": "These options are used to configure the NODDI model fitting steps in the pipeline.",
+            "properties": {
+                "run_noddi": {
+                    "type": "boolean",
+                    "description": "Whether to run the NODDI processing step. If selected, the resulting metric maps will be added to the list used in the bundling and connectomics profile. NODDI is only available for multi-shell acquisitions, for single-shell acquisitions, please consider using Freewater model instead.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "noddi_lambda1": {
+                    "type": "number",
+                    "description": "Value to use as the first regularization parameter (lambda1) in the NODDI fitting process.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "noddi_lambda2": {
+                    "type": "number",
+                    "description": "Value to use as the second regularization parameter (lambda2) in the NODDI fitting process.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1e-3,
+                    "hidden": true
+                }
             }
-        }
-    },
-    "freewater_options": {
-        "title": "Freewater Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for Freewater model fitting.",
-        "help_text": "These options are used to configure the Freewater model fitting steps in the pipeline.",
-        "properties": {
-            "run_freewater": {
-                "type": "boolean",
-                "description": "Whether to run the Freewater processing step. If selected, the resulting metric maps will be added to the list used in the bundling and connectomics profile.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": false
-            },
-            "freewater_lambda1": {
-                "type": "number",
-                "description": "Value to use as the first regularization parameter (lambda1) in the Freewater fitting process.",
-                "fa_icon": "fas fa-brain",
-                "default": 0,
-                "hidden": true
-            },
-            "freewater_lambda2": {
-                "type": "number",
-                "description": "Value to use as the second regularization parameter (lambda2) in the Freewater fitting process.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.25,
-                "hidden": true
+        },
+        "freewater_options": {
+            "title": "Freewater Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for Freewater model fitting.",
+            "help_text": "These options are used to configure the Freewater model fitting steps in the pipeline.",
+            "properties": {
+                "run_freewater": {
+                    "type": "boolean",
+                    "description": "Whether to run the Freewater processing step. If selected, the resulting metric maps will be added to the list used in the bundling and connectomics profile.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "freewater_lambda1": {
+                    "type": "number",
+                    "description": "Value to use as the first regularization parameter (lambda1) in the Freewater fitting process.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0,
+                    "hidden": true
+                },
+                "freewater_lambda2": {
+                    "type": "number",
+                    "description": "Value to use as the second regularization parameter (lambda2) in the Freewater fitting process.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.25,
+                    "hidden": true
+                }
             }
-        }
-    },
-    "bundleseg_options": {
-        "title": "BundleSeg Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for BundleSeg",
-        "help_text": "These options are used to configure how BundleSeg will recognize and extract bundles from the whole-brain tractogram.",
-        "properties": {
-            "atlas_directory": {
-                "type": "string",
-                "description": "Path to the WM bundles atlas directory.",
-                "help_text": "This allows you to specify a custom atlas for bundle segmentation. If not provided, the default atlas included with the pipeline will be used. NOTE: The provided atlas will be used with all participants without accounting for age.",
-                "fa_icon": "fas fa-brain",
-                "default": null,
-                "hidden": false
-            },
-            "minimal_vote_ratio": {
-                "type": "number",
-                "description": "Ratio of vote across models to consider a streamline for saving. If you have 5 input models and a ratio of 0.5, you will need at least 3 votes.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.5,
-                "hidden": true
-            },
-            "outlier_alpha": {
-                "type": "number",
-                "description": "Percentage of the length of the tree that clusters of individual streamlines will be pruned. Higher values will remove more streamlines.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.6,
-                "hidden": true
-            },
-            "nb_points": {
-                "type": "integer",
-                "description": "Number of points to segment the bundles.",
-                "fa_icon": "fas fa-brain",
-                "default": 5,
-                "hidden": false
-            },
-            "colormap": {
-                "type": "string",
-                "description": "Colormap to use for coloring the bundles. Color only affects visualization.",
-                "fa_icon": "fas fa-brain",
-                "default": "jet",
-                "hidden": false
-            },
-            "use_hyperplane": {
-                "type": "boolean",
-                "description": "If set, will use hyperplane to segment bundles (still experimental), otherwise, will use the euclidean distance.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": false
-            },
-            "use_manhattan": {
-                "type": "boolean",
-                "description": "If set, will use manhattan distance to segment bundles, otherwise, will use the euclidean distance.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": false
-            },
-            "density_weighting": {
-                "type": "boolean",
-                "description": "If set, weight statistics based on the number of voxel going through the voxel.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": true
-            },
-            "normalize_weights": {
-                "type": "boolean",
-                "description": "If set, the weights will be normalized to the [0,1] range.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": true
-            },
-            "length_stats": {
-                "type": "boolean",
-                "description": "If set, will output bundles' length.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "endpoints_stats": {
-                "type": "boolean",
-                "description": "If set, will output statistics in endpoints.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "means_std": {
-                "type": "boolean",
-                "description": "If set, will output mean and std values per bundle per metrics.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "volume": {
-                "type": "boolean",
-                "description": "If set, will output volume values per bundle.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "streamline_count": {
-                "type": "boolean",
-                "description": "If set, will output the streamline count per bundle.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "volume_per_labels": {
-                "type": "boolean",
-                "description": "If set, will output volume values per labels per bundle.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
-            },
-            "mean_std_per_point": {
-                "type": "boolean",
-                "description": "If set, will output mean and std per points per metrics per bundle.",
-                "fa_icon": "fas fa-brain",
-                "default": true,
-                "hidden": false
+        },
+        "bundleseg_options": {
+            "title": "BundleSeg Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for BundleSeg",
+            "help_text": "These options are used to configure how BundleSeg will recognize and extract bundles from the whole-brain tractogram.",
+            "properties": {
+                "atlas_directory": {
+                    "type": "string",
+                    "description": "Path to the WM bundles atlas directory.",
+                    "help_text": "This allows you to specify a custom atlas for bundle segmentation. If not provided, the default atlas included with the pipeline will be used. NOTE: The provided atlas will be used with all participants without accounting for age.",
+                    "fa_icon": "fas fa-brain",
+                    "default": null,
+                    "hidden": false
+                },
+                "minimal_vote_ratio": {
+                    "type": "number",
+                    "description": "Ratio of vote across models to consider a streamline for saving. If you have 5 input models and a ratio of 0.5, you will need at least 3 votes.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.5,
+                    "hidden": true
+                },
+                "outlier_alpha": {
+                    "type": "number",
+                    "description": "Percentage of the length of the tree that clusters of individual streamlines will be pruned. Higher values will remove more streamlines.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.6,
+                    "hidden": true
+                },
+                "nb_points": {
+                    "type": "integer",
+                    "description": "Number of points to segment the bundles.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 5,
+                    "hidden": false
+                },
+                "colormap": {
+                    "type": "string",
+                    "description": "Colormap to use for coloring the bundles. Color only affects visualization.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "jet",
+                    "hidden": false
+                },
+                "use_hyperplane": {
+                    "type": "boolean",
+                    "description": "If set, will use hyperplane to segment bundles (still experimental), otherwise, will use the euclidean distance.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "use_manhattan": {
+                    "type": "boolean",
+                    "description": "If set, will use manhattan distance to segment bundles, otherwise, will use the euclidean distance.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": false
+                },
+                "density_weighting": {
+                    "type": "boolean",
+                    "description": "If set, weight statistics based on the number of voxel going through the voxel.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": true
+                },
+                "normalize_weights": {
+                    "type": "boolean",
+                    "description": "If set, the weights will be normalized to the [0,1] range.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": true
+                },
+                "length_stats": {
+                    "type": "boolean",
+                    "description": "If set, will output bundles' length.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "endpoints_stats": {
+                    "type": "boolean",
+                    "description": "If set, will output statistics in endpoints.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "means_std": {
+                    "type": "boolean",
+                    "description": "If set, will output mean and std values per bundle per metrics.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "volume": {
+                    "type": "boolean",
+                    "description": "If set, will output volume values per bundle.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "streamline_count": {
+                    "type": "boolean",
+                    "description": "If set, will output the streamline count per bundle.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "volume_per_labels": {
+                    "type": "boolean",
+                    "description": "If set, will output volume values per labels per bundle.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "mean_std_per_point": {
+                    "type": "boolean",
+                    "description": "If set, will output mean and std per points per metrics per bundle.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                }
             }
-        }
-    },
-    "transform_labels_options": {
-        "title": "Transform Labels Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for transforming labels from anatomical to diffusion space.",
-        "help_text": "These options are used to configure the transformation of labels in the pipeline. You can use these options to customise the behaviour of the label transformation steps.",
-        "properties": {
-            "labels_transform_dimensionality": {
-                "type": "integer",
-                "description": "Dimensionality of the label file.",
-                "fa_icon": "fas fa-brain",
-                "default": 3,
-                "hidden": true
-            },
-            "labels_output_suffix": {
-                "type": "string",
-                "description": "Name to use as suffix in the output filename.",
-                "fa_icon": "fas fa-brain",
-                "default": "_labels",
-                "hidden": true
-            },
-            "labels_interpolation": {
-                "type": "string",
-                "description": "Interpolation method used in the label transformation step. Choices: NearestNeighbor, Linear, or BSpline.",
-                "fa_icon": "fas fa-brain",
-                "default": "NearestNeighbor",
-                "enum": ["NearestNeighbor", "Linear", "BSpline"],
-                "errorMessage": "Invalid choice. Must be either 'NearestNeighbor', 'Linear', or 'BSpline'.",
-                "hidden": true
-            },
-            "labels_output_dtype": {
-                "type": "string",
-                "description": "Output data type used in the label transformation step. Choices: float or int.",
-                "fa_icon": "fas fa-brain",
-                "default": "int",
-                "enum": ["float", "int"],
-                "errorMessage": "Invalid choice. Must be either 'float' or 'int'.",
-                "hidden": true
+        },
+        "transform_labels_options": {
+            "title": "Transform Labels Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for transforming labels from anatomical to diffusion space.",
+            "help_text": "These options are used to configure the transformation of labels in the pipeline. You can use these options to customise the behaviour of the label transformation steps.",
+            "properties": {
+                "labels_transform_dimensionality": {
+                    "type": "integer",
+                    "description": "Dimensionality of the label file.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 3,
+                    "hidden": true
+                },
+                "labels_output_suffix": {
+                    "type": "string",
+                    "description": "Name to use as suffix in the output filename.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "_labels",
+                    "hidden": true
+                },
+                "labels_interpolation": {
+                    "type": "string",
+                    "description": "Interpolation method used in the label transformation step. Choices: NearestNeighbor, Linear, or BSpline.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "NearestNeighbor",
+                    "enum": ["NearestNeighbor", "Linear", "BSpline"],
+                    "errorMessage": "Invalid choice. Must be either 'NearestNeighbor', 'Linear', or 'BSpline'.",
+                    "hidden": true
+                },
+                "labels_output_dtype": {
+                    "type": "string",
+                    "description": "Output data type used in the label transformation step. Choices: float or int.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "int",
+                    "enum": ["float", "int"],
+                    "errorMessage": "Invalid choice. Must be either 'float' or 'int'.",
+                    "hidden": true
+                }
             }
-        }
-    },
-    "commit_options": {
-        "title": "COMMIT Options",
-        "type": "object",
-        "fa_icon": "fas fa-code-branch",
-        "description": "Options for COMMIT filtering.",
-        "help_text": "These options are used to configure the COMMIT filtering steps in the pipeline. You can use these options to customise the behaviour of the COMMIT filtering steps.",
-        "properties": {
-            "run_commit2": {
-                "type": "boolean",
-                "description": "Run COMMIT2 filtering.",
-                "fa_icon": "fas fa-code-branch",
-                "default": true,
-                "hidden": false
-            },
-            "commit2_lambda": {
-                "type": "number",
-                "description": "Lambda value used in the COMMIT filtering step.",
-                "fa_icon": "fas fa-code-branch",
-                "default": 0.001,
-                "hidden": true
-            },
-            "commit_ball_stick": {
-                "type": "boolean",
-                "description": "Use the ball and stick model in the COMMIT filtering step.",
-                "fa_icon": "fas fa-code-branch",
-                "default": false,
-                "hidden": true
-            },
-            "commit_nbr_dir": {
-                "type": "integer",
-                "description": "Number of directions used in the COMMIT filtering step.",
-                "fa_icon": "fas fa-code-branch",
-                "default": 500,
-                "hidden": true
+        },
+        "commit_options": {
+            "title": "COMMIT Options",
+            "type": "object",
+            "fa_icon": "fas fa-code-branch",
+            "description": "Options for COMMIT filtering.",
+            "help_text": "These options are used to configure the COMMIT filtering steps in the pipeline. You can use these options to customise the behaviour of the COMMIT filtering steps.",
+            "properties": {
+                "run_commit2": {
+                    "type": "boolean",
+                    "description": "Run COMMIT2 filtering.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": true,
+                    "hidden": false
+                },
+                "commit2_lambda": {
+                    "type": "number",
+                    "description": "Lambda value used in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": 0.001,
+                    "hidden": true
+                },
+                "commit_ball_stick": {
+                    "type": "boolean",
+                    "description": "Use the ball and stick model in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": false,
+                    "hidden": true
+                },
+                "commit_nbr_dir": {
+                    "type": "integer",
+                    "description": "Number of directions used in the COMMIT filtering step.",
+                    "fa_icon": "fas fa-code-branch",
+                    "default": 500,
+                    "hidden": true
+                }
             }
-        }
-    },
-    "decompose_options": {
-        "title": "Decompose Tractogram Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for decomposing the tractogram according to a label file.",
-        "help_text": "These options are used to configure the decomposition of the tractogram in the pipeline. You can use these options to customise the behaviour of the tractogram decomposition steps.",
-        "properties": {
-            "decompose_no_pruning": {
-                "type": "boolean",
-                "description": "Do not prune the tractogram.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
-            },
-            "decompose_no_remove_loops": {
-                "type": "boolean",
-                "description": "Do not remove loops from the tractogram.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
-            },
-            "decompose_no_remove_outliers": {
-                "type": "boolean",
-                "description": "Do not remove outliers from the tractogram.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
-            },
-            "decompose_no_remove_curv": {
-                "type": "boolean",
-                "description": "Do not remove curvilinear structures from the tractogram.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
-            },
-            "decompose_min_len": {
-                "type": "number",
-                "description": "Minimum length used in the tractogram decomposition step.",
-                "fa_icon": "fas fa-brain",
-                "default": 20,
-                "hidden": false
-            },
-            "decompose_max_len": {
-                "type": "number",
-                "description": "Maximum length used in the tractogram decomposition step.",
-                "fa_icon": "fas fa-brain",
-                "default": 200,
-                "hidden": false
-            },
-            "decompose_outlier_threshold": {
-                "type": "number",
-                "description": "Outlier threshold used in the tractogram decomposition step.",
-                "fa_icon": "fas fa-brain",
-                "default": 0.6,
-                "hidden": false
-            },
-            "decompose_max_angle": {
-                "type": "number",
-                "description": "Maximum angle used in the tractogram decomposition step.",
-                "fa_icon": "fas fa-brain",
-                "default": 330.0,
-                "hidden": false
-            },
-            "decompose_max_curv": {
-                "type": "number",
-                "description": "Maximum curvature used in the tractogram decomposition step.",
-                "fa_icon": "fas fa-brain",
-                "default": 10.0,
-                "hidden": false
+        },
+        "decompose_options": {
+            "title": "Decompose Tractogram Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for decomposing the tractogram according to a label file.",
+            "help_text": "These options are used to configure the decomposition of the tractogram in the pipeline. You can use these options to customise the behaviour of the tractogram decomposition steps.",
+            "properties": {
+                "decompose_no_pruning": {
+                    "type": "boolean",
+                    "description": "Do not prune the tractogram.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "decompose_no_remove_loops": {
+                    "type": "boolean",
+                    "description": "Do not remove loops from the tractogram.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "decompose_no_remove_outliers": {
+                    "type": "boolean",
+                    "description": "Do not remove outliers from the tractogram.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "decompose_no_remove_curv": {
+                    "type": "boolean",
+                    "description": "Do not remove curvilinear structures from the tractogram.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                },
+                "decompose_min_len": {
+                    "type": "number",
+                    "description": "Minimum length used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 20,
+                    "hidden": false
+                },
+                "decompose_max_len": {
+                    "type": "number",
+                    "description": "Maximum length used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 200,
+                    "hidden": false
+                },
+                "decompose_outlier_threshold": {
+                    "type": "number",
+                    "description": "Outlier threshold used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 0.6,
+                    "hidden": false
+                },
+                "decompose_max_angle": {
+                    "type": "number",
+                    "description": "Maximum angle used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 330.0,
+                    "hidden": false
+                },
+                "decompose_max_curv": {
+                    "type": "number",
+                    "description": "Maximum curvature used in the tractogram decomposition step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 10.0,
+                    "hidden": false
+                }
             }
-        }
-    },
-    "afd_fixel_options": {
-        "title": "AFD Fixel Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for AFD fixel processing.",
-        "help_text": "These options are used to configure the AFD fixel processing steps in the pipeline. You can use these options to customise the behaviour of the AFD fixel processing steps.",
-        "properties": {
-            "afd_fixel_length_weighting": {
-                "type": "boolean",
-                "description": "Use length weighting in the AFD fixel processing step.",
-                "fa_icon": "fas fa-brain",
-                "default": false,
-                "hidden": true
+        },
+        "afd_fixel_options": {
+            "title": "AFD Fixel Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for AFD fixel processing.",
+            "help_text": "These options are used to configure the AFD fixel processing steps in the pipeline. You can use these options to customise the behaviour of the AFD fixel processing steps.",
+            "properties": {
+                "afd_fixel_length_weighting": {
+                    "type": "boolean",
+                    "description": "Use length weighting in the AFD fixel processing step.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                }
             }
-        }
-    },
-    "template": {
-        "title": "Output to Template Options",
-        "type": "object",
-        "fa_icon": "fas fa-brain",
-        "description": "Options for outputting to specific template space.",
-        "help_text": "These options are used to configure the output to template space steps in the pipeline (e.g., template selection, resolution, etc.).",
-        "properties": {
-            "template": {
-                "type": "string",
-                "description": "Template space to output to. The available template are the ones supported by TemplateFlow, please see their documentation for an exhaustive list (https://www.templateflow.org/browse/).",
-                "fa_icon": "fas fa-brain",
-                "default": null,
-                "hidden": false
-            },
-            "templateflow_res": {
-                "type": "integer",
-                "description": "Resolution of the template space.",
-                "fa_icon": "fas fa-brain",
-                "default": 1,
-                "hidden": false
-            },
-            "templateflow_cohort": {
-                "type": "integer",
-                "description": "Cohort to use for the template space (not required for most template, but if it is, simply provide the cohort's number).",
-                "fa_icon": "fas fa-brain",
-                "hidden": false
-            },
-            "templateflow_home": {
-                "type": "string",
-                "description": "Path to the TemplateFlow home directory where templates will be downloaded. If you are running the pipeline without internet access, this needs to point to a folder containing predownloaded templates.",
-                "fa_icon": "fas fa-brain",
-                "default": "./templateflow",
-                "hidden": false
+        },
+        "template": {
+            "title": "Output to Template Options",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Options for outputting to specific template space.",
+            "help_text": "These options are used to configure the output to template space steps in the pipeline (e.g., template selection, resolution, etc.).",
+            "properties": {
+                "template": {
+                    "type": "string",
+                    "description": "Template space to output to. The available template are the ones supported by TemplateFlow, please see their documentation for an exhaustive list (https://www.templateflow.org/browse/).",
+                    "fa_icon": "fas fa-brain",
+                    "default": null,
+                    "hidden": false
+                },
+                "templateflow_res": {
+                    "type": "integer",
+                    "description": "Resolution of the template space.",
+                    "fa_icon": "fas fa-brain",
+                    "default": 1,
+                    "hidden": false
+                },
+                "templateflow_cohort": {
+                    "type": "integer",
+                    "description": "Cohort to use for the template space (not required for most template, but if it is, simply provide the cohort's number).",
+                    "fa_icon": "fas fa-brain",
+                    "hidden": false
+                },
+                "templateflow_home": {
+                    "type": "string",
+                    "description": "Path to the TemplateFlow home directory where templates will be downloaded. If you are running the pipeline without internet access, this needs to point to a folder containing predownloaded templates.",
+                    "fa_icon": "fas fa-brain",
+                    "default": "./templateflow",
+                    "hidden": false
+                }
             }
-        }
-    },
-    "institutional_config_options": {
-        "title": "Institutional config options",
-        "type": "object",
-        "fa_icon": "fas fa-university",
-        "description": "Parameters used to describe centralised config profiles. These should not be edited.",
-        "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
-        "properties": {
-            "custom_config_version": {
-                "type": "string",
-                "description": "Git commit id for Institutional configs.",
-                "default": "master",
-                "hidden": true,
-                "fa_icon": "fas fa-users-cog"
-            },
-            "custom_config_base": {
-                "type": "string",
-                "description": "Base directory for Institutional configs.",
-                "default": "https://raw.githubusercontent.com/nf-core/configs/master",
-                "hidden": true,
-                "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
-                "fa_icon": "fas fa-users-cog"
-            },
-            "config_profile_name": {
-                "type": "string",
-                "description": "Institutional config name.",
-                "hidden": true,
-                "fa_icon": "fas fa-users-cog"
-            },
-            "config_profile_description": {
-                "type": "string",
-                "description": "Institutional config description.",
-                "hidden": true,
-                "fa_icon": "fas fa-users-cog"
-            },
-            "config_profile_contact": {
-                "type": "string",
-                "description": "Institutional config contact information.",
-                "hidden": true,
-                "fa_icon": "fas fa-users-cog"
-            },
-            "config_profile_url": {
-                "type": "string",
-                "description": "Institutional config URL link.",
-                "hidden": true,
-                "fa_icon": "fas fa-users-cog"
+        },
+        "institutional_config_options": {
+            "title": "Institutional config options",
+            "type": "object",
+            "fa_icon": "fas fa-university",
+            "description": "Parameters used to describe centralised config profiles. These should not be edited.",
+            "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
+            "properties": {
+                "custom_config_version": {
+                    "type": "string",
+                    "description": "Git commit id for Institutional configs.",
+                    "default": "master",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "custom_config_base": {
+                    "type": "string",
+                    "description": "Base directory for Institutional configs.",
+                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+                    "hidden": true,
+                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_name": {
+                    "type": "string",
+                    "description": "Institutional config name.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_description": {
+                    "type": "string",
+                    "description": "Institutional config description.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_contact": {
+                    "type": "string",
+                    "description": "Institutional config contact information.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_url": {
+                    "type": "string",
+                    "description": "Institutional config URL link.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                }
             }
-        }
-    },
-    "generic_options": {
-        "title": "Generic options",
-        "type": "object",
-        "fa_icon": "fas fa-file-import",
-        "description": "Less common options for the pipeline, typically set in a config file.",
-        "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
-        "properties": {
-            "version": {
-                "type": "boolean",
-                "description": "Display version and exit.",
-                "fa_icon": "fas fa-question-circle",
-                "hidden": true
-            },
-            "publish_dir_mode": {
-                "type": "string",
-                "default": "copy",
-                "description": "Method used to save pipeline results to output directory.",
-                "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
-                "fa_icon": "fas fa-copy",
-                "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
-                "errorMessage": "Invalid choice. Must be either 'symlink', 'rellink', 'link', 'copy', 'copyNoFollow', or 'move'.",
-                "hidden": true
-            },
-            "lean_output": {
-                "type": "boolean",
-                "description": "Do not copy intermediate files to output directory.",
-                "fa_icon": "fas fa-file-import",
-                "hidden": true
-            },
-            "email_on_fail": {
-                "type": "string",
-                "description": "Email address for completion summary, only when pipeline fails.",
-                "fa_icon": "fas fa-exclamation-triangle",
-                "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
-            },
-            "plaintext_email": {
-                "type": "boolean",
-                "description": "Send plain-text email instead of HTML.",
-                "fa_icon": "fas fa-remove-format",
-                "hidden": true
-            },
-            "max_multiqc_email_size": {
-                "type": "string",
-                "description": "File size limit when attaching MultiQC reports to summary emails.",
-                "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                "default": "25.MB",
-                "fa_icon": "fas fa-file-upload",
-                "hidden": true
-            },
-            "monochrome_logs": {
-                "type": "boolean",
-                "description": "Do not use coloured log outputs.",
-                "fa_icon": "fas fa-palette",
-                "hidden": true
-            },
-            "multiqc_config": {
-                "type": "string",
-                "format": "file-path",
-                "description": "Custom config file to supply to MultiQC.",
-                "fa_icon": "fas fa-cog",
-                "hidden": true
-            },
-            "multiqc_logo": {
-                "type": "string",
-                "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
-                "fa_icon": "fas fa-image",
-                "hidden": true
-            },
-            "multiqc_methods_description": {
-                "type": "string",
-                "description": "Custom MultiQC yaml file containing HTML including a methods description.",
-                "fa_icon": "fas fa-cog",
-                "hidden": true
-            },
-            "validate_params": {
-                "type": "boolean",
-                "description": "Boolean whether to validate parameters against the schema at runtime",
-                "default": true,
-                "fa_icon": "fas fa-check-square",
-                "hidden": true
-            },
-            "trace_report_suffix": {
-                "type": "string",
-                "fa_icon": "far calendar",
-                "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
-                "hidden": true
-            },
-            "help": {
-                "type": ["boolean", "string"],
-                "description": "Display the help message."
-            },
-            "help_full": {
-                "type": "boolean",
-                "description": "Display the full detailed help message."
-            },
-            "show_hidden": {
-                "type": "boolean",
-                "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
+        },
+        "generic_options": {
+            "title": "Generic options",
+            "type": "object",
+            "fa_icon": "fas fa-file-import",
+            "description": "Less common options for the pipeline, typically set in a config file.",
+            "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
+            "properties": {
+                "version": {
+                    "type": "boolean",
+                    "description": "Display version and exit.",
+                    "fa_icon": "fas fa-question-circle",
+                    "hidden": true
+                },
+                "publish_dir_mode": {
+                    "type": "string",
+                    "default": "copy",
+                    "description": "Method used to save pipeline results to output directory.",
+                    "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
+                    "fa_icon": "fas fa-copy",
+                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
+                    "errorMessage": "Invalid choice. Must be either 'symlink', 'rellink', 'link', 'copy', 'copyNoFollow', or 'move'.",
+                    "hidden": true
+                },
+                "lean_output": {
+                    "type": "boolean",
+                    "description": "Do not copy intermediate files to output directory.",
+                    "fa_icon": "fas fa-file-import",
+                    "hidden": true
+                },
+                "email_on_fail": {
+                    "type": "string",
+                    "description": "Email address for completion summary, only when pipeline fails.",
+                    "fa_icon": "fas fa-exclamation-triangle",
+                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                },
+                "plaintext_email": {
+                    "type": "boolean",
+                    "description": "Send plain-text email instead of HTML.",
+                    "fa_icon": "fas fa-remove-format",
+                    "hidden": true
+                },
+                "max_multiqc_email_size": {
+                    "type": "string",
+                    "description": "File size limit when attaching MultiQC reports to summary emails.",
+                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+                    "default": "25.MB",
+                    "fa_icon": "fas fa-file-upload",
+                    "hidden": true
+                },
+                "monochrome_logs": {
+                    "type": "boolean",
+                    "description": "Do not use coloured log outputs.",
+                    "fa_icon": "fas fa-palette",
+                    "hidden": true
+                },
+                "multiqc_config": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Custom config file to supply to MultiQC.",
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
+                },
+                "multiqc_logo": {
+                    "type": "string",
+                    "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
+                    "fa_icon": "fas fa-image",
+                    "hidden": true
+                },
+                "multiqc_methods_description": {
+                    "type": "string",
+                    "description": "Custom MultiQC yaml file containing HTML including a methods description.",
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
+                },
+                "validate_params": {
+                    "type": "boolean",
+                    "description": "Boolean whether to validate parameters against the schema at runtime",
+                    "default": true,
+                    "fa_icon": "fas fa-check-square",
+                    "hidden": true
+                },
+                "trace_report_suffix": {
+                    "type": "string",
+                    "fa_icon": "far calendar",
+                    "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
+                    "hidden": true
+                },
+                "help": {
+                    "type": ["boolean", "string"],
+                    "description": "Display the help message."
+                },
+                "help_full": {
+                    "type": "boolean",
+                    "description": "Display the full detailed help message."
+                },
+                "show_hidden": {
+                    "type": "boolean",
+                    "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
+                }
             }
         },
         "profiles": {
