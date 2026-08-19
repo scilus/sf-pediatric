@@ -27,6 +27,7 @@ process ATLASES_FSLR2FSAVERAGE {
 
     # Set some env variables.
     export FS_LICENSE=${fs_license}
+    export SUBJECTS_DIR=\$(pwd)
 
     # Set some temp folders
     mkdir -p ./tmp/
@@ -38,33 +39,23 @@ process ATLASES_FSLR2FSAVERAGE {
         -volume-all ${atlas_name}_subcortical.nii.gz \
         -label ${atlas_name}_subcortical_labels.nii.gz
 
-    # Convert transformation sphere if we can find one tagged with "fslr32k"
-    # Mostly found in alternative fsaverage atlases, such as the one used by MCRIBS
-    if [[ -f ./fsaverage_folder/surf/lh.sphere.reg.fslr32k ]]; then
-        mris_convert ./fsaverage_folder/surf/lh.*.fslr32k ./fsaverage_folder/surf/lh.sphere.reg.fslr32k.surf.gii
-        mris_convert ./fsaverage_folder/surf/rh.*.fslr32k ./fsaverage_folder/surf/rh.sphere.reg.fslr32k.surf.gii
-        lh_sphere=./fsaverage_folder/surf/lh.sphere.reg.fslr32k.surf.gii
-        rh_sphere=./fsaverage_folder/surf/rh.sphere.reg.fslr32k.surf.gii
-    else
-        # Convert the freesurfer sphere to gifti
-        mris_convert ./fsaverage_folder/surf/lh.sphere ./fsaverage_folder/surf/lh.sphere.surf.gii
-        mris_convert ./fsaverage_folder/surf/rh.sphere ./fsaverage_folder/surf/rh.sphere.surf.gii
+    mris_convert ./fsaverage_folder/surf/lh.sphere ./fsaverage_folder/surf/lh.sphere.surf.gii
+    mris_convert ./fsaverage_folder/surf/rh.sphere ./fsaverage_folder/surf/rh.sphere.surf.gii
 
-        # We need to invert the fsLR -> fsaverage transform
-        wb_command -surface-sphere-project-unproject \
-            ./fsaverage_folder/surf/lh.sphere.surf.gii \
-            $fslr/fs_LR-deformed_to-fsaverage.L.sphere.32k_fs_LR.surf.gii \
-            $fslr/fsaverage.L.sphere.32k_fs_LR.surf.gii \
-            ./fsaverage_folder/surf/lh.sphere.reg.fslr32k.surf.gii
-        wb_command -surface-sphere-project-unproject \
-            ./fsaverage_folder/surf/rh.sphere.surf.gii \
-            $fslr/fs_LR-deformed_to-fsaverage.R.sphere.32k_fs_LR.surf.gii \
-            $fslr/fsaverage.R.sphere.32k_fs_LR.surf.gii \
-            ./fsaverage_folder/surf/rh.sphere.reg.fslr32k.surf.gii
+    # We need to invert the fsLR -> fsaverage transform
+    wb_command -surface-sphere-project-unproject \
+        ./fsaverage_folder/surf/lh.sphere.surf.gii \
+        $fslr/fs_LR-deformed_to-fsaverage.L.sphere.32k_fs_LR.surf.gii \
+        $fslr/fsaverage.L.sphere.32k_fs_LR.surf.gii \
+        ./fsaverage_folder/surf/lh.sphere.reg.fslr32k.surf.gii
+    wb_command -surface-sphere-project-unproject \
+        ./fsaverage_folder/surf/rh.sphere.surf.gii \
+        $fslr/fs_LR-deformed_to-fsaverage.R.sphere.32k_fs_LR.surf.gii \
+        $fslr/fsaverage.R.sphere.32k_fs_LR.surf.gii \
+        ./fsaverage_folder/surf/rh.sphere.reg.fslr32k.surf.gii
 
-        lh_sphere=./fsaverage_folder/surf/lh.sphere.reg.fslr32k.surf.gii
-        rh_sphere=./fsaverage_folder/surf/rh.sphere.reg.fslr32k.surf.gii
-    fi
+    lh_sphere=./fsaverage_folder/surf/lh.sphere.reg.fslr32k.surf.gii
+    rh_sphere=./fsaverage_folder/surf/rh.sphere.reg.fslr32k.surf.gii
 
     # Create a midthickness surface for the fsaverage atlas, needed to map the labels using wb_command
     wb_shortcuts -freesurfer-resample-prep ./fsaverage_folder/surf/lh.white \

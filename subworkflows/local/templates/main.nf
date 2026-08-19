@@ -14,16 +14,46 @@ def createCohortChannel(channel, cohort) {
     }
 }
 
+// Function to compute md5 checksum of a folder //
+def computeDirMd5(dirPath) {
+    def md = java.security.MessageDigest.getInstance('MD5')
+    def baseDir = file(dirPath)
+    def all_files = []
+    baseDir.eachFileRecurse { f ->
+        if (f.isFile()) { all_files << f }
+    }
+    // Sort by path relative to the base directory — filesystem-location-independent
+    all_files.sort { a, b ->
+        baseDir.relativize(a).toString() <=> baseDir.relativize(b).toString()
+    }
+    all_files.each { f ->
+        md.update(f.bytes)
+    }
+    return md.digest().encodeHex().toString()
+}
+
 workflow TEMPLATES {
 
     main:
 
     ch_versions = channel.empty()
     def templates_path = "${params.templates_download_path}/templates"
+    def expected_md5 = "8c74f1635d69969a6b67f098d569a0b7"
 
-    if ( file(templates_path).exists() ) {
-        log.info "Templates already exist at ${templates_path}, skipping download."
-    } else {
+    // Compute a deterministic md5 checksum of the templates folder to check if it has changed
+    def needs_download = true
+    if (file(templates_path).exists() && file(templates_path).isDirectory()) {
+        def local_md5 = computeDirMd5(templates_path)
+        if (local_md5 == expected_md5) {
+            log.info "Templates already exist at ${templates_path} and are up-to-date, skipping download."
+            needs_download = false
+        } else {
+            log.info "Templates already exist at ${templates_path} but are outdated, re-downloading."
+            file(templates_path).deleteDir()
+        }
+    }
+
+    if ( needs_download ) {
         log.info "Downloading templates..."
         try {
             "mkdir -p ${params.templates_download_path}".execute().waitFor()

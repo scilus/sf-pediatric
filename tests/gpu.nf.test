@@ -1,0 +1,26 @@
+nextflow_pipeline {
+
+    options "-stub-run"
+
+    name "Test sf-pediatric profile tracking"
+    script "../main.nf"
+
+    profile "gpu"
+
+    test("Tracking + gpu profile without gpu_type - should fail") {
+        when {
+            params {
+
+                params.input = "$projectDir/tests/data/bids/"
+                params.outdir = "$outputDir"
+
+                params.tracking = true
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("ERROR: The 'gpu' profile is used but no GPU type is provided. Please provide a GPU type using --gpu_type.")
+        }
+    }
+}

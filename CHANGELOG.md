@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- Changed segmentation in young participants to use BIBSnet and infant freesurfer ([#128](https://github.com/scilus/sf-pediatric/pull/128))
 - Now use `nf-bids` plugin to read BIDS dataset for faster and more efficient data collection ([#124](https://github.com/scilus/sf-pediatric/pull/124))
 - Add GPU support via a config profile for module `eddy` and `localtracking` ([#121](https://github.com/scilus/sf-pediatric/pull/121))
 - Add support for user-defined external atlases in ‘fsLR‘ 32k space and simply mapping from template to subject space ([#120](https://github.com/scilus/sf-pediatric/pull/120))
@@ -27,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update to nf-core template `4.0.3` ([#127](https://github.com/scilus/sf-pediatric/pull/127))
 - Move to parameter typing and bump minimal nextflow version to `26.04.0` ([#122](https://github.com/scilus/sf-pediatric/pull/122))
 - Update to nf-core template `4.0.2` ([#117](https://github.com/scilus/sf-pediatric/pull/117))
+
+### `Removed`
+
+- Remove M-CRIB-S as a segmentation method for younger participants in favor of BIBSnet and infantfs ([#128](https://github.com/scilus/sf-pediatric/pull/128))
 
 ## [0.2.2] - [2026-02-09]
 

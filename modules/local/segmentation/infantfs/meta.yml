@@ -1,0 +1,99 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "segmentation_infantfs"
+description: |
+  This module performs segmentation of infant brain MRI images using the infant_recon_all tool.
+  When providing only raw images, the module is designed to work with only T1w images. However,
+  it also accepts pre-segmented images (e.g., using BIBSNet) and will reuse this segmentation
+  to generate surfaces and other outputs. When using pre-segmented images, the module can work with
+  both T1w and T2w images. Pre-segmented images should be supplied with a brain mask, otherwise an
+  error will be thrown.
+keywords:
+  - infant
+  - segmentation
+  - infant_recon_all
+  - surfaces
+  - cortical
+tools:
+  - "freesurfer":
+      description: |
+        Open source neuroimaging toolkit for processing, analyzing, and visualizing human brain MR images.
+      homepage: https://surfer.nmr.mgh.harvard.edu/
+      doi: 10.1016/j.neuroimage.2012.01.021
+      identifier: ""
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1' ]`
+    - anat:
+        type: file
+        description: Anatomical image (T1w or T2w) in NIfTI format.
+        pattern: "*.{nii,nii.gz}"
+        ontologies:
+          - edam: http://edamontology.org/format_4001 # NIFTI format
+    - aseg:
+        type: file
+        description: Pre-segmented anatomical image (e.g., from BIBSNet) in NIfTI format.
+        pattern: "*.{nii,nii.gz}"
+        ontologies:
+          - edam: http://edamontology.org/format_4001 # NIFTI format
+    - mask:
+        type: file
+        description: Brain mask to be used with theanatomical image.
+        pattern: "*.{nii,nii.gz}"
+        ontologies:
+          - edam: http://edamontology.org/format_4001 # NIFTI format
+    - license:
+        type: file
+        description: FreeSurfer license file.
+        pattern: "*.txt"
+        ontologies: []
+output:
+  folder:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1' ]`
+      - "*_infantfs":
+          type: folder
+          description: FreeSurfer output folder.
+          pattern: "*_infantfs"
+  image:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1' ]`
+      - "*_final_image.nii.gz":
+          type: file
+          description: Final processed anatomical image.
+          pattern: "*_final_image.nii.gz"
+          ontologies:
+            - edam: http://edamontology.org/format_4001 # NIFTI format
+  versions_segmentation:
+    - - "${task.process}":
+          type: string
+          description: The name of the process
+      - "freesurfer":
+          type: string
+          description: The name of the tool
+      - "mri_convert -version | grep 'freesurfer' | sed -E 's/.* ([0-9.]+).*/\\1/'":
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - "freesurfer":
+          type: string
+          description: The name of the tool
+      - "mri_convert -version | grep 'freesurfer' | sed -E 's/.* ([0-9.]+).*/\\1/'":
+          type: eval
+          description: The expression to obtain the version of the tool
+authors:
+  - "@gagnonanthony"
+maintainers:
+  - "@gagnonanthony"

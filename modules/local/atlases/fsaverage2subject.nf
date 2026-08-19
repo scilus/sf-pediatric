@@ -36,39 +36,17 @@ process ATLASES_FSAVERAGE2SUBJECT {
     export FS_LICENSE=${fs_license}
     export SUBJECTS_DIR=\$(pwd)
 
-    # Check if we got infant data, if so, we need to recompute the sphere registration
-    if [ -f ${prefix}_fs/surf/lh.sphere.reg2 ]; then
-        # Mapping directly subject -> fsaverage yields better results than going through the template
-        mris_register -multi_scale 3 -max_degrees 135 -1 -inflated ${prefix}_fs/surf/lh.sphere \
-            ${fsaverage}/surf/lh.sphere ${prefix}_fs/surf/lh.sphere.fsaverage.reg --threads $task.cpus
-        mris_register -multi_scale 3 -max_degrees 135 -1 -inflated ${prefix}_fs/surf/rh.sphere \
-            ${fsaverage}/surf/rh.sphere ${prefix}_fs/surf/rh.sphere.fsaverage.reg --threads $task.cpus
-        args="--srcsurfreg sphere --trgsurfreg sphere.fsaverage.reg --cortex"
-    else
-        # surf to surf works well with adult data, so nothing to add here.
-        args=""
-    fi
-
     # Surface-to-surface mapping
     mri_surf2surf --srcsubject \$(basename $fsaverage) --trgsubject ${prefix}_fs \
         --hemi lh --sval-annot ${atlas_name}.annot \
-        --o ${atlas_name}.annot \$args
+        --o ${atlas_name}.annot
     mri_surf2surf --srcsubject \$(basename $fsaverage) --trgsubject ${prefix}_fs \
         --hemi rh --sval-annot ${atlas_name}.annot \
-        --o ${atlas_name}.annot \$args
+        --o ${atlas_name}.annot
 
     # Convert to uint16
     scil_volume_math convert ${subcortical} \
          ${atlas_name}_subcortical_warped.nii.gz --data_type uint16 -f
-
-    # Assess if there is a talairach.xfm file, if not, generate an identity transform.
-    # TODO: Check if this does not introduce aberrant statistics (by comparing to a subject with a talairach.xfm file).
-    if [ ! -f ${prefix}_fs/mri/transforms/talairach.xfm ]
-    then
-        echo "No talairach.xfm file found, generating an identity transform."
-        mkdir ${prefix}_fs/mri/transforms
-        printf "MNI Transform File\\n%% Transform from orig to talairach\\n\\nTransform_type = Linear;\\nLinear_Transform =\\n 1.000000 0.000000 0.000000 0.000000 ;\\n 0.000000 1.000000 0.000000 0.000000 ;\\n 0.000000 0.000000 1.000000 0.000000 ;\\n" > ${prefix}_fs/mri/transforms/talairach.xfm
-    fi
 
     # Compute stats for cortical regions
     mris_anatomical_stats -mgz -cortex ${prefix}_fs/label/lh.cortex.label \
@@ -95,7 +73,7 @@ process ATLASES_FSAVERAGE2SUBJECT {
         --tablefile=${prefix}__area_rh.${atlas_name}.tsv
 
     # Compute stats for subcortical regions
-    mri_segstats --seg $subcortical \
+    mri_segstats --seg ${atlas_name}_subcortical_warped.nii.gz \
         --ctab ${atlas_name}_LUT.txt \
         --excludeid 0 \
         --o ${prefix}_fs/stats/subcortical.${atlas_name}.stats \

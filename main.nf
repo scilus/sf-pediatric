@@ -61,7 +61,7 @@ params {
     outdir: String
 
     // URL to download templates from.
-    templates_url: String = 'https://osf.io/Kd8h7/download'
+    templates_url: String = 'https://osf.io/Bqw6v/download'
 
     // Path to the directory where templates will be downloaded and cached.
     templates_download_path: String = "${env('HOME')}/.cache/sf-pediatric"

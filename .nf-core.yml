@@ -1,5 +1,4 @@
 lint:
-  container_configs: false
   files_exist:
     - CODE_OF_CONDUCT.md
     - assets/nf-core-sf_pediatric_logo_light.png
@@ -37,6 +36,9 @@ lint:
   nextflow_config: false
   schema_params: false
   template_strings: false
+  container_configs: false
+  nf_test_content:
+    - tests/gpu.nf.test
 nf_core_version: 4.0.3
 repository_type: pipeline
 template:

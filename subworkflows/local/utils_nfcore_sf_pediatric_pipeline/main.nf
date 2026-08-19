@@ -42,6 +42,13 @@ workflow PIPELINE_INITIALISATION {
     ch_versions = channel.empty()
 
     //
+    // Check if the gpu profile is used and validate if a gpu type is provided.
+    //
+    if ( workflow.profile.contains('gpu') && !params.gpu_type ) {
+        error "ERROR: The 'gpu' profile is used but no GPU type is provided. Please provide a GPU type using --gpu_type."
+    }
+
+    //
     // Print version and exit if required and dump pipeline parameters to JSON file
     //
     UTILS_NEXTFLOW_PIPELINE (
@@ -131,8 +138,8 @@ workflow PIPELINE_INITIALISATION {
             }
             // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
             // ** Setting to a minimum of 0.04 (~ 2 weeks) to avoid negative values for the priors prediction ** //
-            def tempAge = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
-            def priors = fetchPriors(tempAge)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
 
             // ** Instantiate a variable that will collect prints related to BIDS file matching ** //
             // ** to be printed in a log file later                                             ** //
@@ -700,7 +707,7 @@ def matchFilesToDWI(Map dwiJson, dwiFilename, Map revJson, revFilename, Map asso
     }
 
     // If no B0Field* are present, check for IntendedFor
-    def intendedFor = assocJson?.IntendedFor
+    def intendedFor = normalizeToList(assocJson?.IntendedFor)
     if (intendedFor) {
         def matches = intendedFor.any { target ->
             def targetName = target.toString().replaceAll("^bids::", "").split('/')[-1]
@@ -1454,8 +1461,8 @@ def buildMethodsDescription() {
             if ( !enabled('segmentation') ) return ""
             def parts = []
             parts << """<h5>Cortical and sub-cortical segmentation</h5>"""
-            parts << "Cortical and subcortical segmentation was performed using ${params.method == "fastsurfer" ? "FastSurfer (Henschel et al., 2020)" : params.method == "recon-all" ? " recon-all from FreeSurfer (Fischl, 2012)" : "recon-all-clinical from Freesurfer (Fischl, 2012; Billot et al., 2023; Iglesias et al., 2023)"} on the T1w anatomical images."
-            parts << "For younger participants (< 3 months old), cortical and subcortical segmentation was performed using the M-CRIB-S pipeline (Adamson et al., 2020)."
+            parts << "Cortical and subcortical segmentation and surface reconstruction was performed using ${params.method == "fastsurfer" ? "FastSurfer (Henschel et al., 2020)" : params.method == "recon-all" ? " recon-all from FreeSurfer (Fischl, 2012)" : "recon-all-clinical from Freesurfer (Fischl, 2012; Billot et al., 2023; Iglesias et al., 2023)"} on the T1w anatomical images."
+            parts << "For younger participants (< 1 year old), cortical and subcortical segmentation was performed initially using BIBSnet (Hendrickson et al., 2026). Then, the BIBSnet segmentation was added as input to infant-recon-all to generate the final surfaces and cortical segmentation (Zöllei et al., 2020)."
             parts << "Following segmentation, the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : "${params.atlas_name} atlas"} was mapped from fsLR-32k space to subject-space using surface-based registration methods from FreeSurfer (Fischl, 2012) and then converted into voxel labels."
             parts << "Volume, surface area, and cortical thickness were measured for each parcel and outputted in tab-separated value files."
 
@@ -1563,6 +1570,8 @@ def toolBibliographyText() {
         "Zhang et al., 2012"         : "<li>Zhang, H., Schneider, T., Wheeler-Kingshott, C. A., & Alexander, D. C. (2012). NODDI: Practical in vivo neurite orientation dispersion and density imaging of the human brain. <i>NeuroImage</i>, 61(4), 1000–1016. <a href=https://doi.org/10.1016/j.neuroimage.2012.03.072>https://doi.org/10.1016/j.neuroimage.2012.03.072</a></li>",
         "Pasternak et al., 2009"     : "<li>Pasternak, O., Sochen, N., Gur, Y., Intrator, N., & Assaf, Y. (2009). Free water elimination and mapping from diffusion MRI. <i>Magnetic Resonance in Medicine</i>, 62(3), 717–730. <a href=https://doi.org/10.1002/mrm.22055>https://doi.org/10.1002/mrm.22055</a></li>",
         "Renauld et al., 2026"       : "<li>Renauld, E., Boré, A., Poirier, C., Valcourt-Caron, A., Karan, P., Théberge, A., Théaud, G., Edde, M., Poulin, P., Girard, G., Houde, J.-C., Gagnon, A., St-Onge, E., Little, G., Legarreta, J. H., Thoumyre, S., Grenier, G., El Yamani, Z., Ocampo Pineda, M., … Descoteaux, M. (2026). Tractography analysis with the scilpy toolbox. <i>Aperture Neuro</i>, 6. <a href=https://doi.org/10.52294/001c.154022>https://doi.org/10.52294/001c.154022</a></li>",
+        "Hendrickson et al., 2026"   : "<li>Hendrickson, T. J., Reiners, P., Moore, L. A., Lundquist, J. T., Fayzullobekova, B., Perrone, A. J., Lee, E. G., Moser, J., Day, T. K. M., Alexopoulos, D., Styner, M., Kardan, O., Chamberlain, T. A., Mummaneni, A., Caldas, H. A., Bower, B., Stoyell, S., Martin, T., Sung, S., … Feczko, E. (2026). BIBSNet: A deep learning baby image brain segmentation network for MRI scans. <i>Developmental Cognitive Neuroscience</i>, 79, 101706. <a href=https://doi.org/10.1016/j.dcn.2026.101706>https://doi.org/10.1016/j.dcn.2026.101706</a></li>",
+        "Zöllei et al., 2020"        : "<li>Zöllei, L., Iglesias, J. E., Ou, Y., Grant, P. E., & Fischl, B. (2020). Infant FreeSurfer: An automated segmentation and surface extraction pipeline for T1-weighted neuroimaging data of infants 0–2 years. <i>NeuroImage</i>, 218, 116946. <a href=https://doi.org/10.1016/j.neuroimage.2020.116946>https://doi.org/10.1016/j.neuroimage.2020.116946</a></li>",
         // Preprints and in-preparation works
         "Gagnon et al., 2026"       : "<li>Gagnon, A., Boré, A., Valcourt Caron, A., Edde, M., Thoumyre, S., Lepage, J.-F., Talati, A., Posner, J., Ouellet, A., Brunet, M. A., Takser, L., Rheault, F., & Descoteaux, M. (2026). sf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. <i>bioRxiv</i>. <a href=https://doi.org/10.64898/2026.01.19.700454>https://doi.org/10.64898/2026.01.19.700454</a></li>",
     ]
