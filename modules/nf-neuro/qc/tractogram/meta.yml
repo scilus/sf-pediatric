@@ -14,36 +14,6 @@ tools:
         processing toolbox.
       homepage: https://github.com/scilus/scilpy.git
       identifier: ""
-args:
-  - sh_basis:
-      type: string
-      description: Spherical harmonics basis to use for FODF fitting.
-      default: false
-  - sphere:
-      type: string
-      description: Sphere used for the angular discretization.
-      default: "repulsion724"
-  - sh_order:
-      type: integer
-      description: Spherical harmonics order to use for FODF fitting.
-      default: 8
-  - normalize_per_voxel:
-      type: boolean
-      description: If set, normalize each SF/SH at each voxel.
-      default: false
-  - smooth_todi:
-      type: boolean
-      description: If set, smooth TODI (angular and spatial).
-      default: false
-  - asymmetric:
-      type: boolean
-      description: If set, compute asymmetric TODI. Cannot be used with --smooth_todi.
-      default: false
-  - n_steps:
-      type: integer
-      description: Number of steps for streamline segments subdivision prior to
-        binning.
-      default: 1
 input:
   - - meta:
         type: map

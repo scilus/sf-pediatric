@@ -3,7 +3,7 @@ process RECONST_FREEWATER {
     tag "$meta.id"
     label 'process_low'
 
-    container "scilus/scilpy:2.2.0_cpu"
+    container 'scilus/scilpy@sha256:2626bb7cec11a9acf421ba5c5d9c333f065e2434134c6cfdcaa850122727a1c3'
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(kernels), val(para_diff), val(iso_diff), val(perp_diff_min), val(perp_diff_max)
@@ -13,6 +13,7 @@ process RECONST_FREEWATER {
         tuple val(meta), path("*__dir.nii.gz")               , emit: dir, optional: true
         tuple val(meta), path("*__fibervolume.nii.gz")       , emit: fibervolume, optional: true
         tuple val(meta), path("*__fwf.nii.gz")               , emit: fwf, optional: true
+        tuple val(meta), path("*__rmse.nii.gz")              , emit: rmse, optional: true
         tuple val(meta), path("*__nrmse.nii.gz")             , emit: nrmse, optional: true
         path("kernels")                                      , emit: kernels, optional: true
         path "versions.yml"                                  , emit: versions
@@ -29,27 +30,34 @@ process RECONST_FREEWATER {
     def perp_diff_max_str = task.ext.perp_diff_max ? "--perp_diff_max " + task.ext.perp_diff_max : perp_diff_max ? "--perp_diff_max " + perp_diff_max : ""
     def lambda1 = task.ext.fw_lambda1 ? "--lambda1 " + task.ext.fw_lambda1 : ""
     def lambda2 = task.ext.fw_lambda2 ? "--lambda2 " + task.ext.fw_lambda2 : ""
-    def nb_threads = "--processes $task.cpus"
+    def replace_bad_voxels = task.ext.replace_bad_voxels != null ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
+    def compute_rmse = task.ext.compute_rmse ? "--compute_rmse" : ""
+    def compute_nrmse = task.ext.compute_nrmse ? "--compute_nrmse" : ""
+    def nthreads = task.ext.single_thread ? 1 : task.cpus
     def b_thr = task.ext.b_thr ? "--b_thr " + task.ext.b_thr : ""
     def set_kernels = kernels ? "--load_kernels $kernels" : "--save_kernels kernels/"
     def set_mask = mask ? "--mask $mask" : ""
     def compute_only = task.ext.compute_only && !kernels ? "--compute_only" : ""
 
     """
+    export OMP_NUM_THREADS=${task.ext.single_thread ? 1 : task.cpus}
+    export OPENBLAS_NUM_THREADS=1
     # Set home directory. This is problematic if the container is run
     # with non-root user which does not create a home directory, whilst
     # AMICO attempts to write in the home directory, raising an error.
     export HOME=/tmp
 
     scil_freewater_maps $dwi $bval $bvec $para_diff_str $perp_diff_min_str \
-        $perp_diff_max_str $iso_diff_str $lambda1 $lambda2 $nb_threads $b_thr \
-        $set_mask $set_kernels $compute_only
+        $perp_diff_max_str $iso_diff_str $lambda1 $lambda2 --processes $nthreads $b_thr \
+        $set_mask $set_kernels $compute_only $replace_bad_voxels \
+        $compute_rmse $compute_nrmse
 
     if [ -z "${compute_only}" ]; then
         mv results/DWI_corrected.nii.gz ${prefix}__dwi_fw_corrected.nii.gz
         mv results/fit_dir.nii.gz ${prefix}__dir.nii.gz
         mv results/fit_FiberVolume.nii.gz ${prefix}__fibervolume.nii.gz
         mv results/fit_FW.nii.gz ${prefix}__fwf.nii.gz
+        mv results/fit_RMSE.nii.gz ${prefix}__rmse.nii.gz
         mv results/fit_NRMSE.nii.gz ${prefix}__nrmse.nii.gz
 
         rm -rf results
@@ -65,12 +73,18 @@ process RECONST_FREEWATER {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
+    # Set home directory. This is problematic if the container is run
+    # with non-root user which does not create a home directory, whilst
+    # AMICO attempts to write in the home directory, raising an error.
+    export HOME=/tmp
+
     scil_freewater_maps -h
     mkdir kernels
     touch "${prefix}__dwi_fw_corrected.nii.gz"
     touch "${prefix}__dir.nii.gz"
     touch "${prefix}__fibervolume.nii.gz"
     touch "${prefix}__fwf.nii.gz"
+    touch "${prefix}__rmse.nii.gz"
     touch "${prefix}__nrmse.nii.gz"
 
     cat <<-END_VERSIONS > versions.yml

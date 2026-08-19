@@ -4,34 +4,25 @@ Changes in component 'nf-neuro/bundle/recognize'
 Changes in 'bundle/recognize/main.nf':
 --- modules/nf-neuro/bundle/recognize/main.nf
 +++ modules/nf-neuro/bundle/recognize/main.nf
-@@ -2,7 +2,7 @@
-     tag "$meta.id"
-     label 'process_high'
- 
--    container "scilus/scilpy:2.2.0_cpu"
-+    container "scilus/scilpy:2.2.1_cpu"
- 
-     input:
-         tuple val(meta), path(tractograms), path(transform), path(config), path(directory)
-@@ -35,7 +35,7 @@
+@@ -38,7 +38,7 @@
  
      for bundle_file in recobundles/*.trk; do
          bname=\$(basename \${bundle_file} .trk | sed 's/${prefix}_\\+//')
 -        out_cleaned=${prefix}_\${bname}_cleaned.trk
 +        out_cleaned=${prefix}__\${bname}_cleaned.trk
-         scil_bundle_reject_outliers \${bundle_file} "\${out_cleaned}" ${outlier_alpha}
+         echo "scil_bundle_reject_outliers \${bundle_file} \${out_cleaned} ${outlier_alpha}" >> commands.txt
      done
  
-@@ -52,7 +52,8 @@
-     scil_bundle_reject_outliers -h
+@@ -88,7 +88,8 @@
+     scil_json_merge_entries -h
  
      # dummy output for single bundle
 -    touch ${prefix}_AF_L_cleaned.trk
 +    touch ${prefix}__AF_L_cleaned.trk
 +    touch ${prefix}__AF_R_cleaned.trk
+     touch ${prefix}__bundles_mosaic_mqc.png
+     touch ${prefix}__bundles_stats_mqc.json
  
-     cat <<-END_VERSIONS > versions.yml
-     "${task.process}":
 
 'modules/nf-neuro/bundle/recognize/tests/nextflow_params.config' is unchanged
 'modules/nf-neuro/bundle/recognize/tests/main.nf.test.snap' is unchanged

@@ -3,6 +3,37 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - [Unreleased]
+
+### `Added`
+
+- Changed segmentation in young participants to use BIBSnet and infant freesurfer ([#128](https://github.com/scilus/sf-pediatric/pull/128))
+- Now use `nf-bids` plugin to read BIDS dataset for faster and more efficient data collection ([#124](https://github.com/scilus/sf-pediatric/pull/124))
+- Add GPU support via a config profile for module `eddy` and `localtracking` ([#121](https://github.com/scilus/sf-pediatric/pull/121))
+- Add support for user-defined external atlases in ‘fsLR‘ 32k space and simply mapping from template to subject space ([#120](https://github.com/scilus/sf-pediatric/pull/120))
+- Add RMSE and NRMSE maps to freewater and noddi output ([#118](https://github.com/scilus/sf-pediatric/pull/118))
+- Support for `nextflow` 26.04.0 ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
+- Quality control section for connectivity data ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
+- Quality control visualization section for bundles ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
+- Improved visualization of cortical/subcortical segmentation results in native subject space ([[#116](https://github.com/scilus/sf-pediatric/pull/116)])
+
+### `Fixed`
+
+- Issues when multiple anatomical runs were found and not linked with the DWI acquisition(s) + tests for bidsignore ([#126](https://github.com/scilus/sf-pediatric/pull/126))
+- Issues where `reconst_fw_noddi` would use too much RAM causing java heap errors ([#118](https://github.com/scilus/sf-pediatric/pull/118))
+- Issues where `NaN` values would appear following `eddy` and were making `amico` models fail due to invalid voxels. `NaN` values are now quantified, reported, and converted to 0.
+
+### `Changed`
+
+- Update to nf-core template `4.1.0` ([#129](https://github.com/scilus/sf-pediatric/pull/129))
+- Update to nf-core template `4.0.3` ([#127](https://github.com/scilus/sf-pediatric/pull/127))
+- Move to parameter typing and bump minimal nextflow version to `26.04.0` ([#122](https://github.com/scilus/sf-pediatric/pull/122))
+- Update to nf-core template `4.0.2` ([#117](https://github.com/scilus/sf-pediatric/pull/117))
+
+### `Removed`
+
+- Remove M-CRIB-S as a segmentation method for younger participants in favor of BIBSnet and infantfs ([#128](https://github.com/scilus/sf-pediatric/pull/128))
+
 ## [0.2.2] - [2026-02-09]
 
 ### `Added`

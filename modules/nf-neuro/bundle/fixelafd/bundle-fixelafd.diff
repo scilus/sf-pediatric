@@ -4,15 +4,6 @@ Changes in component 'nf-neuro/bundle/fixelafd'
 Changes in 'bundle/fixelafd/main.nf':
 --- modules/nf-neuro/bundle/fixelafd/main.nf
 +++ modules/nf-neuro/bundle/fixelafd/main.nf
-@@ -2,7 +2,7 @@
-     tag "$meta.id"
-     label 'process_single'
- 
--    container "scilus/scilpy:2.2.0_cpu"
-+    container "scilus/scilpy:2.2.1_cpu"
- 
-     input:
-         tuple val(meta), path(bundles), path(fodf)
 @@ -22,7 +22,7 @@
          do\
          bname=\$(basename \${bundle} .trk)

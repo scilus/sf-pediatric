@@ -5,7 +5,7 @@ nextflow_process {
     process "CONNECTIVITY_DECOMPOSE"
 
     tag "modules"
-    tag "modules_nfcore"
+    tag "modules_nfneuro"
     tag "connectivity"
     tag "connectivity/decompose"
 
@@ -16,7 +16,7 @@ nextflow_process {
             script "../../../../../subworkflows/nf-neuro/load_test_data/main.nf"
             process {
                 """
-                input[0] = Channel.from( [ "connectivity.zip" ] )
+                input[0] = channel.from( [ "connectivity.zip" ] )
                 input[1] = "test.load-test-data"
                 """
             }
@@ -68,7 +68,8 @@ nextflow_process {
         }
     }
 
-        test("connectivity - visualisation - stub-run") {
+        test("connectivity - decompose - stub-run") {
+        tag "stub"
         options "-stub-run"
         when {
             process {

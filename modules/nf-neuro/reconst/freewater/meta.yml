@@ -69,7 +69,6 @@ input:
         type: float
         description: Maximum perpendicular diffusivity value (diff prior).
         mandatory: false
-
 args:
   - para_diff:
       type: float
@@ -89,13 +88,19 @@ args:
   - fw_lambda2:
       type: float
       description: Second regularization parameter for freewater fitting.
+  - replace_bad_voxels:
+      type: float
+      description: If set, replace bad voxels with the current specified value.
   - b_thr:
       type: float
       description: Limit value to consider that a b-value is on an existing shell. Above this limit, the b-value is placed on a new shell. This includes b0s values.
   - compute_only:
       type: boolean
       description: Compute kernels only.
-
+  - single_thread:
+      type: boolean
+      description: If true, the command will be run in single-threaded mode. By default, the command will use multiple threads based on the number of CPUs allocated to the task.
+      default: false
 output:
   dwi_fw_corrected:
     - - meta:

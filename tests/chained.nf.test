@@ -27,14 +27,13 @@ nextflow_pipeline {
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
             // All fastsurfer output.
             def fastsurfer_output = getAllFilesFromDir("$outputDir/../freesurfer/", relative: true, includeDir: true)
-            def mcribs_output = getAllFilesFromDir("$outputDir/../mcribs-2.1.0/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf_pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name,
                     // All fastsurfer output.
@@ -71,7 +70,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf_pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()
@@ -88,6 +87,12 @@ nextflow_pipeline {
                 params.participant_label = ["sub-test1", "sub-test2", "sub-test3"]
                 params.outdir = "$outputDir"
 
+                params.run_dwi_denoising = false
+                params.run_dwi_degibbs = false
+                params.run_dwi_topup = false
+                params.run_dwi_eddy = false
+                params.run_dwi_n4 = false
+
                 params.dti_max_shell_value = 1500
 
                 params.template = "MNIInfant"
@@ -98,7 +103,7 @@ nextflow_pipeline {
                 params.tracking = true
                 params.segmentation = true
                 params.run_freewater = true
-                params.run_noddi = true
+                params.run_noddi = true // ** NODDI is triggered, but due to bval being empty files will not run ** //
 
                 params.fs_license = "https://www.dropbox.com/scl/fi/0s8lp6lydyd0rxawxb4jm/license.txt?rlkey=hz54oc0d4sor69avqphtrjvgn&st=9e0yij97&dl=0"
             }
@@ -109,19 +114,21 @@ nextflow_pipeline {
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
             // All fastsurfer output.
             def fastsurfer_output = getAllFilesFromDir("$outputDir/../freesurfer/", relative: true, includeDir: true)
-            def mcribs_output = getAllFilesFromDir("$outputDir/../mcribs-2.1.0/", relative: true, includeDir: true)
+            // TemplateFlow output.
+            def tfl_name = getAllFilesFromDir("$outputDir/../templateflow/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf_pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name,
                     // All fastsurfer output.
                     fastsurfer_output,
-                    mcribs_output
+                    // TemplateFlow output.
+                    tfl_name
                 ).match()
             }
         }
@@ -153,7 +160,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf_pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()

@@ -4,74 +4,74 @@ Changes in component 'nf-neuro/registration/ants'
 Changes in 'registration/ants/main.nf':
 --- modules/nf-neuro/registration/ants/main.nf
 +++ modules/nf-neuro/registration/ants/main.nf
-@@ -3,15 +3,13 @@
-     tag "$meta.id"
-     label 'process_medium'
- 
--    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
--        "https://scil.usherbrooke.ca/containers/scilus_latest.sif":
--        "scilus/scilus:latest"}"
-+    container 'scilus/scilus:2.1.0'
- 
-     input:
-     tuple val(meta), path(fixedimage), path(movingimage), path(mask) //** optional, input = [] **//
- 
-     output:
--    tuple val(meta), path("*_warped.nii.gz")                        , emit: image
-+    tuple val(meta), path("*warped.nii.gz")                        , emit: image
-     tuple val(meta), path("*__output0Warp.nii.gz")                  , emit: warp, optional:true
-     tuple val(meta), path("*__output1GenericAffine.mat")            , emit: affine
-     tuple val(meta), path("*__output1InverseWarp.nii.gz")           , emit: inverse_warp, optional: true
-@@ -25,6 +23,7 @@
-     script:
+@@ -28,6 +28,7 @@
+     def initialization_types = ["geometric center": 0, "intensities": 1, "origin": 2]
      def args = task.ext.args ?: ''
      def prefix = task.ext.prefix ?: "${meta.id}"
-+    def suffix = movingimage.name.contains("T1w") ? "T1w" : "T2w"
-     def suffix_qc = task.ext.suffix_qc ? "${task.ext.suffix_qc}" : ""
-     def ants = task.ext.quick ? "antsRegistrationSyNQuick.sh " :  "antsRegistrationSyN.sh "
-     def dimension = task.ext.dimension ? "-d " + task.ext.dimension : "-d 3"
-@@ -50,7 +49,7 @@
++    def suffix = moving_image.name.contains("T1w") ? "T1w" : "T2w"
+     def suffix_qc = task.ext.suffix_qc ?: ""
+     def ants = task.ext.quick ? "antsRegistrationSyNQuick.sh" : "antsRegistrationSyN.sh"
+     def dimension = "-d ${task.ext.dimension ?: 3}"
+@@ -53,22 +54,22 @@
  
-     $ants $dimension -f $fixedimage -m $movingimage -o output -t $transform $args $seed
+     $ants $dimension -f $fixed_image -m $moving_image -o output -t $transform $args $seed
  
--    mv outputWarped.nii.gz ${prefix}__warped.nii.gz
-+    mv outputWarped.nii.gz ${prefix}__${suffix}warped.nii.gz
-     mv output0GenericAffine.mat ${prefix}__output1GenericAffine.mat
+-    moving_id=\$(basename $moving_image .nii.gz)
+-    moving_id=\${moving_id#${meta.id}_*}
++    moving_id=$suffix
++    #moving_id=\${moving_id#${meta.id}_*}
  
-     if [ $transform != "t" ] && [ $transform != "r" ] && [ $transform != "a" ];
-@@ -81,11 +80,12 @@
-         # Iterate over images.
-         for image in fixedimage warped;
-         do
--            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_coronal.png \
-+            mrconvert *\${image}.nii.gz *\${image}_viz.nii.gz -stride -1,2,3 -nthreads $task.cpus
-+            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_coronal.png \
-                 --slices \$coronal_dim --axis coronal \$viz_params
--            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_sagittal.png \
-+            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_sagittal.png \
-                 --slices \$sagittal_dim --axis sagittal \$viz_params
--            scil_viz_volume_screenshot.py *\${image}.nii.gz \${image}_axial.png \
-+            scil_viz_volume_screenshot.py *\${image}_viz.nii.gz \${image}_axial.png \
-                 --slices \$axial_dim --axis axial \$viz_params
-             if [ \$image != fixedimage ];
-             then
-@@ -119,9 +119,10 @@
+     mv outputWarped.nii.gz ${prefix}_\${moving_id}_warped.nii.gz
+ 
+     if [ $transform != "bo" ] && [ $transform != "so" ]; then
+-        mv output0GenericAffine.mat ${prefix}_forward1_affine.mat
++        mv output0GenericAffine.mat ${prefix}_\${moving_id}_forward1_affine.mat
+     fi
+ 
+     if [ $transform != "t" ] && [ $transform != "r" ] && [ $transform != "a" ]; then
+-        mv output1InverseWarp.nii.gz ${prefix}_backward1_warp.nii.gz
+-        mv output1Warp.nii.gz ${prefix}_forward0_warp.nii.gz
++        mv output1InverseWarp.nii.gz ${prefix}_\${moving_id}_backward1_warp.nii.gz
++        mv output1Warp.nii.gz ${prefix}_\${moving_id}_forward0_warp.nii.gz
+     fi
+ 
+-    antsApplyTransforms -d 3 -t [${prefix}_forward1_affine.mat,1] \
+-        -o Linear[${prefix}_backward0_affine.mat]
++    antsApplyTransforms -d 3 -t [${prefix}_\${moving_id}_forward1_affine.mat,1] \
++        -o Linear[${prefix}_\${moving_id}_backward0_affine.mat]
+ 
+     ### ** QC ** ###
+     if $run_qc; then
+@@ -132,6 +133,7 @@
+ 
      stub:
-     def args = task.ext.args ?: ''
      def prefix = task.ext.prefix ?: "${meta.id}"
-+    def suffix = movingimage.name.contains("T1w") ? "T1w" : "T2w"
++    def suffix = moving_image.name.contains("T1w") ? "T1w" : "T2w"
+     def suffix_qc = task.ext.suffix_qc ?: ""
+     def run_qc = task.ext.run_qc as Boolean || false
  
-     """
--    touch ${prefix}__t1_warped.nii.gz
-+    touch ${prefix}__${suffix}warped.nii.gz
-     touch ${prefix}__output1GenericAffine.mat
-     touch ${prefix}__output0InverseAffine.mat
-     touch ${prefix}__output1InverseWarp.nii.gz
+@@ -153,11 +155,11 @@
+     convert -help .
+     scil_viz_volume_screenshot -h
+ 
+-    touch ${prefix}_t1_warped.nii.gz
+-    touch ${prefix}_forward1_affine.mat
+-    touch ${prefix}_forward0_warp.nii.gz
+-    touch ${prefix}_backward1_warp.nii.gz
+-    touch ${prefix}_backward0_affine.mat
++    touch ${prefix}_${suffix}_warped.nii.gz
++    touch ${prefix}_${suffix}_forward1_affine.mat
++    touch ${prefix}_${suffix}_forward0_warp.nii.gz
++    touch ${prefix}_${suffix}_backward1_warp.nii.gz
++    touch ${prefix}_${suffix}_backward0_affine.mat
+ 
+     if $run_qc; then
+         touch ${prefix}_${suffix_qc}_registration_ants_mqc.gif
 
 'modules/nf-neuro/registration/ants/tests/main.nf.test.snap' is unchanged
 'modules/nf-neuro/registration/ants/tests/nextflow_quick.config' is unchanged
+'modules/nf-neuro/registration/ants/tests/nextflow_no_warp.config' is unchanged
 'modules/nf-neuro/registration/ants/tests/tags.yml' is unchanged
 'modules/nf-neuro/registration/ants/tests/nextflow.config' is unchanged
-'modules/nf-neuro/registration/ants/tests/nextflow_options.config' is unchanged
 'modules/nf-neuro/registration/ants/tests/main.nf.test' is unchanged
 ************************************************************

@@ -2,37 +2,37 @@
     "multiqc-neuroimaging - stub": {
         "content": [
             [
-                "versions.yml:md5,aa55bf84daa12fdc3ed6d3e04fabed5c"
+                "versions.yml:md5,f16f8e08852bfe6792071d4e4cd633f0"
             ]
         ],
+        "timestamp": "2026-06-25T15:54:27.496634",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2025-11-25T12:37:01.154591"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
+        }
     },
     "multiqc-neuroimaging - single-subject report": {
         "content": [
             [
-                "versions.yml:md5,aa55bf84daa12fdc3ed6d3e04fabed5c"
+                "versions.yml:md5,f16f8e08852bfe6792071d4e4cd633f0"
             ]
         ],
+        "timestamp": "2026-06-25T15:54:09.049057",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.4"
-        },
-        "timestamp": "2025-11-30T23:48:49.764525182"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
+        }
     },
     "multiqc-neuroimaging - global report": {
         "content": [
             [
-                "versions.yml:md5,aa55bf84daa12fdc3ed6d3e04fabed5c"
+                "versions.yml:md5,f16f8e08852bfe6792071d4e4cd633f0"
             ]
         ],
+        "timestamp": "2026-06-25T15:53:43.324737",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2025-11-25T12:44:34.5989"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.3"
+        }
     }
 }

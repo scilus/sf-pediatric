@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "segmentation_bibsnet"
+description: |
+  Module for segmenting neonatal brain MRI anatomical images using the nnU-Net based BIBSNet.
+  Designed to be used with either a T1w, T2w, or both T1w and T2w images for
+  subjects aged 0-8 months.
+keywords:
+  - segmentation
+  - neonatal
+  - anatomical
+  - freesurfer
+tools:
+  - "bibsnet":
+      description: |
+        This BIDS App provides the utility of creating a nnU-Net anatomical MRI segmentation
+        and mask with a infant brain trained model. It can easily be included in other
+        processing pipelines and for circumventing JLF within Nibabies.
+      homepage: "https://github.com/DCAN-Labs/BIBSnet"
+      documentation: "https://bibsnet.readthedocs.io/en/latest/"
+      doi: "https://doi.org/10.1016/j.dcn.2026.101706"
+      licence: Apache-2.0
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1' ]`
+    - t1:
+        type: file
+        description: T1-weighted MRI image
+        pattern: "*.{nii.gz,nii}"
+        ontologies:
+          - edam: "http://edamontology.org/format_4001" # NIfTI
+    - t2:
+        type: file
+        description: T2-weighted MRI image
+        pattern: "*.{nii.gz,nii}"
+        ontologies:
+          - edam: "http://edamontology.org/format_4001" # NIfTI
+output:
+  aseg:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1' ]`
+      - "*.nii.gz":
+          type: file
+          description: Segmented anatomical image
+          pattern: "*.{nii.gz,nii}"
+          ontologies:
+            - edam: "http://edamontology.org/format_4001" # NIfTI
+  mask:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1' ]`
+      - "*.nii.gz":
+          type: file
+          description: Brain mask image
+          pattern: "*.{nii.gz,nii}"
+          ontologies:
+            - edam: "http://edamontology.org/format_4001" # NIfTI
+  versions:
+    - - "${task.process}":
+          type: string
+          description: The name of the process
+      - "bibsnet":
+          type: string
+          description: The name of the tool
+      - "echo $BIBSNET_VERSION":
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - "bibsnet":
+          type: string
+          description: The name of the tool
+      - "echo $BIBSNET_VERSION":
+          type: eval
+          description: The expression to obtain the version of the tool
+authors:
+  - "@gagnonanthony"
+maintainers:
+  - "@gagnonanthony"

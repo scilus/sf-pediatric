@@ -1,7 +1,7 @@
 <!--
-# scilus/sf-pediatric pull request
+# scilus/sf_pediatric pull request
 
-Many thanks for contributing to scilus/sf-pediatric!
+Many thanks for contributing to scilus/sf_pediatric!
 
 Please fill in the appropriate checklist below (delete whatever is not relevant).
 These are the most common things requested on pull requests (PRs).
@@ -9,6 +9,7 @@ These are the most common things requested on pull requests (PRs).
 Remember that PRs should be made against the dev branch, unless you're preparing a pipeline release.
 
 Learn more about contributing: [CONTRIBUTING.md](https://github.com/scilus/sf-pediatric/tree/master/.github/CONTRIBUTING.md)
+
 -->
 
 ## PR checklist

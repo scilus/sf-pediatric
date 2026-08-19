@@ -1,9 +1,0 @@
-{
-    "Modality": "MR",
-    "MagneticFieldStrength": 3,
-    "PhaseEncodingDirection": "j-",
-    "TotalReadoutTime": 0.062,
-    "IntendedFor": [
-        "dwi/sub-test3_dwi.nii.gz"
-    ]
-}

@@ -2,7 +2,7 @@ process RECONST_NODDI {
     tag "$meta.id"
     label 'process_medium'
 
-    container "scilus/scilpy:2.2.0_cpu"
+    container 'scilus/scilpy@sha256:2626bb7cec11a9acf421ba5c5d9c333f065e2434134c6cfdcaa850122727a1c3'
 
     input:
         tuple val(meta), path(dwi), path(bval), path(bvec), path(mask), path(kernels), val(para_diff), val(iso_diff)
@@ -13,6 +13,8 @@ process RECONST_NODDI {
         tuple val(meta), path("*__icvf.nii.gz")         , emit: icvf, optional: true
         tuple val(meta), path("*__ecvf.nii.gz")         , emit: ecvf, optional: true
         tuple val(meta), path("*__odi.nii.gz")          , emit: odi, optional: true
+        tuple val(meta), path("*__rmse.nii.gz")         , emit: rmse, optional: true
+        tuple val(meta), path("*__nrmse.nii.gz")        , emit: nrmse, optional: true
         path("kernels")                                 , emit: kernels, optional: true
         path "versions.yml"                             , emit: versions
 
@@ -26,13 +28,19 @@ process RECONST_NODDI {
     def iso_diff_str = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : iso_diff ? "--iso_diff " + iso_diff : ""
     def lambda1 = task.ext.noddi_lambda1 ? "--lambda1 " + task.ext.noddi_lambda1 : ""
     def lambda2 = task.ext.noddi_lambda2 ? "--lambda2 " + task.ext.noddi_lambda2 : ""
-    def nb_threads = "--processes $task.cpus"
+    def replace_bad_voxels = task.ext.replace_bad_voxels != null ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
+    def compute_rmse = task.ext.compute_rmse ? "--compute_rmse" : ""
+    def compute_nrmse = task.ext.compute_nrmse ? "--compute_nrmse" : ""
+    def nthreads = task.ext.single_thread ? 1 : task.cpus
     def b_thr = task.ext.b_thr ? "--tolerance " + task.ext.b_thr : ""
     def set_kernels = kernels ? "--load_kernels $kernels" : "--save_kernels kernels/"
     def set_mask = mask ? "--mask $mask" : ""
     def compute_only = task.ext.compute_only && !kernels ? "--compute_only" : ""
 
     """
+    export OMP_NUM_THREADS=${task.ext.single_thread ? 1 : task.cpus}
+    export OPENBLAS_NUM_THREADS=1
+
     # Check if data are multi-shell based on b-values and set number of clusters accordingly
     # Set tolerance threshold (default 40 if not specified)
     b_threshold=${task.ext.b_thr ?: 40}
@@ -63,7 +71,8 @@ process RECONST_NODDI {
     export HOME=/tmp
 
     scil_NODDI_maps $dwi $bval $bvec $para_diff_str $iso_diff_str $lambda1 \
-        $lambda2 $nb_threads $b_thr $set_mask $set_kernels --skip_b0_check $compute_only
+        $lambda2 --processes $nthreads $b_thr $set_mask $set_kernels --skip_b0_check $compute_only \
+        $replace_bad_voxels $compute_rmse $compute_nrmse
 
     if [ -z "${compute_only}" ];
     then
@@ -71,8 +80,10 @@ process RECONST_NODDI {
         mv results/fit_NDI.nii.gz ${prefix}__icvf.nii.gz    # ICVF -> NDI
         mv results/fit_FWF.nii.gz ${prefix}__isovf.nii.gz   # ISOVF -> FWF
         mv results/fit_ODI.nii.gz ${prefix}__odi.nii.gz     # ODI -> OD
+        mv results/fit_RMSE.nii.gz ${prefix}__rmse.nii.gz
+        mv results/fit_NRMSE.nii.gz ${prefix}__nrmse.nii.gz
 
-        scil_volume_math subtraction 1 ${prefix}__isovf.nii.gz ${prefix}__ecvf.nii.gz
+        scil_volume_math subtraction 1 ${prefix}__icvf.nii.gz ${prefix}__ecvf.nii.gz
 
         rm -rf results
     fi
@@ -87,6 +98,11 @@ process RECONST_NODDI {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
+    # Set home directory. This is problematic if the container is run
+    # with non-root user which does not create a home directory, whilst
+    # AMICO attempts to write in the home directory, raising an error.
+    export HOME=/tmp
+
     scil_NODDI_maps -h
     scil_volume_math -h
 
@@ -97,6 +113,8 @@ process RECONST_NODDI {
     touch "${prefix}__isovf.nii.gz"
     touch "${prefix}__ecvf.nii.gz"
     touch "${prefix}__odi.nii.gz"
+    touch "${prefix}__rmse.nii.gz"
+    touch "${prefix}__nrmse.nii.gz"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

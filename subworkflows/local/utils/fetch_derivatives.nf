@@ -1,4 +1,4 @@
-include { fetchPriors } from '../utils_nfcore_sf-pediatric_pipeline/main.nf'
+include { fetchPriors } from '../utils_nfcore_sf_pediatric_pipeline/main.nf'
 
 def readParticipantsTsv(file) {
     def participantData = []
@@ -18,6 +18,18 @@ def readParticipantsTsv(file) {
     }
 
     return participantData
+}
+
+// Helper function to get age with session support
+def getAge(participantId, participantData, sessionId = null) {
+    def searchParticipantId = participantId.toString()
+    def searchSessionId = (sessionId == null || sessionId.toString().trim() == "") ? "" : sessionId.toString()
+
+    def match = participantData.find { row ->
+        return row.participant_id == searchParticipantId && row.session_id == searchSessionId
+    }
+
+    return match ? match.age : 0.0  // Return 0.0 instead of empty string
 }
 
 workflow FETCH_DERIVATIVES {
@@ -43,32 +55,19 @@ workflow FETCH_DERIVATIVES {
         params.participant_label.tokenize(',') :
         params.participant_label : []
 
-    // Helper function to get age with session support
-    def getAge = { participantId, sessionId = null ->
-        def searchParticipantId = participantId.toString()
-        def searchSessionId = (sessionId == null || sessionId.toString().trim() == "") ? "" : sessionId.toString()
-
-        def match = participantData.find { row ->
-            return row.participant_id == searchParticipantId && row.session_id == searchSessionId
-        }
-
-        return match ? match.age : 0.0  // Return 0.0 instead of empty string
-    }
-
     // ** Segmentations ** //
     if ( params.connectomics && !params.segmentation ) {
-        ch_labels = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
+        ch_labels = channel.fromPath("${input_deriv}/sub-*/{ses-*/,}anat/*{,space-DWI}_seg*dseg.nii.gz",
             checkIfExists: true)
             .map{ file ->
                 def parts = file.toAbsolutePath().toString().split('/')
                 def id = parts.find { it.startsWith('sub-') }
-                def session = parts.find { it.startsWith('ses-') }
-                def age = getAge(id, session)
-                def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-                def priors = fetchPriors(tempAge)
-                def metadata = session ? \
-                    [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                    [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+                def session = parts.find { it.startsWith('ses-') } ?: ""
+                def run = parts.find { it.startsWith('run-') } ?: ""
+                def age = getAge(id, participantData, session)
+                age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+                def priors = fetchPriors(age)
+                def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
                 return [metadata, file]
             }
@@ -88,22 +87,21 @@ workflow FETCH_DERIVATIVES {
                 participant_ids.isEmpty() || it[0].id in participant_ids
             }
     } else {
-        ch_labels = Channel.empty()
+        ch_labels = channel.empty()
     }
 
     // ** Anatomical file ** //
-    ch_anat = Channel.fromPath("${input_deriv}/sub-**/{ses-*/,}anat/*space-DWI_desc-preproc_{T1w,T2w}.nii.gz",
+    ch_anat = channel.fromPath("${input_deriv}/sub-**/{ses-*/,}anat/*space-DWI_desc-preproc_{T1w,T2w}.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+            def session = parts.find { it.startsWith('ses-') } ?: ""
+            def run = parts.find { it.startsWith('run-') } ?: ""
+            def age = getAge(id, participantData, session)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+            def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
             def type = file.name.contains('T1w') ? 'T1w' : 'T2w'
 
             return [metadata, type, file]
@@ -118,18 +116,17 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Transformation files ** //
-    ch_transforms = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}xfm/*from-{T1w,T2w}_to-dwi_mode-image_desc-{warp,affine}*",
+    ch_transforms = channel.fromPath("${input_deriv}/sub-*/{ses-*/,}xfm/*from-{T1w,T2w}_to-dwi_mode-image_desc-{warp,affine}*",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+            def session = parts.find { it.startsWith('ses-') } ?: ""
+            def run = parts.find { it.startsWith('run-') } ?: ""
+            def age = getAge(id, participantData, session)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+            def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
             def type = file.name.contains('warp') ? 'warp' : 'affine'
 
             return [metadata, type, file]
@@ -152,35 +149,33 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Peaks file ** //
-    ch_peaks = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-peaks*.nii.gz",
+    ch_peaks = channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-peaks*.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+            def session = parts.find { it.startsWith('ses-') } ?: ""
+            def run = parts.find { it.startsWith('run-') } ?: ""
+            def age = getAge(id, participantData, session)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+            def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
         }
 
     // ** fODF file ** //
-    ch_fodf = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-sh*.nii.gz",
+    ch_fodf = channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-sh*.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+            def session = parts.find { it.startsWith('ses-') } ?: ""
+            def run = parts.find { it.startsWith('run-') } ?: ""
+            def age = getAge(id, participantData, session)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+            def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
         }
@@ -189,18 +184,17 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** DWI files (dwi, bval, bvec) ** //
-    ch_dwi_bval_bvec = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-preproc_dwi.{nii.gz,bval,bvec}",
+    ch_dwi_bval_bvec = channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*desc-preproc_dwi.{nii.gz,bval,bvec}",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
             def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+            def session = parts.find { it.startsWith('ses-') } ?: ""
+            def run = parts.find { it.startsWith('run-') } ?: ""
+            def age = getAge(id, participantData, session)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+            def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
         }
@@ -226,17 +220,16 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Tractogram file ** //
-    ch_trk = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*tract-wholebrain_track-{sdstream,pft}*tractogram.trk", checkIfExists: true)
+    ch_trk = channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*tract-wholebrain_track-{sdstream,pft}*tractogram.trk", checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+            def session = parts.find { it.startsWith('ses-') } ?: ""
+            def run = parts.find { it.startsWith('run-') } ?: ""
+            def age = getAge(id, participantData, session)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+            def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
         }
@@ -255,18 +248,17 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Metrics files ** //
-    ch_metrics = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-{fa,md,rd,ad,nufo,afdtotal,afdsum,afdmax,fwf,fibervolume,icvf,odi,ecvf,isovf}{_desc-fwc,}_dwimap.nii.gz",
+    ch_metrics = channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*param-{fa,md,rd,ad,nufo,afdtotal,afdsum,afdmax,fwf,fibervolume,icvf,odi,ecvf,isovf}{_desc-fwc,}_dwimap.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split("/")
             def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+            def session = parts.find { it.startsWith('ses-') } ?: ""
+            def run = parts.find { it.startsWith('run-') } ?: ""
+            def age = getAge(id, participantData, session)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+            def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
         }
@@ -276,22 +268,21 @@ workflow FETCH_DERIVATIVES {
         }
 
     // ** Brain mask ** //
-    ch_brain_mask = Channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*{ses-*,}_desc-brain_mask.nii.gz",
+    ch_brain_mask = channel.fromPath("${input_deriv}/sub-*/{ses-*/,}dwi/*{ses-*,}_desc-brain_mask.nii.gz",
         checkIfExists: true)
         .map { file ->
             def parts = file.toAbsolutePath().toString().split('/')
-            def id = parts.find { it.startsWith('sub-') }
-            def session = parts.find { it.startsWith('ses-') }
-            def age = getAge(id, session)
-            def tempAge = age.toFloat() > 25 ? Math.abs((age.toFloat() - 35) / 52) : age.toFloat()
-            def priors = fetchPriors(tempAge)
-            def metadata = session ? \
-                [id: id, session: session, run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max] : \
-                [id: id, session: "", run: "", age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
+            def id = parts.find { it -> it.startsWith('sub-') }
+            def session = parts.find { it -> it.startsWith('ses-') } ?: ""
+            def run = parts.find { it -> it.startsWith('run-') } ?: ""
+            def age = getAge(id, participantData, session)
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+            def metadata = [id: id, session: session, run: run, age: age, fa: priors.fa, ad: priors.ad, rd: priors.rd, md: priors.md, rd_min: priors.rd_min, rd_max: priors.rd_max]
 
             return [metadata, file]
         }
-        .filter {
+        .filter { it ->
             participant_ids.isEmpty() || it[0].id in participant_ids
         }
 

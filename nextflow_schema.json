@@ -9,7 +9,7 @@
             "title": "Input/output options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "This section will detail how to set the inputs and outputs of the pipeline.",
+            "description": "Define where the pipeline should find input data and save output data.",
             "required": ["outdir"],
             "properties": {
                 "input": {
@@ -33,14 +33,6 @@
                     "description": "Path to the derivatives directory to use as input.",
                     "fa_icon": "fas fa-folder-open"
                 },
-                "bids_script": {
-                    "type": "string",
-                    "format": "file-path",
-                    "description": "Path to the BIDS script.",
-                    "help_text": "This is a script that will be used to generate the BIDS directory structure from the raw data. Unless you know what you are doing, this should not be changed. Will be removed in a future release.",
-                    "fa_icon": "fas fa-file-code",
-                    "hidden": true
-                },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
@@ -48,12 +40,33 @@
                     "help_text": "For a detailed description of the output files, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/).",
                     "fa_icon": "fas fa-folder-open"
                 },
+                "templates_url": {
+                    "type": "string",
+                    "description": "URL to download templates from.",
+                    "format": "uri",
+                    "default": "https://osf.io/Kd8h7/download",
+                    "fa_icon": "fas fa-download",
+                    "hidden": true
+                },
+                "templates_download_path": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Path to the directory where templates will be downloaded and cached.",
+                    "fa_icon": "fas fa-folder-open",
+                    "hidden": true
+                },
+                "gpu_type": {
+                    "type": "string",
+                    "description": "Type of GPU models (or MIG) to use when submitting GPU jobs to HPC clusters using `-profile slurm,gpu`. This should not be needed outside of HPC environments.",
+                    "fa_icon": "fas fa-microchip",
+                    "hidden": false
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",
                     "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
+                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "hidden": true
                 },
                 "multiqc_title_subject": {
@@ -74,12 +87,12 @@
             "title": "Segmentation Options",
             "type": "object",
             "fa_icon": "fas fa-brain",
-            "description": "Options for FreeSurfer, FastSurfer, and/or M-CRIB-S processing. Only relevant if you select the segmentation profile.",
-            "help_text": "These options are used to configure the FreeSurfer, FastSurfer and/or M-CRIB-S processing steps in the pipeline.",
+            "description": "Options for FreeSurfer or FastSurfer processing. Only relevant if you select the segmentation profile.",
+            "help_text": "These options are used to configure the FreeSurfer or FastSurfer processing steps in the pipeline.",
             "properties": {
                 "method": {
                     "type": "string",
-                    "description": "Method to use to perform surface reconstruction and cortical/subcortical segmentation. Will only affect subjects > 3 months of age. Recon-all-clinical is highly recommended for subjects between 3 months and 5 years old. Options include recon-all, recon-all-clinical, or FastSurfer.",
+                    "description": "Method to use to perform surface reconstruction and cortical/subcortical segmentation. Will only affect subjects > 1 year of age. Recon-all-clinical is highly recommended for subjects between 1 year and 5 years old (and above). Options include recon-all, recon-all-clinical, or FastSurfer.",
                     "fa_icon": "fas fa-brain",
                     "default": "recon-all-clinical",
                     "enum": ["recon-all-clinical", "recon-all", "fastsurfer"],
@@ -117,38 +130,11 @@
                 },
                 "fs_output_dir": {
                     "type": "string",
-                    "description": "Path to FreeSurfer/FastSurfer/M-CRIB-S output directory.",
+                    "description": "Path to FreeSurfer/FastSurfer output directory.",
                     "fa_icon": "fas fa-folder-open",
                     "help_text": "Default location will be alongside `--outdir`. For more information, please see the [documentation](https://scilus.github.io/sf-pediatric/guides/outputs/)",
                     "format": "directory-path",
                     "hidden": false
-                },
-                "mcribs_jointhresh": {
-                    "type": "number",
-                    "description": "Join threshold used in the MCRIBS surface reconstruction step.",
-                    "fa_icon": "fas fa-brain",
-                    "hidden": true
-                },
-                "mcribs_fastcollision": {
-                    "type": "boolean",
-                    "description": "Use deformable fast collision test in the MCRIBS surface reconstruction step.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": true
-                },
-                "mcribs_nopialoutside": {
-                    "type": "boolean",
-                    "description": "Do not ensure pial is outside of WM in the MCRIBS surface reconstruction step.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": true
-                },
-                "mcribs_seed": {
-                    "type": "number",
-                    "description": "Seed used in the MCRIBS surface reconstruction step.",
-                    "fa_icon": "fas fa-brain",
-                    "default": 1234,
-                    "hidden": true
                 }
             }
         },
@@ -159,73 +145,24 @@
             "description": "Options for atlases used in the pipeline.",
             "help_text": "These options are used to configure the atlases used in the pipeline. You can use these options to customise the behaviour of the atlases.",
             "properties": {
-                "utils_folder": {
+                "atlas_name": {
                     "type": "string",
-                    "description": "Path to the utils folder.",
-                    "fa_icon": "fas fa-folder",
-                    "help_text": "This folder contains the atlases used in the pipeline. Unless you know what you are doing, please do not change this.",
-                    "format": "directory-path",
-                    "exists": true,
-                    "hidden": true
-                }
-            }
-        },
-        "anat_processing_steps": {
-            "title": "Processing steps to apply on anatomical images.",
-            "type": "object",
-            "fa_icon": "fas fa-brain",
-            "description": "Processing steps to apply on anatomical images. (NOTE: the same steps will be applied on both T1w/T2w if both are available).",
-            "help_text": "These options are used to configure the processing steps to apply on anatomical images. You can use these options to customise the behaviour of the processing steps.",
-            "properties": {
-                "preproc_run_denoising": {
-                    "type": "boolean",
-                    "description": "Run denoising on the anatomical images.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
+                    "description": "Name of the atlas to use. This will determine the BIDS atlas to use. Multiple values can be specified.",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "BrainnetomeChild",
                     "hidden": false
                 },
-                "preproc_run_N4": {
-                    "type": "boolean",
-                    "description": "Run N4 bias correction on the anatomical images.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
-                "preproc_run_resampling": {
-                    "type": "boolean",
-                    "description": "Run resampling on the anatomical images.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
-                "preproc_run_synthstrip": {
-                    "type": "boolean",
-                    "description": "Run SynthStrip for brain extraction.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
-                "preproc_run_ants_bet": {
-                    "type": "boolean",
-                    "description": "Run AntsBet for brain extraction",
-                    "fa_icon": "fas fa-brain",
-                    "help_text": "This step will require the use of a template image which does not match all ages and is much slower than the default synthstrip method. Not recommended.",
-                    "default": false,
-                    "hidden": false
-                },
-                "preproc_run_crop": {
-                    "type": "boolean",
-                    "description": "Run cropping on the anatomical images.",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
-                "synthstrip_weights": {
+                "atlas_folder": {
                     "type": "string",
-                    "description": "Path to alternative weights for SynthStrip brain extraction.",
-                    "fa_icon": "fas fa-brain",
-                    "format": "file-path",
-                    "default": null,
+                    "description": "Path to the directory containing the atlases. This should be a directory containing the atlases in BIDS format. If not specified, will search in the default location ('$projectDir/assets/').",
+                    "fa_icon": "fas fa-folder-open",
+                    "hidden": false
+                },
+                "subcortical_rois": {
+                    "type": "string",
+                    "description": "Indexes of the subcortical ROIs in the atlas to use in the QC report. Will mostly be used to properly separate cortical and subcortical ROIs in the QC report. Should be provided as a string of comma-separated values or ranges (e.g. '189:224').",
+                    "fa_icon": "fas fa-map-marked-alt",
+                    "default": "189:224",
                     "hidden": false
                 }
             }
@@ -237,6 +174,34 @@
             "description": "Options for T1w processing. In the case where you do not have a T1w image, you can ignore those options.",
             "help_text": "These options are used to configure the T1w processing steps in the pipeline. You can use these options to customise the behaviour of the T1w processing steps.",
             "properties": {
+                "run_t1_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_n4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t1_crop": {
+                    "type": "boolean",
+                    "description": "Run cropping on the T1w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
                 "t1_denoise_number_of_coils": {
                     "type": "integer",
                     "description": "Number of coils used in the T1w denoising step.",
@@ -295,6 +260,34 @@
             "description": "Options for T2w preprocessing. In the case where you do not have a T2w image, you can ignore those options.",
             "help_text": "These options are used to configure the T2w preprocessing steps in the pipeline. You can use these options to customise the behaviour of the T2w preprocessing steps.",
             "properties": {
+                "run_t2_denoising": {
+                    "type": "boolean",
+                    "description": "Run denoising on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_n4": {
+                    "type": "boolean",
+                    "description": "Run N4 bias correction on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_resampling": {
+                    "type": "boolean",
+                    "description": "Run resampling on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
+                "run_t2_crop": {
+                    "type": "boolean",
+                    "description": "Run cropping on the T2w images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
                 "t2_denoise_number_of_coils": {
                     "type": "integer",
                     "description": "Number of coils used in the T2w denoising step.",
@@ -385,13 +378,6 @@
             "description": "Options for DWI preprocessing. You can use these options to customise the behaviour of the DWI preprocessing steps.",
             "help_text": "These options are used to configure the DWI preprocessing steps in the pipeline. You can use these options to customise the behaviour of the DWI preprocessing steps.",
             "properties": {
-                "skip_dwi_preprocessing": {
-                    "type": "boolean",
-                    "description": "Skip the DWI preprocessing steps.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": false
-                },
                 "dwi_b0_threshold": {
                     "type": "integer",
                     "description": "B0 threshold used in the DWI preprocessing steps.",
@@ -406,7 +392,7 @@
                     "default": 50,
                     "hidden": false
                 },
-                "preproc_dwi_run_denoising": {
+                "run_dwi_denoising": {
                     "type": "boolean",
                     "description": "Run denoising on the DWI images.",
                     "fa_icon": "fas fa-brain",
@@ -420,14 +406,14 @@
                     "default": 7,
                     "hidden": true
                 },
-                "preproc_dwi_run_degibbs": {
+                "run_dwi_degibbs": {
                     "type": "boolean",
                     "description": "Run Gibbs ringing correction on the DWI images.",
                     "fa_icon": "fas fa-brain",
                     "default": false,
                     "hidden": false
                 },
-                "topup_eddy_run_topup": {
+                "run_dwi_topup": {
                     "type": "boolean",
                     "description": "Run topup in the susceptibility distortion correction step.",
                     "fa_icon": "fas fa-brain",
@@ -462,7 +448,7 @@
                     "default": "y",
                     "hidden": true
                 },
-                "topup_eddy_run_eddy": {
+                "run_dwi_eddy": {
                     "type": "boolean",
                     "description": "Run eddy in the eddy current correction step.",
                     "fa_icon": "fas fa-brain",
@@ -496,13 +482,6 @@
                     "fa_icon": "fas fa-brain",
                     "hidden": false
                 },
-                "dwi_run_synthstrip": {
-                    "type": "boolean",
-                    "description": "Run SynthStrip for brain extraction",
-                    "fa_icon": "fas fa-brain",
-                    "default": true,
-                    "hidden": false
-                },
                 "dwi_synthstrip_border": {
                     "type": "integer",
                     "description": "Brain border used in the SynthStrip brain extraction step.",
@@ -517,13 +496,6 @@
                     "default": false,
                     "hidden": true
                 },
-                "dwi_synthstrip_weights": {
-                    "type": "string",
-                    "description": "Alternative weights used in the SynthStrip brain extraction step.",
-                    "fa_icon": "fas fa-brain",
-                    "default": null,
-                    "hidden": false
-                },
                 "dwi_bet_f_threshold": {
                     "type": "number",
                     "description": "Bet f threshold used in the brain extraction step.",
@@ -531,7 +503,7 @@
                     "default": 0.16,
                     "hidden": true
                 },
-                "preproc_dwi_run_N4": {
+                "run_dwi_n4": {
                     "type": "boolean",
                     "description": "Run N4 bias correction on the DWI images.",
                     "fa_icon": "fas fa-brain",
@@ -552,6 +524,13 @@
                     "default": 4,
                     "hidden": true
                 },
+                "run_dwi_normalize": {
+                    "type": "boolean",
+                    "description": "Run normalization on the DWI images.",
+                    "fa_icon": "fas fa-brain",
+                    "default": true,
+                    "hidden": false
+                },
                 "dwi_normalize_fa_mask_threshold": {
                     "type": "number",
                     "description": "FA mask threshold used in the normalization step.",
@@ -559,7 +538,7 @@
                     "default": 0.4,
                     "hidden": false
                 },
-                "preproc_dwi_run_resampling": {
+                "run_dwi_resampling": {
                     "type": "boolean",
                     "description": "Run resampling on the DWI images.",
                     "fa_icon": "fas fa-brain",
@@ -1442,49 +1421,6 @@
                     "fa_icon": "fas fa-brain",
                     "default": "./templateflow",
                     "hidden": false
-                },
-                "use_template_t2w": {
-                    "type": "boolean",
-                    "description": "Use the T2w image from the template space (useful with infant data.).",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": false
-                }
-            }
-        },
-        "profiles": {
-            "title": "Pipeline profile",
-            "type": "object",
-            "fa_icon": "fas fa-cogs",
-            "description": "Pipeline profile options. This is a short list of options. For full description, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/usage/#choosing-a-profile)",
-            "properties": {
-                "tracking": {
-                    "type": "boolean",
-                    "description": "Perform tracking profile.",
-                    "fa_icon": "fas fa-map-marker",
-                    "default": false,
-                    "hidden": true
-                },
-                "bundling": {
-                    "type": "boolean",
-                    "description": "Perform bundle extraction profile.",
-                    "fa_icon": "fas fa-map-marker",
-                    "default": false,
-                    "hidden": true
-                },
-                "connectomics": {
-                    "type": "boolean",
-                    "description": "Perform connectomics profile.",
-                    "fa_icon": "fas fa-network-wired",
-                    "default": false,
-                    "hidden": true
-                },
-                "segmentation": {
-                    "type": "boolean",
-                    "description": "Perform segmentation profile.",
-                    "fa_icon": "fas fa-brain",
-                    "default": false,
-                    "hidden": true
                 }
             }
         },
@@ -1593,13 +1529,6 @@
                     "fa_icon": "fas fa-palette",
                     "hidden": true
                 },
-                "hook_url": {
-                    "type": "string",
-                    "description": "Incoming hook URL for messaging service",
-                    "fa_icon": "fas fa-people-group",
-                    "help_text": "Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.",
-                    "hidden": true
-                },
                 "multiqc_config": {
                     "type": "string",
                     "format": "file-path",
@@ -1626,13 +1555,6 @@
                     "fa_icon": "fas fa-check-square",
                     "hidden": true
                 },
-                "pipelines_testdata_base_path": {
-                    "type": "string",
-                    "fa_icon": "far fa-check-circle",
-                    "description": "Base URL or local path to location of pipeline test dataset files",
-                    "hidden": true,
-                    "default": null
-                },
                 "trace_report_suffix": {
                     "type": "string",
                     "fa_icon": "far calendar",
@@ -1652,6 +1574,42 @@
                     "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
                 }
             }
+        },
+        "profiles": {
+            "title": "Pipeline profile",
+            "type": "object",
+            "fa_icon": "fas fa-cogs",
+            "description": "Pipeline profile options. This is a short list of options. For full description, please see [the documentation](https://scilus.github.io/sf-pediatric/guides/usage/#choosing-a-profile)",
+            "properties": {
+                "tracking": {
+                    "type": "boolean",
+                    "description": "Perform tracking profile.",
+                    "fa_icon": "fas fa-map-marker",
+                    "default": false,
+                    "hidden": true
+                },
+                "bundling": {
+                    "type": "boolean",
+                    "description": "Perform bundle extraction profile.",
+                    "fa_icon": "fas fa-map-marker",
+                    "default": false,
+                    "hidden": true
+                },
+                "connectomics": {
+                    "type": "boolean",
+                    "description": "Perform connectomics profile.",
+                    "fa_icon": "fas fa-network-wired",
+                    "default": false,
+                    "hidden": true
+                },
+                "segmentation": {
+                    "type": "boolean",
+                    "description": "Perform segmentation profile.",
+                    "fa_icon": "fas fa-brain",
+                    "default": false,
+                    "hidden": true
+                }
+            }
         }
     },
     "allOf": [
@@ -1663,9 +1621,6 @@
         },
         {
             "$ref": "#/$defs/atlases_options"
-        },
-        {
-            "$ref": "#/$defs/anat_processing_steps"
         },
         {
             "$ref": "#/$defs/t1_processing_options"
@@ -1722,13 +1677,13 @@
             "$ref": "#/$defs/template"
         },
         {
-            "$ref": "#/$defs/profiles"
-        },
-        {
             "$ref": "#/$defs/institutional_config_options"
         },
         {
             "$ref": "#/$defs/generic_options"
+        },
+        {
+            "$ref": "#/$defs/profiles"
         }
     ]
 }

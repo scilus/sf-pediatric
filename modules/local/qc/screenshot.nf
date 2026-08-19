@@ -2,7 +2,7 @@ process QC_SCREENSHOT {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.1.0'
+    container 'scilus/scilus:2.2.2'
 
     input:
     tuple val(meta), path(image), path(wmmask), path(gmmask), path(csfmask), path(labels)
@@ -26,7 +26,7 @@ process QC_SCREENSHOT {
     size=\$(mrinfo $image -size)
     mid_slice=\$(echo \$size | awk '{print int((\$3 + 1) / 2)}')
 
-    scil_viz_volume_screenshot.py $image ${prefix}_ax.png \
+    scil_viz_volume_screenshot $image ${prefix}_ax.png \
         --slices \$mid_slice --axis axial \
         --overlays $wmmask $gmmask $csfmask \
         --overlays_as_contours \
@@ -37,7 +37,7 @@ process QC_SCREENSHOT {
     # Fetch middle coronal slice.
     mid_slice=\$(echo \$size | awk '{print int((\$2 + 1) / 2)}')
 
-    scil_viz_volume_screenshot.py $image ${prefix}_cor.png \
+    scil_viz_volume_screenshot $image ${prefix}_cor.png \
         --slices \$mid_slice --axis coronal \
         --overlays $wmmask $gmmask $csfmask \
         --overlays_as_contours \
@@ -48,7 +48,7 @@ process QC_SCREENSHOT {
     # Fetch middle sagittal slice.
     mid_slice=\$(echo \$size | awk '{print int(((\$1 + 1) / 2) + 10)}')
 
-    scil_viz_volume_screenshot.py $image ${prefix}_sag.png \
+    scil_viz_volume_screenshot $image ${prefix}_sag.png \
         --slices \$mid_slice --axis sagittal \
         --overlays $wmmask $gmmask $csfmask \
         --overlays_as_contours \
@@ -61,7 +61,7 @@ process QC_SCREENSHOT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list --disable-pip-version-check --no-python-version-warning | grep scilpy | tr -s ' ' | cut -d ' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d ' ' -f2)
     END_VERSIONS
     """
     } else {
@@ -70,7 +70,7 @@ process QC_SCREENSHOT {
     size=\$(mrinfo $image -size)
     mid_slice=\$(echo \$size | awk '{print int((\$3 + 1) / 2)}')
 
-    scil_viz_volume_screenshot.py $image ${prefix}_ax.png \
+    scil_viz_volume_screenshot $image ${prefix}_ax.png \
         --slices \$mid_slice --axis axial \
         --labelmap $labels \
         --labelmap_cmap_name $cmap \
@@ -79,7 +79,7 @@ process QC_SCREENSHOT {
     # Fetch middle coronal slice.
     mid_slice=\$(echo \$size | awk '{print int((\$2 + 1) / 2)}')
 
-    scil_viz_volume_screenshot.py $image ${prefix}_cor.png \
+    scil_viz_volume_screenshot $image ${prefix}_cor.png \
         --slices \$mid_slice --axis coronal \
         --labelmap $labels \
         --labelmap_cmap_name $cmap \
@@ -88,7 +88,7 @@ process QC_SCREENSHOT {
     # Fetch middle sagittal slice.
     mid_slice=\$(echo \$size | awk '{print int((\$1 + 1) / 2)}')
 
-    scil_viz_volume_screenshot.py $image ${prefix}_sag.png \
+    scil_viz_volume_screenshot $image ${prefix}_sag.png \
         --slices \$mid_slice --axis sagittal \
         --labelmap $labels \
         --labelmap_cmap_name $cmap \
@@ -99,7 +99,7 @@ process QC_SCREENSHOT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list --disable-pip-version-check --no-python-version-warning | grep scilpy | tr -s ' ' | cut -d ' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d ' ' -f2)
     END_VERSIONS
     """
     }
@@ -109,24 +109,24 @@ process QC_SCREENSHOT {
 
     if ( !labels ) {
     """
-    scil_viz_volume_screenshot.py -h
+    scil_viz_volume_screenshot -h
 
     touch ${prefix}_tissue_segmentation_mqc.png
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list --disable-pip-version-check --no-python-version-warning | grep scilpy | tr -s ' ' | cut -d ' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d ' ' -f2)
     END_VERSIONS
     """
     } else {
     """
-    scil_viz_volume_screenshot.py -h
+    scil_viz_volume_screenshot -h
 
     touch ${prefix}_labels_mqc.png
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list --disable-pip-version-check --no-python-version-warning | grep scilpy | tr -s ' ' | cut -d ' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d ' ' -f2)
     END_VERSIONS
     """
     }

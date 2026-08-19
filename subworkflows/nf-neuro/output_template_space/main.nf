@@ -138,8 +138,15 @@ workflow OUTPUT_TEMPLATE_SPACE {
 
     // ** Register the subject to the template space ** //
     ch_registration = ch_anat
-        | combine(params.use_template_t2w ? ch_t2w_tpl : ch_t1w_tpl)
-        | map{ meta, anat, tpl -> tuple(meta, tpl, anat, []) }
+        | combine(ch_t1w_tpl)
+        | combine(ch_t2w_tpl)
+        | map{ meta, anat, t1, t2 ->
+            if ( anat.name.contains("T2w") ) {
+                tuple(meta, t2, anat, [])
+            } else {
+                tuple(meta, t1, anat, [])
+            }
+        }
 
     REGISTRATION_ANTS ( ch_registration )
     ch_versions = ch_versions.mix(REGISTRATION_ANTS.out.versions)
@@ -150,49 +157,44 @@ workflow OUTPUT_TEMPLATE_SPACE {
     // ** [ tuple(meta, [ file1, file2, ... ]) ] ** //
     // ** Need to unpack the files and apply the transformation to each one ** //
     ch_files_to_transform = ch_nifti_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_image_transform)
     WARPIMAGES ( ch_files_to_transform )
     ch_versions = ch_versions.mix(WARPIMAGES.out.versions)
 
     // ** Same process for the rgb files ** //
     ch_rgb_to_transform = ch_rgb_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_image_transform)
     WARPRGB ( ch_rgb_to_transform )
     ch_versions = ch_versions.mix(WARPRGB.out.versions)
 
     // ** Same process for the masks ** //
     ch_masks_to_transform = ch_mask_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_image_transform)
     WARPMASK ( ch_masks_to_transform )
     ch_versions = ch_versions.mix(WARPMASK.out.versions)
 
     // ** Same process for the labels ** //
     ch_labels_to_transform = ch_labels_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.warp)
-        | join(REGISTRATION_ANTS.out.affine)
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_image_transform)
     WARPLABELS ( ch_labels_to_transform )
     ch_versions = ch_versions.mix(WARPLABELS.out.versions)
 
     // ** Apply the transformation to the tractograms ** //
     ch_tractograms_to_transform = ch_trk_files
-        | join(REGISTRATION_ANTS.out.image)
-        | join(REGISTRATION_ANTS.out.inverse_warp)
-        | join(REGISTRATION_ANTS.out.affine)
-        | map{ meta, trk, image, warp, affine ->
+        | join(REGISTRATION_ANTS.out.image_warped)
+        | join(REGISTRATION_ANTS.out.forward_tractogram_transform)
+        | map{ meta, trk, image, transforms ->
             // Calculate memory based on tractogram files size
             def trk_files = [trk].flatten()
             def total_size = trk_files.collect { it.size() }.sum()
             def mem = ((8L * 1024 * 1024 * 1024) + (total_size * 10.0))
 
             // Return with memory in meta
-            tuple(meta + [mem: mem as long], image, affine, trk, [], warp)
+            tuple(meta + [mem: mem as long], trk, [], image, transforms)
         }
 
     REGISTRATION_TRACTOGRAM ( ch_tractograms_to_transform )
@@ -201,7 +203,7 @@ workflow OUTPUT_TEMPLATE_SPACE {
     emit:
         ch_t1w_tpl                  = ch_t1w_tpl                                        // channel: [ tpl-T1w ]
         ch_t2w_tpl                  = ch_t2w_tpl                                        // channel: [ tpl-T2w ]
-        ch_registered_anat          = REGISTRATION_ANTS.out.image                       // channel: [ val(meta), [ image ] ]
+        ch_registered_anat          = REGISTRATION_ANTS.out.image_warped                // channel: [ val(meta), [ image ] ]
         ch_warped_nifti_files       = WARPIMAGES.out.warped_image                       // channel: [ val(meta), [ warped_image ] ]
         ch_rgb_nifti_files          = WARPRGB.out.warped_image                          // channel: [ val(meta), [ warped_rgb ] ]
         ch_warped_mask_files        = WARPMASK.out.warped_image                         // channel: [ val(meta), [ warped_mask ] ]

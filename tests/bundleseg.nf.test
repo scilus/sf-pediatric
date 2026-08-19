@@ -26,15 +26,19 @@ nextflow_pipeline {
         then {
             // stable name: All files + folders in ${params.outdir}/ with a stable name.
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore:  ['pipeline_info/*.{html,json,txt}'])
+            // TemplateFlow output.
+            def tfl_name = getAllFilesFromDir("$outputDir/../templateflow/", relative: true, includeDir: true)
             assertAll {
                 assert workflow.success
                 assert snapshot(
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf_pediatric_software_mqc_versions.yml"),
                     // All stable name.
-                    stable_name
+                    stable_name,
+                    // TemplateFlow output.
+                    tfl_name
                 ).match()
             }
         }

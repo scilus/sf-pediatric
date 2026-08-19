@@ -2,7 +2,7 @@ process QC_TRACTOGRAM {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.2.1'
+    container 'scilus/scilus:2.2.2'
 
     input:
         tuple val(meta), path(tractogram), path(wm), path(gm)
@@ -20,23 +20,13 @@ process QC_TRACTOGRAM {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def sh_basis = task.ext.sh_basis ? "--sh_basis ${task.ext.sh_basis}" : ''
-    def sphere = task.ext.sphere ? "--sphere ${task.ext.sphere}" : ''
-    def sh_order = task.ext.sh_order ? "--sh_order ${task.ext.sh_order}" : ''
-    def normalize_per_voxel = task.ext.normalize_per_voxel ? "--normalize_per_voxel" : ''
-    def smooth_todi = task.ext.smooth_todi ? "--smooth_todi" : ''
-    def asymmetric = task.ext.asymmetric ? "--asymmetric" : ''
-    def n_steps = task.ext.n_steps ? "--n_steps ${task.ext.n_steps}" : ''
 
     """
     scil_tractogram_count_streamlines $tractogram --print_count_alone > ${prefix}__sc.txt
 
-    # Computing TODI.
-    scil_tractogram_compute_TODI $tractogram \
-        --out_mask ${prefix}__tractogram_mask.nii.gz \
-        --out_tdi ${prefix}__TDI.nii.gz \
-        $sh_basis $sphere $sh_order $normalize_per_voxel \
-        $smooth_todi $asymmetric $n_steps
+    # Computing TDI.
+    scil_tractogram_compute_density_map $tractogram ${prefix}__TDI.nii.gz
+    scil_volume_math lower_threshold ${prefix}__TDI.nii.gz 0 ${prefix}__tractogram_mask.nii.gz
 
     # Computing DICE score.
     scil_volume_pairwise_comparison $wm ${prefix}__tractogram_mask.nii.gz \
@@ -103,7 +93,7 @@ process QC_TRACTOGRAM {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     def values = meta.values() as List
-    prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
+    //prefix = values.size() > 1 ? "${meta.id}_${values[1]}" : meta.id
 
     """
     touch ${prefix}__tractogram_mask.nii.gz
@@ -113,7 +103,8 @@ process QC_TRACTOGRAM {
     touch ${prefix}__coverage_overlay_mqc.png
 
     scil_tractogram_count_streamlines -h
-    scil_tractogram_compute_TODI -h
+    scil_tractogram_compute_density_map -h
+    scil_volume_math -h
     scil_volume_pairwise_comparison -h
     scil_viz_volume_screenshot -h
 

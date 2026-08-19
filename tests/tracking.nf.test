@@ -17,7 +17,6 @@ nextflow_pipeline {
 
                 params.tracking = true
                 params.run_freewater = true
-                params.run_noddi = true
             }
         }
 
@@ -30,7 +29,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf_pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()
@@ -49,8 +48,11 @@ nextflow_pipeline {
                 params.dti_max_shell_value = 1500
 
                 params.tracking = true
-                params.skip_dwi_preprocessing = true
-
+                params.run_dwi_denoising = false
+                params.run_dwi_degibbs = false
+                params.run_dwi_topup = false
+                params.run_dwi_eddy = false
+                params.run_dwi_n4 = false
             }
         }
 
@@ -63,7 +65,7 @@ nextflow_pipeline {
                     // Number of successfully completed tasks
                     workflow.trace.succeeded().size(),
                     // Remove the nextflow version from the versions.yml because we test it using different nextflow versions.
-                    removeNextflowVersion("$outputDir/pipeline_info/sf-pediatric_software_mqc_versions.yml"),
+                    removeNextflowVersion("$outputDir/pipeline_info/sf_pediatric_software_mqc_versions.yml"),
                     // All stable name.
                     stable_name
                 ).match()
@@ -105,7 +107,7 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("ERROR: Age is not entered correctly in the participants.tsv file. Please validate.")
+            assert workflow.stdout.contains("ERROR: Age not found for participant sub-test1 in participants.tsv file. Please validate.")
         }
     }
 

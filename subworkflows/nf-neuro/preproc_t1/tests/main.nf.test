@@ -3,26 +3,32 @@ nextflow_workflow {
     name "Test Subworkflow PREPROC_T1"
     script "../main.nf"
     workflow "PREPROC_T1"
+    config "./nextflow.config"
 
     tag "subworkflows"
-    tag "subworkflows_nfcore"
+    tag "subworkflows_nfneuro"
     tag "subworkflows/preproc_t1"
 
     tag "denoising/nlmeans"
     tag "preproc/n4"
     tag "image/resample"
     tag "betcrop/antsbet"
-    tag "betcrop/synthbet"
+    tag "betcrop/synthstrip"
     tag "image/cropvolume"
 
+    tag "subworkflows/utils_options"
+
     tag "load_test_data"
+
+    tag "stub"
+    options "-stub-run"
 
     setup {
         run("LOAD_TEST_DATA", alias: "LOAD_DATA") {
             script "../../load_test_data/main.nf"
             process {
                 """
-                input[0] = Channel.from( [ "antsbet.zip" , "T1w.zip" ] )
+                input[0] = channel.from( [ "antsbet.zip" , "T1w.zip" ] )
                 input[1] = "test.load-test-data"
                 """
             }
@@ -30,7 +36,6 @@ nextflow_workflow {
     }
 
     test("preproc_t1_antsbet_error") {
-        config "./nextflow.config"
         when {
             workflow {
                 """
@@ -41,27 +46,33 @@ nextflow_workflow {
                     }
                 input[0] = ch_split_test_data.t1w.map{
                     test_data_directory -> [
-                        [ id:'test', single_end:false ],
+                        [ id:'test' ],
                         file("\${test_data_directory}/T1w.nii.gz")
                     ]}
-                input[1] = Channel.empty()
-                input[2] = Channel.empty()
-                input[3] = Channel.empty()
-                input[4] = Channel.empty()
-                input[5] = Channel.empty()
-                input[6] = Channel.empty()
-                input[7] = Channel.empty()
+                input[1] = channel.empty()
+                input[2] = channel.empty()
+                input[3] = channel.empty()
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = channel.empty()
+                input[7] = channel.empty()
+                input[8] = [
+                    "preproc_t1_run_denoising": true,
+                    "preproc_t1_run_N4": true,
+                    "preproc_t1_run_resampling": true,
+                    "preproc_t1_run_ants_bet": true,
+                    "preproc_t1_run_synthstrip": false,
+                    "preproc_t1_run_crop": true
+                ]
                 """
             }
         }
-
         then {
             assert workflow.failed
         }
     }
 
     test("preproc_t1_antsbet") {
-        config "./nextflow.config"
         when {
             workflow {
                 """
@@ -72,49 +83,60 @@ nextflow_workflow {
                     }
                 input[0] = ch_split_test_data.t1w.map{
                     test_data_directory -> [
-                        [ id:'test', single_end:false ],
+                        [ id:'test' ],
                         file("\${test_data_directory}/T1w.nii.gz")
                     ]}
                 input[1] = ch_split_test_data.antsbet.map{
                     test_data_directory -> [
-                        [ id:'test', single_end:false ],
+                        [ id:'test' ],
                         file("\${test_data_directory}/t1_template.nii.gz")
                     ]}
                 input[2] = ch_split_test_data.antsbet.map{
                     test_data_directory -> [
-                        [ id:'test', single_end:false ],
+                        [ id:'test' ],
                         file("\${test_data_directory}/t1_brain_probability_map.nii.gz"),
                     ]}
-                input[3] = Channel.empty()
-                input[4] = Channel.empty()
-                input[5] = Channel.empty()
-                input[6] = Channel.empty()
-                input[7] = Channel.empty()
+                input[3] = channel.empty()
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = channel.empty()
+                input[7] = channel.empty()
+                input[8] = [
+                    "preproc_t1_run_denoising": true,
+                    "preproc_t1_run_N4": true,
+                    "preproc_t1_run_resampling": true,
+                    "preproc_t1_run_ants_bet": true,
+                    "preproc_t1_run_synthstrip": false,
+                    "preproc_t1_run_crop": true
+                ]
                 """
             }
         }
-
         then {
             assertAll(
                 { assert workflow.success},
                 { assert snapshot(
-                    niftiMD5SUM(workflow.out.image_nlmeans.get(0).get(1)),
-                    niftiMD5SUM(workflow.out.image_N4.get(0).get(1)),
-                    niftiMD5SUM(workflow.out.image_resample.get(0).get(1)),
-                    file(workflow.out.image_bet.get(0).get(1)).name,
-                    file(workflow.out.mask_bet.get(0).get(1)).name,
-                    file(workflow.out.crop_box.get(0).get(1)).name,
-                    file(workflow.out.mask_final.get(0).get(1)).name,
-                    file(workflow.out.t1_final.get(0).get(1)).name,
-                    workflow.out.versions
-                ).match()}
+                    workflow.out
+                        .findAll{ channel -> !channel.key.isInteger() && channel.value  }
+                        .collectEntries{ channel ->
+                            [(channel.key): ["versions"].contains(channel.key)
+                                ? channel.value
+                                : channel.value.collect{ subject ->
+                                    [ subject[0] ] + subject[1..-1].collect{ entry -> entry ? file(entry).name : "" }
+                            } ]
+                        }
+                ).match() },
+                { assert workflow.out
+                    .findAll{ !it.key.isInteger() }
+                    .every{ channel ->
+                        channel.value.every{ subject -> subject instanceof ArrayList
+                            ? subject.every()
+                            : subject } } }
             )
         }
     }
 
-    test("preproc_t1_synthbet") {
-        config "./nextflow_synthbet.config"
-
+    test("preproc_t1_synthstrip") {
         when {
             workflow {
                 """
@@ -125,41 +147,52 @@ nextflow_workflow {
                     }
                 input[0] = ch_split_test_data.t1w.map{
                     test_data_directory -> [
-                        [ id:'test', single_end:false ],
+                        [ id:'test' ],
                         file("\${test_data_directory}/T1w.nii.gz")
                     ]}
-                input[1] = Channel.empty()
-                input[2] = Channel.empty()
-                input[3] = Channel.empty()
-                input[4] = Channel.empty()
-                input[5] = Channel.empty()
-                input[6] = Channel.empty()
-                input[7] = Channel.empty()
+                input[1] = channel.empty()
+                input[2] = channel.empty()
+                input[3] = channel.empty()
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = channel.empty()
+                input[7] = channel.empty()
+                input[8] = [
+                    "preproc_t1_run_denoising": true,
+                    "preproc_t1_run_N4": true,
+                    "preproc_t1_run_resampling": true,
+                    "preproc_t1_run_ants_bet": false,
+                    "preproc_t1_run_synthstrip": true,
+                    "preproc_t1_run_crop": true
+                ]
                 """
             }
         }
-
         then {
             assertAll(
                 { assert workflow.success},
                 { assert snapshot(
-                    niftiMD5SUM(workflow.out.image_nlmeans.get(0).get(1)),
-                    niftiMD5SUM(workflow.out.image_N4.get(0).get(1)),
-                    niftiMD5SUM(workflow.out.image_resample.get(0).get(1)),
-                    niftiMD5SUM(workflow.out.image_bet.get(0).get(1)),
-                    niftiMD5SUM(workflow.out.mask_bet.get(0).get(1)),
-                    workflow.out.crop_box,
-                    niftiMD5SUM(workflow.out.mask_final.get(0).get(1)),
-                    niftiMD5SUM(workflow.out.t1_final.get(0).get(1)),
-                    workflow.out.versions
-                ).match()}
+                    workflow.out
+                        .findAll{ channel -> !channel.key.isInteger() && channel.value  }
+                        .collectEntries{ channel ->
+                            [(channel.key): ["versions"].contains(channel.key)
+                                ? channel.value
+                                : channel.value.collect{ subject ->
+                                    [ subject[0] ] + subject[1..-1].collect{ entry -> entry ? file(entry).name : "" }
+                            } ]
+                        }
+                ).match() },
+                { assert workflow.out
+                    .findAll{ !it.key.isInteger() }
+                    .every{ channel ->
+                        channel.value.every{ subject -> subject instanceof ArrayList
+                            ? subject.every()
+                            : subject } } }
             )
         }
     }
 
     test("preproc_t1_quick") {
-        config "./nextflow_quick.config"
-
         when {
             workflow {
                 """
@@ -170,31 +203,55 @@ nextflow_workflow {
                     }
                 input[0] = ch_split_test_data.t1w.map{
                     test_data_directory -> [
-                        [ id:'test', single_end:false ],
+                        [ id:'test' ],
                         file("\${test_data_directory}/T1w.nii.gz")
                     ]}
-                input[1] = Channel.empty()
-                input[2] = Channel.empty()
-                input[3] = Channel.empty()
-                input[4] = Channel.empty()
-                input[5] = Channel.empty()
-                input[6] = Channel.empty()
-                input[7] = Channel.empty()
+                input[1] = channel.empty()
+                input[2] = channel.empty()
+                input[3] = channel.empty()
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = channel.empty()
+                input[7] = channel.empty()
+                input[8] = [
+                    "preproc_t1_run_denoising": true,
+                    "preproc_t1_run_N4": false,
+                    "preproc_t1_run_resampling": true,
+                    "preproc_t1_run_ants_bet": false,
+                    "preproc_t1_run_synthstrip": false,
+                    "preproc_t1_run_crop": true
+                ]
                 """
             }
         }
-
         then {
             assertAll(
                 { assert workflow.success },
-                { assert snapshot(workflow.out).match() }
+                { assert snapshot(
+                    workflow.out
+                        .findAll{ channel -> !channel.key.isInteger() && channel.value  }
+                        .collectEntries{ channel ->
+                            [(channel.key): ["versions"].contains(channel.key)
+                                ? channel.value
+                                : channel.value.collect{ subject ->
+                                    [ subject[0] ] + subject[1..-1].collect{ entry -> entry ? file(entry).name : "" }
+                            } ]
+                        }
+                ).match() },
+                { assert workflow.out
+                    .findAll{ !it.key.isInteger() }
+                    .every{ channel -> ["image_N4",
+                                        "image_bet",
+                                        "mask_bet"].contains(channel.key)
+                        ? channel.value.size() == 0
+                        : channel.value.every{ subject -> subject instanceof ArrayList
+                            ? subject.every()
+                            : subject } } }
             )
         }
     }
 
     test("preproc_t1_skip_all") {
-        config "./nextflow_skip_all.config"
-
         when {
             workflow {
                 """
@@ -205,24 +262,53 @@ nextflow_workflow {
                     }
                 input[0] = ch_split_test_data.t1w.map{
                     test_data_directory -> [
-                        [ id:'test', single_end:false ],
+                        [ id:'test' ],
                         file("\${test_data_directory}/T1w.nii.gz")
                     ]}
-                input[1] = Channel.empty()
-                input[2] = Channel.empty()
-                input[3] = Channel.empty()
-                input[4] = Channel.empty()
-                input[5] = Channel.empty()
-                input[6] = Channel.empty()
-                input[7] = Channel.empty()
+                input[1] = channel.empty()
+                input[2] = channel.empty()
+                input[3] = channel.empty()
+                input[4] = channel.empty()
+                input[5] = channel.empty()
+                input[6] = channel.empty()
+                input[7] = channel.empty()
+                input[8] = [
+                    "preproc_t1_run_denoising": false,
+                    "preproc_t1_run_N4": false,
+                    "preproc_t1_run_resampling": false,
+                    "preproc_t1_run_ants_bet": false,
+                    "preproc_t1_run_synthstrip": false,
+                    "preproc_t1_run_crop": false
+                ]
                 """
             }
         }
-
         then {
             assertAll(
                 { assert workflow.success },
-                { assert snapshot(workflow.out).match() }
+                { assert snapshot(
+                    workflow.out
+                        .findAll{ channel -> !channel.key.isInteger() && channel.value  }
+                        .collectEntries{ channel ->
+                            [(channel.key): ["versions"].contains(channel.key)
+                                ? channel.value
+                                : channel.value.collect{ subject ->
+                                    [ subject[0] ] + subject[1..-1].collect{ entry -> entry ? file(entry).name : "" }
+                            } ]
+                        }
+                ).match() },
+                { assert workflow.out
+                    .findAll{ !it.key.isInteger() }
+                    .every{ channel -> ["image_nlmeans",
+                                        "image_N4",
+                                        "image_resample",
+                                        "image_bet",
+                                        "mask_bet",
+                                        "crop_box"].contains(channel.key)
+                        ? channel.value.size() == 0
+                        : channel.value.every{ subject -> subject instanceof ArrayList
+                            ? subject.every()
+                            : subject } } }
             )
         }
     }

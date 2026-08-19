@@ -1,0 +1,1647 @@
+//
+// Subworkflow with functionality specific to the scilus/sf_pediatric pipeline
+//
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+include { UTILS_NFSCHEMA_PLUGIN             } from '../../nf-core/utils_nfschema_plugin'
+include { paramsSummaryMap                  } from 'plugin/nf-schema'
+include { samplesheetToList                 } from 'plugin/nf-schema'
+include { paramsHelp                        } from 'plugin/nf-schema'
+include { completionEmail                   } from '../../nf-core/utils_nfcore_pipeline'
+include { completionSummary                 } from '../../nf-core/utils_nfcore_pipeline'
+include { UTILS_NFCORE_PIPELINE             } from '../../nf-core/utils_nfcore_pipeline'
+include { UTILS_NEXTFLOW_PIPELINE           } from '../../nf-core/utils_nextflow_pipeline'
+include { fromBIDS                          } from 'plugin/nf-bids'
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SUBWORKFLOW TO INITIALISE PIPELINE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+workflow PIPELINE_INITIALISATION {
+
+    take:
+    version           // boolean: Display version and exit
+    validate_params   // boolean: Boolean whether to validate parameters against the schema at runtime
+    monochrome_logs   // boolean: Do not use coloured log outputs
+    nextflow_cli_args //   array: List of positional nextflow CLI args
+    outdir            //  string: The output directory where the results will be saved
+    input_bids        //  string: Path to input samplesheet
+    help              // boolean: Display help message and exit
+    help_full         // boolean: Show the full help message
+    show_hidden       // boolean: Show hidden parameters in the help message
+
+    main:
+
+    ch_versions = channel.empty()
+
+    //
+    // Check if the gpu profile is used and validate if a gpu type is provided.
+    //
+    if ( workflow.profile.contains('gpu') && !params.gpu_type ) {
+        error "ERROR: The 'gpu' profile is used but no GPU type is provided. Please provide a GPU type using --gpu_type."
+    }
+
+    //
+    // Print version and exit if required and dump pipeline parameters to JSON file
+    //
+    UTILS_NEXTFLOW_PIPELINE (
+        version,
+        true,
+        outdir,
+        workflow.profile.tokenize(',').intersect(['conda', 'mamba']).size() >= 1
+    )
+
+    //
+    // Validate parameters and generate parameter summary to stdout
+    //
+
+    def before_text = ""
+    def after_text = ""
+    if (monochrome_logs) {
+        before_text = before_text.replaceAll(/\033\[[0-9;]*m/, '')
+    }
+
+    command = "nextflow run ${workflow.manifest.name} -profile <tracking,docker,...> --input <BIDS_folder> --outdir <OUTDIR>"
+
+    UTILS_NFSCHEMA_PLUGIN (
+        workflow,
+        validate_params,
+        null,
+        help,
+        help_full,
+        show_hidden,
+        before_text,
+        after_text,
+        command,
+        false
+    )
+
+    //
+    // Check config provided to the pipeline
+    //
+    UTILS_NFCORE_PIPELINE (
+        nextflow_cli_args
+    )
+
+    //
+    // Some sanity checks for required inputs.
+    //
+    if (!input_bids && ( params.segmentation || params.tracking ) ) {
+        error "ERROR: Missing input BIDS folder. Please provide a BIDS folder using --input."
+    }
+
+    //
+    // Ensure a participants.tsv file is present in the bids folder.
+    //
+    if ( ! file("$input_bids/participants.tsv").exists() && input_bids ) {
+        error "ERROR: Your bids dataset does not contain a participants.tsv file. " +
+        "Please provide a participants.tsv file with a column indicating the participants' " +
+        "age. For any questions, please refer to the documentation at " +
+        "https://scilus.github.io/sf-pediatric/ or open an issue!"
+    } else if ( input_bids ) {
+        // Copy to the output directory the participants file.
+        file("$input_bids/participants.tsv").copyTo(file("$outdir/participants.tsv"))
+    }
+
+    //
+    // Create channel from input file provided through params.input using nf-bids plugin
+    //
+    if ( input_bids ) {
+        // ** To support comma separated participant labels and list ** //
+        def participant_ids = params.participant_label ?
+            params.participant_label instanceof String ?
+            params.participant_label.tokenize(",") :
+            params.participant_label : []
+
+        ch_inputs = channel.fromBIDS(
+            input_bids,
+            "$projectDir/assets/nf-bids_config.yml",
+            [flatten_output: true,
+            unpack_json_sidecar: true]
+        )
+        .filter { item -> participant_ids.isEmpty() || item.meta.subject in participant_ids }
+        .flatMap { item ->
+            def id = item.meta.subject
+            def ses = item.meta.session == "NA" ? null : item.meta.session
+
+            // Age is already fetched from the participants.tsv file, flag subjects with missing age and exit.
+            def age = item.meta.age ? item.meta.age.toFloat() : 0.0
+            if ( age == 0.0 ) {
+                error "ERROR: Age not found for participant ${id}${ses ? " and session " + ses : ""} in participants.tsv file. Please validate."
+            }
+            // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
+            // ** Setting to a minimum of 0.04 (~ 2 weeks) to avoid negative values for the priors prediction ** //
+            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
+            def priors = fetchPriors(age)
+
+            // ** Instantiate a variable that will collect prints related to BIDS file matching ** //
+            // ** to be printed in a log file later                                             ** //
+            def logs = []
+
+            // DWI and associated files
+            def dwi = item.dwi?.nii ?: []
+            def dwi_json = item.dwi?.json ?: []
+            def dwi_bval = item.dwi?.bval ?: []
+            def dwi_bvec = item.dwi?.bvec ?: []
+
+            // DWI AP/PA
+            def dwi_ap = item.dwi_full?.ap?.nii ?: []
+            def dwi_ap_json = item.dwi_full?.ap?.json ?: []
+            def dwi_ap_bval = item.dwi_full?.ap?.bval ?: []
+            def dwi_ap_bvec = item.dwi_full?.ap?.bvec ?: []
+            def dwi_pa = item.dwi_full?.pa?.nii ?: []
+            def dwi_pa_json = item.dwi_full?.pa?.json ?: []
+            def dwi_pa_bval = item.dwi_full?.pa?.bval ?: []
+            def dwi_pa_bvec = item.dwi_full?.pa?.bvec ?: []
+
+            // ** Figuring out which DWI to use for the pipeline ** //
+            // ** dwi should be mutually exclusive with dwi_ap and dwi_pa ** //
+            // ** but taking the PA/AP if available **//
+            def use_ap_pa = dwi_ap || dwi_pa
+            if ( dwi && use_ap_pa ) {
+                logs << "[${id}${ses ? "/" + ses : ""}] Both single DWI and AP/PA DWI found. Using AP/PA DWI " +
+                        "for processing. Use .bidsignore to override."
+            }
+
+            // Sbref
+            def sbref = item.sbref?.nii ?: []
+            def sbref_json = item.sbref?.json ?: []
+
+            // Sbref AP/PA
+            def sbref_ap = item.sbref_full?.ap?.nii ?: []
+            def sbref_ap_json = item.sbref_full?.ap?.json ?: []
+            def sbref_pa = item.sbref_full?.pa?.nii ?: []
+            def sbref_pa_json = item.sbref_full?.pa?.json ?: []
+
+            // EPI
+            def epi = item.epi?.nii ?: []
+            def epi_json = item.epi?.json ?: []
+
+            // EPI AP/PA
+            def epi_ap = item.epi_full?.ap?.nii ?: []
+            def epi_ap_json = item.epi_full?.ap?.json ?: []
+            def epi_pa = item.epi_full?.pa?.nii ?: []
+            def epi_pa_json = item.epi_full?.pa?.json ?: []
+
+            // T1w and T2w
+            // ** Note: we don't need the JSON files for T1w/T2w ** //
+            def t1w = item.T1w?.nii ?: []
+            def t2w = item.T2w?.nii ?: []
+
+            if ( t1w && t1w.size() > 1 ) {
+                logs << "[${id}${ses ? "/" + ses : ""}] Multiple T1w images found. Using the last one for processing. Use .bidsignore to override."
+                t1w = t1w[-1]
+            } else if ( t1w ) {
+                t1w = t1w[0]
+            }
+
+            if ( t2w && t2w.size() > 1) {
+                logs << "[${id}${ses ? "/" + ses : ""}] Multiple T2w images found. Using the last one for processing. Use .bidsignore to override."
+                t2w = t2w[-1]
+            } else if ( t2w ) {
+                t2w = t2w[0]
+            }
+
+            // ** Starting with AP/PA, look if there are multiple runs ** //
+            def files = []
+            if ( use_ap_pa ) {
+                // ** We might get only one of the two, so assume AP by default, if absent, use PA ** //
+                def primary_nii = []
+                def primary_json = []
+                def primary_bval = []
+                def primary_bvec = []
+                def reverse_nii = []
+                def reverse_json = []
+                def reverse_bval = []
+                def reverse_bvec = []
+                if (dwi_ap) {
+                    primary_nii = normalizeToList(dwi_ap)
+                    primary_json = normalizeToList(dwi_ap_json)
+                    primary_bval = normalizeToList(dwi_ap_bval)
+                    primary_bvec = normalizeToList(dwi_ap_bvec)
+                    reverse_nii = normalizeToList(dwi_pa)
+                    reverse_json = normalizeToList(dwi_pa_json)
+                    reverse_bval = normalizeToList(dwi_pa_bval)
+                    reverse_bvec = normalizeToList(dwi_pa_bvec)
+                } else {
+                    primary_nii = normalizeToList(dwi_pa)
+                    primary_json = normalizeToList(dwi_pa_json)
+                    primary_bval = normalizeToList(dwi_pa_bval)
+                    primary_bvec = normalizeToList(dwi_pa_bvec)
+                    reverse_nii = normalizeToList(dwi_ap)
+                    reverse_json = normalizeToList(dwi_ap_json)
+                    reverse_bval = normalizeToList(dwi_ap_bval)
+                    reverse_bvec = normalizeToList(dwi_ap_bvec)
+                }
+
+                primary_nii.eachWithIndex { nii, idx ->
+                    def run_id = extractRunFromFilename(nii) ?: (primary_nii.size() > 1 ? "${idx + 1}" : "")
+                    def rev_idx = findMatchingReverseFile(nii, reverse_nii)
+
+                    // ** Before mixing the AP/PA, check if the PhaseEncodingDirection are opposite ** //
+                    def pe_check = [matched: true, warnings: [], pe: null]
+                    if (rev_idx != null) {
+                        pe_check = areOppositePhaseEncoding(pe_check, primary_json[idx], reverse_json[rev_idx])
+                        if (!pe_check.matched) {
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] ${pe_check.warnings.join(" ")}"
+                        }
+                    }
+                    def readout = primary_json[idx]?.TotalReadoutTime ?: primary_json[idx]?.EstimatedTotalReadoutTime ?: params.dwi_susceptibility_readout
+
+                    // ** Finding possible sbref and epi candidates for this DWI run ** //
+                    def sbref_candidates = []
+                    [
+                        [sbref_ap, sbref_ap_json, "AP"], [sbref_pa, sbref_pa_json, "PA"], [sbref, sbref_json, "NA"]
+                    ].each { group ->
+                        def nii_list = normalizeToList(group[0])
+                        def json_list = normalizeToList(group[1])
+                        nii_list.eachWithIndex { snii, sidx ->
+                            sbref_candidates << [nii: snii, json: json_list[sidx], direction: group[2]]
+                        }
+                    }
+                    def epi_candidates = []
+                    [
+                        [epi_ap, epi_ap_json, "AP"], [epi_pa, epi_pa_json, "PA"], [epi, epi_json, "NA"]
+                    ].each { group ->
+                        def nii_list = normalizeToList(group[0])
+                        def json_list = normalizeToList(group[1])
+                        nii_list.eachWithIndex { enii, eidx ->
+                            epi_candidates << [nii: enii, json: json_list[eidx], direction: group[2]]
+                        }
+                    }
+
+                    // ** Inspecting the JSON metadata to find matches ** //
+                    def sbref_match = []
+                    sbref_candidates.each { candidate ->
+                        def match = matchFilesToDWI(
+                            primary_json[idx],
+                            nii,
+                            reverse_json[rev_idx] ?: [],
+                            reverse_nii[rev_idx] ?: [],
+                            candidate.json       // JSON file
+                        )
+
+                        if (match.matched) {
+                            sbref_match << [nii: candidate.nii, json: candidate.json]
+                        }
+                        match.warnings.each { w ->
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] WARN (sbref) ${w}"
+                        }
+                    }
+
+                    def epi_match = []
+                    epi_candidates.each { candidate ->
+                        def match = matchFilesToDWI(
+                            primary_json[idx],
+                            nii,
+                            reverse_json[rev_idx] ?: [],
+                            reverse_nii[rev_idx] ?: [],
+                            candidate.json       // JSON file
+                        )
+
+                        if (match.matched) {
+                            epi_match << [nii: candidate.nii, json: candidate.json]
+                        }
+                        match.warnings.each { w ->
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] WARN (epi) ${w}"
+                        }
+                    }
+
+                    if (!sbref_match && !epi_match) {
+                        logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] No matching sbref or epi found for this DWI run."
+                    }
+
+                    // ** Organize the matched sbref/epi files by alignment with main DWI PE ** //
+                    def sbref_split = splitByPEDirection(sbref_match, primary_json[idx])
+                    def epi_split = splitByPEDirection(epi_match, primary_json[idx])
+
+                    files << [
+                        [
+                            id: id, session: ses ?: "", run: run_id,
+                            readout: readout, pe: pe_check.pe,
+                            age: age,
+                            fa: priors.fa, ad: priors.ad,
+                            rd: priors.rd, md: priors.md,
+                            rd_min: priors.rd_min, rd_max: priors.rd_max
+                        ],
+                        t1w,
+                        t2w,
+                        nii,
+                        primary_bval[idx],
+                        primary_bvec[idx],
+                        rev_idx != null ? reverse_nii[rev_idx] : [],
+                        rev_idx != null ? reverse_bval[rev_idx] : [],
+                        rev_idx != null ? reverse_bvec[rev_idx] : [],
+                        sbref_split.same ? sbref_split.same[0].nii : [],
+                        sbref_split.opposite ? sbref_split.opposite[0].nii : [],
+                        epi_split.same ? epi_split.same[0].nii : [],
+                        epi_split.opposite ? epi_split.opposite[0].nii : [],
+                    ]
+                }
+            } else if (dwi) {
+                // ** In this case, we have a DWI without the dir- entity, but we may have runs ** //
+                def dwi_list = normalizeToList(dwi)
+                def dwi_json_list = normalizeToList(dwi_json)
+                def dwi_bval_list = normalizeToList(dwi_bval)
+                def dwi_bvec_list = normalizeToList(dwi_bvec)
+                dwi_list.eachWithIndex { nii, idx ->
+                    def run_id = extractRunFromFilename(nii) ?: (dwi_list.size() > 1 ? "${idx + 1}" : "")
+                    def readout = dwi_json_list[idx]?.TotalReadoutTime ?: dwi_json_list[idx]?.EstimatedTotalReadoutTime ?: params.dwi_susceptibility_readout
+                    def axisMap = [j: "y"]
+                    def pe = axisMap[dwi_json_list[idx]?.PhaseEncodingDirection]
+
+
+                    // ** Finding possible sbref and epi candidates for this DWI run ** //
+                    def sbref_candidates = []
+                    [
+                        [sbref_ap, sbref_ap_json, "AP"], [sbref_pa, sbref_pa_json, "PA"], [sbref, sbref_json, "NA"]
+                    ].each { group ->
+                        def nii_list = normalizeToList(group[0])
+                        def json_list = normalizeToList(group[1])
+                        nii_list.eachWithIndex { snii, sidx ->
+                            sbref_candidates << [nii: snii, json: json_list[sidx], direction: group[2]]
+                        }
+                    }
+
+                    def epi_candidates = []
+                    [
+                        [epi_ap, epi_ap_json, "AP"], [epi_pa, epi_pa_json, "PA"], [epi, epi_json, "NA"]
+                    ].each { group ->
+                        def nii_list = normalizeToList(group[0])
+                        def json_list = normalizeToList(group[1])
+                        nii_list.eachWithIndex { enii, eidx ->
+                            epi_candidates << [nii: enii, json: json_list[eidx], direction: group[2]]
+                        }
+                    }
+
+                    // ** Now matching them via the metadata ** //
+                    def sbref_match = []
+                    sbref_candidates.each { candidate ->
+                        def match = matchFilesToDWI(
+                            dwi_json_list[idx],
+                            nii,
+                            [],                     // No reverse file in this case
+                            [],
+                            candidate.json          // JSON file
+                        )
+
+                        if (match.matched) {
+                            sbref_match << [nii: candidate.nii, json: candidate.json]
+                        }
+                        match.warnings.each { w ->
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] WARN (sbref) ${w}"
+                        }
+                    }
+
+                    def epi_match = []
+                    epi_candidates.each { candidate ->
+                        def match = matchFilesToDWI(
+                            dwi_json_list[idx],
+                            nii,
+                            [],                     // No reverse file in this case
+                            [],
+                            candidate.json          // JSON file
+                        )
+
+                        if (match.matched) {
+                            epi_match << [nii: candidate.nii, json: candidate.json]
+                        }
+                        match.warnings.each { w ->
+                            logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] WARN (epi) ${w}"
+                        }
+                    }
+
+                    if (!sbref_match && !epi_match) {
+                        logs << "[${id}${ses ? "/" + ses : ""}${run_id ? '/run-' + run_id : ''}] No matching sbref or epi found for this DWI run."
+                    }
+
+                    // ** Organize by PE direction matching the PE of the main DWI file ** //
+                    def sbref_split = splitByPEDirection(sbref_match, dwi_json_list[idx])
+                    def epi_split = splitByPEDirection(epi_match, dwi_json_list[idx])
+
+                    files << [
+                        [
+                            id: id, session: ses ?: "", run: run_id,
+                            readout: readout, pe: pe,
+                            age: age,
+                            fa: priors.fa, ad: priors.ad,
+                            rd: priors.rd, md: priors.md,
+                            rd_min: priors.rd_min, rd_max: priors.rd_max
+                        ],
+                        t1w,
+                        t2w,
+                        nii,
+                        dwi_bval_list[idx],
+                        dwi_bvec_list[idx],
+                        [],
+                        [],
+                        [],
+                        sbref_split.same ? sbref_split.same[0].nii : [],
+                        sbref_split.opposite ? sbref_split.opposite[0].nii : [],
+                        epi_split.same ? epi_split.same[0].nii : [],
+                        epi_split.opposite ? epi_split.opposite[0].nii : []
+                    ]
+                }
+            } else {
+                files << [
+                    [
+                        id: id, session: ses ?: "", run: "",
+                        readout: "", pe: "",
+                        age: age,
+                        fa: priors.fa, ad: priors.ad,
+                        rd: priors.rd, md: priors.md,
+                        rd_min: priors.rd_min, rd_max: priors.rd_max
+                    ],
+                    t1w,
+                    t2w,
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                ]
+            }
+
+            // ** Save the logs into ${params.outdir}/pipeline_info/BIDS_logs.txt ** //
+            file("${params.outdir}/pipeline_info/BIDS_logs.txt") << logs.join("\n") + "\n"
+
+            // Add a check that b-values are within the params.dti_max_shell_value and params.fodf_min_shell_value, and if not, throw an error.
+            if ( files[0][4] && !params.dti_shells && !params.fodf_shells && params.tracking ) {
+
+                def bvals = file(files[0][4]).text.trim().split(/\s+/).findAll { it -> it }.collect { it -> it as Double }.toSet()
+                    .findAll { it -> !(it >= 0 - params.dwi_b0_threshold) || !(it <= 0 + params.dwi_b0_threshold) }
+
+                // Check if any values fits the threshold for DTI fitting (shells under the threshold)
+                def belowDTI = bvals.findAll { it -> it <= params.dti_max_shell_value }
+                if ( belowDTI.size() == 0) {
+                    error "ERROR: No b-values are below the dti_max_shell_value threshold of ${params.dti_max_shell_value} for subject ${id}. " +
+                        "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
+                        "Please check your acquisition protocol and provide the shells to use for DTI fitting using --dti_shells. " +
+                        "Alternatively, you can increase this threshold using --dti_max_shell_value."
+                }
+
+                // Check if any values fits the threshold for fODF fitting (shells over the threshold)
+                def aboveFODF = bvals.findAll { it -> it >= params.fodf_min_shell_value }
+                if ( aboveFODF.size() == 0) {
+                    error "ERROR: No b-values are above the fodf_min_shell_value threshold of ${params.fodf_min_shell_value} for subject ${id}. " +
+                        "Current protocol (excluding b0s) contains the following shells: ${bvals.join(', ')}. " +
+                        "Please check your acquisition protocol and provide the shells to use for fODF fitting using --fodf_shells. " +
+                        "Alternatively, you can decrease this threshold using --fodf_min_shell_value."
+                }
+            }
+
+            return files
+        }
+    } else {
+        ch_inputs = channel.empty()
+    }
+
+    emit:
+    input_bids      = ch_inputs
+    versions        = ch_versions
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SUBWORKFLOW FOR PIPELINE COMPLETION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+workflow PIPELINE_COMPLETION {
+
+    take:
+    email           //  string: email address
+    email_on_fail   //  string: email address sent on pipeline failure
+    plaintext_email // boolean: Send plain-text email instead of HTML
+    outdir          //    path: Path to output directory where results will be published
+    monochrome_logs // boolean: Disable ANSI colour codes in log output
+    multiqc_report  //  string: Path to MultiQC report
+
+    main:
+    summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def multiqc_reports = multiqc_report.toList()
+
+    //
+    // Completion email and summary
+    //
+    workflow.onComplete {
+        if (email || email_on_fail) {
+            completionEmail(
+                summary_params,
+                email,
+                email_on_fail,
+                plaintext_email,
+                outdir,
+                monochrome_logs,
+                multiqc_reports.getVal(),
+            )
+        }
+
+        completionSummary(monochrome_logs)
+
+        //
+        // ** Generate sidecar jsons for all files **
+        //
+        generateSidecarJson(outdir)
+    }
+
+    workflow.onError {
+        log.error "Pipeline failed. Please refer to troubleshooting docs for common issues: https://scilus.github.io/sf-pediatric/guides/troubleshooting/"
+    }
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    FUNCTIONS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+//
+// Function to format a list from null, string, or list.
+//
+def normalizeToList(value) {
+    if (value == null) return []
+    if (value instanceof List) return value
+    return [value]
+}
+
+//
+// Function to extract run number from a BIDS filename.
+//
+def extractRunFromFilename(filepath) {
+    def filename = filepath instanceof Path ? filepath.name : filepath.toString().split('/')[-1]
+    def matcher = (filename =~ /run-([a-zA-Z0-9]+)/)
+    return matcher ? matcher[0][1] : null
+}
+
+//
+// Function to find the matching reverse file in the case of DWI AP/PA
+//
+def findMatchingReverseFile(primaryFile, List reverseList) {
+    if (!reverseList) return null
+
+    def primaryRun = extractRunFromFilename(primaryFile)
+
+    // 1. match by run entity first
+    if (primaryRun) {
+        def match = reverseList.findIndexOf { rev ->
+            extractRunFromFilename(rev) == primaryRun
+        }
+        if (match >= 0) return match
+    }
+
+    // 2. If reverse has only one file, use it
+    if (reverseList.size() == 1) return 0
+
+    // 3. nothing to match at this point
+    return null
+}
+
+//
+// Function to assess whether phase encoding direction are opposite for a pair of JSON sidecar files
+//
+def areOppositePhaseEncoding(Map results, Map json1, Map json2) {
+    def pe1 = json1?.PhaseEncodingDirection
+    def pe2 = json2?.PhaseEncodingDirection
+
+    if (!pe1 || !pe2) {
+        results.warnings << "Missing PhaseEncodingDirection in one of the JSON sidecar files. Cannot determine if they are opposite."
+        results.matched = false
+        return results
+    }
+
+    // ** Currently only support j/j- pair ** //
+    def axis1 = pe1.replaceAll("-", "")
+    def axis2 = pe2.replaceAll("-", "")
+    if (axis1 != axis2) {
+        results.warnings << "PhaseEncodingDirection axes do not match: ${pe1} vs ${pe2}. Cannot determine if they are opposite."
+        results.matched = false
+    }
+
+    def neg1 = pe1.contains("-")
+    def neg2 = pe2.contains("-")
+    results.matched = (neg1 != neg2) ? true : false
+
+    // ** Convert j/j- into y/y- for clarity ** //
+    def axisMap = [j: "y"]
+    results.pe = axisMap[axis1]
+    if (results.pe == null) {
+        results.warnings << "PhaseEncodingDirection axes are not j/j- pair: ${pe1} vs ${pe2}. Cannot determine if they are opposite."
+        results.matched = false
+    }
+
+    return results
+}
+
+//
+// Function to match sbref and epi files to DWI
+//
+def matchFilesToDWI(Map dwiJson, dwiFilename, Map revJson, revFilename, Map assocJson) {
+    def result = [matched: false, warnings: []]
+
+    def dwiName = (dwiFilename instanceof Path ? dwiFilename.name :
+                  dwiFilename.toString().split('/')[-1])
+    def revName = (revFilename instanceof Path ? revFilename.name :
+                  revFilename.toString().split('/')[-1])
+
+    // Trying to find a match between B0FieldSource and B0FieldIdentifier
+    def dwiFieldSource = dwiJson?.B0FieldSource
+    def assocFieldId = assocJson?.B0FieldIdentifier
+
+    if (dwiFieldSource && assocFieldId) {
+        if (normalizeToList(dwiFieldSource).intersect(normalizeToList(assocFieldId))) {
+            result.matched = true
+        } else {
+            result.warnings << "B0FieldSource and B0FieldIdentifier do not match: ${dwiFieldSource} vs ${assocFieldId}. Cannot determine if they are opposite."
+            return result
+        }
+    }
+
+    // Checking the reverse association in case it happens
+    def dwiFieldId = dwiJson?.B0FieldIdentifier
+    def assocFieldSource = assocJson?.B0FieldSource
+
+    if (dwiFieldId && assocFieldSource) {
+        if (normalizeToList(dwiFieldId).intersect(normalizeToList(assocFieldSource))) {
+            result.matched = true
+        } else {
+            result.warnings << "B0FieldIdentifier and B0FieldSource do not match: ${dwiFieldId} vs ${assocFieldSource}. Cannot determine if they are opposite."
+            return result
+        }
+    }
+
+    // Check in the reverse DWI file, if present, for B0FieldSource and B0FieldIdentifier
+    if (revJson) {
+        def revFieldSource = revJson?.B0FieldSource
+        def revFieldId = revJson?.B0FieldIdentifier
+
+        if (revFieldSource && assocFieldId) {
+            if (normalizeToList(revFieldSource).intersect(normalizeToList(assocFieldId))) {
+                result.matched = true
+            } else {
+                result.warnings << "Reverse B0FieldSource and B0FieldIdentifier do not match: ${revFieldSource} vs ${assocFieldId}. Cannot determine if they are opposite."
+                return result
+            }
+        }
+
+        if (revFieldId && assocFieldSource) {
+            if (normalizeToList(revFieldId).intersect(normalizeToList(assocFieldSource))) {
+                result.matched = true
+            } else {
+                result.warnings << "Reverse B0FieldIdentifier and B0FieldSource do not match: ${revFieldId} vs ${assocFieldSource}. Cannot determine if they are opposite."
+                return result
+            }
+        }
+    }
+
+    // If no B0Field* are present, check for IntendedFor
+    def intendedFor = normalizeToList(assocJson?.IntendedFor)
+    if (intendedFor) {
+        def matches = intendedFor.any { target ->
+            def targetName = target.toString().replaceAll("^bids::", "").split('/')[-1]
+
+            // target name must match the DWI filename
+            return targetName == dwiName || targetName == revName
+        }
+
+        if ( matches ) {
+            result.matched = true
+        } else {
+            return result
+        }
+    }
+    return result
+}
+
+//
+// Function sort if matched sbref/epi files are the same direction as the main DWI or not.
+//
+def splitByPEDirection(List matches, Map dwiJson) {
+    def dwiPE = dwiJson?.PhaseEncodingDirection
+    def samePE = []
+    def oppositePE = []
+
+    matches.each { m ->
+        def assocPE = m.json?.PhaseEncodingDirection
+        if (!dwiPE || !assocPE) {
+            // Can't determine, so put in oppositePE for safety
+            oppositePE << m
+        } else if (arePEDirectionOpposite(dwiPE, assocPE)) {
+            oppositePE << m
+        } else {
+            samePE << m
+        }
+    }
+    return [same: samePE, opposite: oppositePE]
+}
+
+//
+// Small function to check if two PE strings are in the opposite direction
+//
+def arePEDirectionOpposite(String pe1, String pe2) {
+    def axis1 = pe1.replaceAll("-", "")
+    def axis2 = pe2.replaceAll("-", "")
+    if (axis1 != axis2) return false
+    return pe1.contains("-") != pe2.contains("-")
+}
+
+//
+// Fetch priors based on age using the following equations:
+//    FA = 0.753922 * exp(-0.117753 * exp(-1.486159 * age))
+//    AD = 0.001820 * age^-0.047373
+//    RD = 0.000432 * age^-0.095184
+//    MD = 0.004116 * (1 - exp(-(3243541.309087 * age)^0.012118)) **This is in ventricles, not 1-fiber population**
+//
+def fetchPriors(age) {
+    def fa = 0.753938 * Math.exp(-0.117902 * Math.exp(-1.491989 * age))
+    def ad = 0.001835 * Math.pow(age, -0.048725)
+    def rd = 0.000430 * Math.pow(age, -0.092705)
+    def md = 0.004116 * (1 - Math.exp(-Math.pow((3243541.309087 * age), 0.012118)))
+    def rd_min = 0.000159 * Math.pow(age, -0.276126)
+    def rd_max = 0 * Math.pow(age, 3) + -0.000002 * Math.pow(age, 2) + 0.000022 * age + 0.000776
+
+    // Return values as a map and round them.
+    return [fa: fa.round(2), ad: ad.round(5), rd: rd.round(6), md: md.round(5), rd_min: rd_min.round(6), rd_max: rd_max.round(6)]
+}
+
+//
+// Generating dataset_description.json file in output folder.
+//
+def generateDatasetJson() {
+    def jsonFile = "${params.outdir}/dataset_description.json"
+    def info = [
+        Name: "sf-pediatric derivatives",
+        BIDSVersion: "1.10.1",
+        DatasetType: "derivative",
+        GeneratedBy: [
+                [
+                Name: workflow.manifest.name,
+                Version: workflow.manifest.version,
+                Date: java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                Container: [
+                    Type: workflow.containerEngine ?: "NA",
+                ]
+            ]
+        ]
+    ]
+    file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(info))
+}
+
+//
+// Utils function to fetch a subject ID and session from a BIDS path.
+//
+def extractBidsInfo(filePath) {
+    def pathParts = filePath.toString().split('/')
+    def subjectId = pathParts.find { it -> it.startsWith('sub-') }
+    def sessionId = pathParts.find { it -> it.startsWith('ses-') }
+
+    return [ subject: subjectId, sessionId: sessionId != null ? sessionId + "/" : '' ]
+}
+
+//
+// Generating sidecar .json file in output folder.
+//
+def generateSidecarJson(outputDir) {
+    def niftiFiles = []
+
+    // Use Java NIO to recursively find files
+    def outputPath = java.nio.file.Paths.get(outputDir)
+    if (java.nio.file.Files.exists(outputPath)) {
+        java.nio.file.Files.walk(outputPath)
+            .filter { path -> path.toString().endsWith('.nii.gz') }
+            .forEach { path -> niftiFiles.add(path.toFile()) }
+    }
+
+    niftiFiles.each { niftiFile ->
+
+        // ** Extract sub ID and session ID for the file ** //
+        def bidsInfo = extractBidsInfo(niftiFile)
+        def jsonFile = niftiFile.toString().replace('.nii.gz', '.json')
+
+        if (niftiFile.name.contains("T1w.nii.gz")) {
+            def links = []
+
+            def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*T1w.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                }
+            }
+
+            if (niftiFile.name.contains("space-DWI")) {
+                def transforms = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                    .findAll { f ->
+                        f.name.contains("to-dwi")
+                    }
+
+                def transformsList = transforms instanceof List ? transforms : [transforms]
+                transformsList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                    }
+                }
+            }
+            if (niftiFile.name.contains("space-T2w")) {
+                def transforms = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                    .findAll { f ->
+                        f.name.contains("T1w_to-T2w")
+                    }
+                def transformsList = transforms instanceof List ? transforms : [transforms]
+                transformsList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                    }
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                SkullStripped: true
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+            }
+
+        if (niftiFile.name.contains("T2w.nii.gz")) {
+            def links = []
+
+            def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*T2w.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                }
+            }
+
+            if (niftiFile.name.contains("space-DWI")) {
+                def transforms = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                    .findAll { f ->
+                        f.name.contains("to-dwi")
+                    }
+                def transformsList = transforms instanceof List ? transforms : [transforms]
+                transformsList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                    }
+                }
+            }
+            if (niftiFile.name.contains("space-T1w")) {
+                def transforms = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                    .findAll { f ->
+                        f.name.contains("T2w_to-T1w")
+                    }
+                def transformsList = transforms instanceof List ? transforms : [transforms]
+                transformsList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                    }
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                SkullStripped: true
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+
+        if (niftiFile.name.contains("brain_mask.nii.gz")) {
+            def links = []
+
+            if (niftiFile.name.contains("dwi")) {
+                def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*dwi.nii.gz")
+                def fileList = fileNames instanceof List ? fileNames : [fileNames]
+                fileList.each { f ->
+                    if (f.exists()) {
+                        links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}dwi/${f.name}")
+                    }
+                }
+            } else {
+                def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*{T1w,T2w}.nii.gz")
+                def fileList = fileNames instanceof List ? fileNames : [fileNames]
+                fileList.each { f ->
+                    if (f.exists()) {
+                        links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                    }
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                Type: "Brain"
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+
+        if (niftiFile.name.contains("DK_dseg.nii.gz")) {
+            def links = []
+
+            def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*T2w.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                }
+            }
+
+            def preprocFiles = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*preproc_T2w.nii.gz")
+            def preprocList = preprocFiles instanceof List ? preprocFiles : [preprocFiles]
+            preprocList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                }
+            }
+
+            if (niftiFile.name.contains("space-DWI")) {
+                def transforms = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                    .findAll { f ->
+                        f.name.contains("to-dwi")
+                    }
+                def transformsList = transforms instanceof List ? transforms : [transforms]
+                transformsList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                    }
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                Type: "Segmentation",
+                Description: "Desikan-Killiany Atlas segmentation"
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+
+        if (niftiFile.name.contains("BrainnetomeChild_dseg")) {
+            def links = []
+            def dilated = niftiFile.name.contains("dilated") ? " (dilated)" : ""
+
+            def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*{T1w,T2w}.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                }
+            }
+
+            def preprocFiles = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*preproc_{T1w,T2w}.nii.gz")
+            def preprocList = preprocFiles instanceof List ? preprocFiles : [preprocFiles]
+            preprocList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                }
+            }
+
+            if (niftiFile.name.contains("space-DWI")) {
+                def transforms = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                    .findAll { f ->
+                        f.name.contains("to-dwi")
+                    }
+                def transformsList = transforms instanceof List ? transforms : [transforms]
+                transformsList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                    }
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                Type: "Segmentation",
+                Description: "Brainnetome Child Atlas segmentation${dilated}"
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+
+        if (niftiFile.name.contains("label")) {
+            def links = []
+
+            def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*{T1w,T2w}.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                }
+            }
+
+            def preprocFiles = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}anat/*space-DWI_preproc_{T1w,T2w}.nii.gz")
+            def preprocList = preprocFiles instanceof List ? preprocFiles : [preprocFiles]
+            preprocList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}anat/${f.name}")
+                }
+            }
+
+            def transforms = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                .findAll { f ->
+                    f.name.contains("to-dwi")
+                }
+            def transformsList = transforms instanceof List ? transforms : [transforms]
+            transformsList.each { f ->
+            if (f.exists()) {
+                links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                Type: "Segmentation"
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+
+        if (niftiFile.name.contains("preproc_dwi")) {
+            def links = []
+
+            def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*dwi.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}dwi/${f.name}")
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                SkullStripped: true
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+
+        if (niftiFile.name.contains("desc-fwc")) {
+            def links = []
+
+            def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*dwi.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}dwi/${f.name}")
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+                SkullStripped: true,
+                Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                Description: "Free-water corrected diffusion volume",
+                ParameterURL: "https://doi.org/10.1002/mrm.22055"
+            ]
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+
+        def sh_basis = params.fodf_sh_basis.contains("descoteaux") ? "descoteaux" : "MRtrix3"
+
+        // We should read the fiber response function from the subject file.
+        // We need a nested list [[val1], [val2], [val3], [val4]]
+        def responseFiles = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*frf.txt")
+        def responseFileList = responseFiles instanceof List ? responseFiles : [responseFiles]
+        def responseList = []
+
+        responseFileList.each { frfFile ->
+            if (frfFile.exists() && frfFile.size() > 0) {
+                def line = frfFile.text.trim()
+                if (line) {
+                    def values = line.split(/\s+/).findAll { it -> it }.collect { it -> it as Double }
+                    // Create nested list: [[val1], [val2], [val3], [val4]]
+                    responseList = values.collect { it -> [it] }
+                }
+            }
+        }
+
+        // Map patterns to their specific metadata
+        def patternMetadata = [
+            "param-ad_dwimap": [Description: "Axial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-afd": [Description: "Apparent fiber density", Model: [Description: "Single-Shell Single-Tissue (SSST) Constrained Spherical Deconvolution (CSD)"],
+                    OrientationEncoding: [SphericalHarmonicBasis: sh_basis, SphericalHarmonicDegree: params.fodf_sh_order, Type: "sh"],
+                    ResponseFunction: [Coefficients: responseList, Type: "zsh"]],
+            "param-fa_dwimap": [Description: "Fractional Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-sh": [Description: "White matter", Model: [Description: "Single-Shell Single-Tissue (SSST) Constrained Spherical Deconvolution (CSD)"],
+                    OrientationEncoding: [SphericalHarmonicBasis: sh_basis, SphericalHarmonicDegree: params.fodf_sh_order, Type: "sh"],
+                    ResponseFunction: [Coefficients: responseList, Type: "zsh"]],
+            "param-ga_dwimap": [Description: "Geodesic Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-md_dwimap": [Description: "Mean Diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-mode_dwimap": [Description: "Mode", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-nufo": [Description: "Number of Fiber Orientation", Model: [Description: "Single-Shell Single-Tissue (SSST) Constrained Spherical Deconvolution (CSD)"],
+                    OrientationEncoding: [SphericalHarmonicBasis: sh_basis, SphericalHarmonicDegree: params.fodf_sh_order, Type: "sh"],
+                    ResponseFunction: [Coefficients: responseList, Type: "zsh"]],
+            "param-peaks": [Description: "Peaks", Model: [Description: "Single-Shell Single-Tissue (SSST) Constrained Spherical Deconvolution (CSD)"],
+                    OrientationEncoding: [SphericalHarmonicBasis: sh_basis, SphericalHarmonicDegree: params.fodf_sh_order, Type: "sh"],
+                    ResponseFunction: [Coefficients: responseList, Type: "zsh"]],
+            "b0": [Type: "DWI", Description: "Mean B0 image"],
+            "param-rd_dwimap": [Description: "Radial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-rgb_dwimap": [Description: "Color-coded Fractional Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-diffusivity_dwimap": [Description: "Diffusion Coefficient, encoded as a tensor representation", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-icvf": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Intra-cellular volume fraction CVF", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "param-odi": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Orientation dispersion index", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "model-noddi_param-direction": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Direction", OrientationEncoding: [EncodingAxis: 3, Type: "unit3vector", Reference: "xyz"]],
+            "param-ecvf": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Extracellular volume fraction ECVF", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "param-isovf": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Isotropic volume fraction ISOVF", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "model-noddi_param-rmse": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Root Mean Square Error", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "model-noddi_param-nrmse": [Model: [Description: "Neurite Orientation Dispersion and Density Imaging (NODDI)", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Normalized Root Mean Square Error", ParameterURL: "https://doi.org/10.1016/j.neuroimage.2012.03.072"],
+            "model-fw_param-direction": [Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Direction", OrientationEncoding: [EncodingAxis: 3, Type: "unit3vector", Reference: "xyz"]],
+            "param-fwf": [Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Freewater fraction", ParameterURL: "https://doi.org/10.1002/mrm.22055"],
+            "param-fibervolume": [Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Fiber volume", ParameterURL: "https://doi.org/10.1002/mrm.22055"],
+            "model-fw_param-rmse": [Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Root Mean Square Error", ParameterURL: "https://doi.org/10.1002/mrm.22055"],
+            "model-fw_param-nrmse": [Model: [Description: "Free Water Elimination", URL: "https://www.sciencedirect.com/science/article/pii/S1053811914008519"],
+                    Description: "Normalized Root Mean Square Error", ParameterURL: "https://doi.org/10.1002/mrm.22055"],
+            "param-ad_desc-fwc": [Description: "Freewater-corrected axial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-rd_desc-fwc": [Description: "Freewater-corrected radial diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-md_desc-fwc": [Description: "Freewater-corrected mean diffusivity", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]], Units: "mm^2/s"],
+            "param-fa_desc-fwc": [Description: "Freewater-corrected fractional anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-mode_desc-fwc": [Description: "Freewater-corrected mode", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-diffusivity_desc-fwc": [Description: "Freewater-corrected diffusion Coefficient, encoded as a tensor representation", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-rgb_desc-fwc": [Description: "Freewater-corrected color-coded Fractional Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+            "param-ga_desc-fwc": [Description: "Freewater-corrected Geodesic Anisotropy", Model: [Description: "Diffusion tensor", Parameters: [FitMethod: "wls", OutlierRejectionMethod: "None"]]],
+        ]
+
+        def matchedPattern = patternMetadata.keySet().find { pattern -> niftiFile.name.contains(pattern) }
+
+        if (matchedPattern) {
+            def links = []
+
+            def fileNames = files("${params.input}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*dwi.nii.gz")
+            def fileList = fileNames instanceof List ? fileNames : [fileNames]
+            fileList.each { f ->
+                if (f.exists()) {
+                    links.add("bids:raw:${bidsInfo.subject}/${bidsInfo.sessionId}dwi/${f.name}")
+                }
+            }
+            def preprocFiles = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}dwi/*preproc_dwi.nii.gz")
+            def preprocList = preprocFiles instanceof List ? preprocFiles : [preprocFiles]
+            preprocList.each { f ->
+                if (f.exists()) {
+                    links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}dwi/${f.name}")
+                }
+            }
+
+            // ** If the file is in a specific space, add the transforms ** //
+            if (niftiFile.name.contains("space-")) {
+                // Extract the space label
+                def spaceLabelMatch = (niftiFile.name =~ /space-([a-zA-Z0-9]+)/)
+                if (spaceLabelMatch) {
+                    def spaceLabel = spaceLabelMatch[0][1]
+                    def transforms = files("${params.outdir}/${bidsInfo.subject}/${bidsInfo.sessionId}xfm/*")
+                        .findAll { f ->
+                            f.name.contains("from-dwi") && f.name.contains("to-${spaceLabel}")
+                        }
+                    def transformsList = transforms instanceof List ? transforms : [transforms]
+                    transformsList.each { f ->
+                    if (f.exists()) {
+                        links.add("bids::${bidsInfo.subject}/${bidsInfo.sessionId}xfm/${f.name}")
+                        }
+                    }
+                }
+            }
+
+            def sidecarInfo = [
+                Sources: links != [] ? links : "",
+            ] + patternMetadata[matchedPattern]
+
+            file(jsonFile).text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(sidecarInfo))
+        }
+    }
+}
+
+//
+// Generate methods description for MultiQC
+//
+// Helper: indent multiline HTML so it fits inside the YAML block-scalar (data: |)
+def indentForYaml(String text, int spaces = 2) {
+    if (!text) return ""
+    def indent = ' ' * spaces
+    // Prefix every line with the required indent
+    return text.replaceAll('(?m)^', indent)
+}
+
+//
+// Helper to assess if a params is enabled
+//
+def enabled(key) {
+    return (params[key] ?: false) as boolean
+}
+
+//
+// Build a dynamic methods boilerplate.
+//
+def buildMethodsDescription() {
+    def fragments = [
+        dwi_preproc: { ->
+            if ( !enabled('tracking') ) return ""
+            def parts = []
+            parts << """<h5>DWI preprocessing</h5>"""
+            parts << "Diffusion weighting imaging (DWI) files were extracted from the input BIDS folder and associated with their corresponding reverse phase-encoded images when available."
+            if ( enabled('run_dwi_denoising') ) {
+                parts << "DWI volumes were denoised using the MP-PCA algorithm (Veraart et al., 2016) implemented in the MRtrix3 toolbox (Tournier et al., 2019)."
+            }
+            if ( enabled('run_dwi_degibbs') ) {
+                parts << "Correction for Gibbs ringing artifacts was applied using the method of Kellner et al. (2016) as implemented in MRtrix3 (Tournier et al., 2019)."
+            }
+            if ( enabled('run_dwi_topup') ) {
+                parts << "Susceptibility-induced distortions were corrected using FSL's TOPUP (Andersson et al., 2003; Jenkinson et al., 2012) when reverse phase-encoded images were available."
+            }
+            if ( enabled('run_dwi_eddy') ) {
+                parts << "Eddy current and motion correction were performed using FSL's EDDY (Andersson & Sotiropoulos, 2016; Jenkinson et al., 2012); maximum framewise displacement was recorded for quality control purposes."
+            }
+            parts << "Brain extraction was performed by applying the deep learning model SynthStrip (Hoopes et al., 2022) on powdered average images. Pediatric-tailored weights were used for very young subjects where applicable (Kelley et al., 2024). The resulting mask was applied to the DWI volumes."
+            if ( enabled('run_dwi_n4') ) {
+                parts << "Bias field correction was applied using the N4 algorithm (Tustison et al., 2010) from the ANTs toolbox (Tustison et al., 2021) using a b-spline knot per voxel of ${params.dwi_bias_bspline_knot_per_voxel} and a shrink factor of ${params.dwi_bias_shrink_factor}."
+            }
+            if ( enabled('run_dwi_normalize') ) {
+                parts << "DWI volumes were normalized using the mean B0 intensity within white matter (FA > ${params.dwi_normalize_fa_mask_threshold}) using MRtrix3 (Tournier et al., 2019)."
+            }
+            if ( enabled('run_dwi_resampling') ) {
+                parts << "Preprocessed DWI volumes were resampled to an isotropic voxel size of ${params.dwi_resample_voxel_size} mm."
+            }
+
+            return parts.findAll{ it }.join(' ')
+        },
+        anat_preproc: { ->
+            if ( !enabled('tracking') ) return ""
+            def parts = []
+            parts << """<h5>T1w preprocessing</h5>"""
+            if ( enabled('run_t1_denoising') ) {
+                parts << "Anatomical T1w images were denoised using the Non-Local Means algorithm (Coupe et al., 2008) as implemented in the DIPY toolbox (Garyfallidis et al., 2014)."
+            }
+            if ( enabled('run_t1_n4') ) {
+                parts << "Bias field correction was applied using the N4 algorithm (Tustison et al., 2010) from the ANTs toolbox (Tustison et al., 2021) using a b-spline knot per voxel of ${params.t1_bias_bspline_knot_per_voxel} and a shrink factor of ${params.t1_bias_shrink_factor}."
+            }
+            if ( enabled('run_t1_resampling') ) {
+                parts << "T1w images were resampled to an isotropic voxel size of ${params.t1_resample_voxel_size} mm."
+            }
+            parts << "Brain extraction was performed using SynthStrip (Hoopes et al., 2022); pediatric-tailored weights were used for very young subjects where applicable (Kelley et al., 2024)."
+
+            parts << "<h5>T2w preprocessing</h5>"
+            if ( enabled('run_t2_denoising') ) {
+                parts << "Anatomical T2w images were denoised using the Non-Local Means algorithm (Coupe et al., 2008) as implemented in the DIPY toolbox (Garyfallidis et al., 2014)."
+            }
+            if ( enabled('run_t2_n4') ) {
+                parts << "Bias field correction was applied using the N4 algorithm (Tustison et al., 2010) from the ANTs toolbox (Tustison et al., 2021) using a b-spline knot per voxel of ${params.t2_bias_bspline_knot_per_voxel} and a shrink factor of ${params.t2_bias_shrink_factor}."
+            }
+            if ( enabled('run_t2_resampling') ) {
+                parts << "T2w images were resampled to an isotropic voxel size of ${params.t2_resample_voxel_size} mm."
+            }
+            parts << "Brain extraction was performed using SynthStrip (Hoopes et al., 2022); pediatric-tailored weights were used for very young subjects where applicable (Kelley et al., 2024)."
+            parts << "If both T1w and T2w images were available, they were registered using ANTs (Tustison et al., 2021) using ${params.coreg_transform == "a" ? "an affine" : params.coreg_transform == "r" || params.coreg_transform == "t" ? "a rigid" : "a non-linear"} transform."
+
+            return parts.findAll{ it }.join(' ')
+
+        },
+        dti: { ->
+            if ( !enabled('tracking') ) return ""
+            def parts = []
+            parts << """<h5>Diffusion Tensor Imaging (DTI)</h5>"""
+            parts << "Diffusion tensor imaging (DTI) models were fitted on the processed volume using the scilpy toolbox (Renauld et al., 2026); fractional anisotropy (FA), axial diffusivity (AD), radial diffusivity (RD), mean diffusivity (MD), mode of anisotropy, and color-coded FA maps were generated."
+            if ( enabled('dti_shells') ) {
+                parts << "DTI fitting used the following shells: ${params.dti_shells.tokenize().join(', ')}."
+            } else {
+                parts << "DTI fitting used all available shells under the maximum b-value of ${params.dti_max_shell_value} s/mm²."
+            }
+
+            return parts.findAll{ it }.join(' ')
+        },
+        fodf: { ->
+            if ( !enabled('tracking') ) return ""
+            def parts = []
+            parts << """<h5>Fiber Orientation Distribution Function (fODF)</h5>"""
+            parts << "Fiber orientation distribution functions (fODF) were computed using the scilpy toolbox (Renauld et al., 2026) using the ${params.fodf_set_method ? "single-shell single-tissue method" : "multi-shell multi-tissue method"} on the ${params.fodf_shells ? "following shells: " + params.fodf_shells.tokenize().join(', ') : "all available shells over the minimum b-value of " + params.fodf_min_shell_value + " s/mm²"}."
+            parts << "fODF were computed using a maximum spherical harmonic order of ${params.fodf_sh_order} in basis ${params.fodf_sh_basis}."
+            parts << "Fiber response functions were estimated based on normative curves of the brain's diffusivities through the developmental age-range (Gagnon et al., 2026)."
+
+            return parts.findAll{ it }.join(' ')
+        },
+        registration: { ->
+            if ( !enabled('tracking') ) return ""
+            def parts = []
+            parts << """<h5>Registration to DWI space</h5>"""
+            parts << "Anatomical images were registered to the preprocessed DWI space using ANTs (Tustison et al., 2021). For younger participants (< 2.5 years old), the T2w image, if available, was preferred for registration due to better tissue contrast. If used, the T2w image was registered using non-linear methods using the mean diffusivity map and B0 image as targets. For older participants or if only T1w images were available, the T1w image was registered using non-linear methods with the FA map and B0 image as targets."
+
+            return parts.findAll{ it }.join(' ')
+        },
+        tissue_segmentation: { ->
+            if ( !enabled('tracking') ) return ""
+            def parts = []
+            parts << """<h5>Tissue segmentation</h5>"""
+            parts << "Tissue segmentation into white matter, grey matter, and cerebrospinal fluid was performed on the anatomical images registered to DWI space."
+            parts << "For younger participants (< 2.5 years old), segmentation was performed by registering age-matched templates from the UNC/UMN Baby Connectome Project (Chen et al., 2022)."
+            parts << "Briefly, templates closest to the participant's age were non-linearly registered to the participant's anatomical images using ANTs (Tustison et al., 2021), and the resulting transforms were applied to the corresponding tissue probability maps."
+            parts << "The resulting maps were then thresholded to generate binary masks for each tissue type."
+            parts << "For older participants, tissue segmentation was performed using the FAST algorithm from FSL (Zhang et al., 2001; Jenkinson et al., 2012). Similarly to younger participants, resulting probability maps were thresholded to obtain binary masks."
+
+            return parts.findAll{ it }.join(' ')
+        },
+        tracking: { ->
+            if ( !enabled('tracking') ) return ""
+            def parts = []
+            parts << """<h5>Tractography</h5>"""
+            parts << "Whole-brain tractography was performed using the scilpy toolbox (Renauld et al., 2026)."
+            if ( enabled('run_pft_tracking') ) {
+                parts << "Particle Filter Tracking (PFT) was used to leverage anatomical priors from the tissue segmentation to improve streamline generation (Girard et al., 2014)."
+                parts << "Tracking seeds were randomly placed ${params.pft_seeding_mask_type == "wm" ? "within the white matter mask" : params.pft_seeding_mask_type == "interface" ? "at the grey matter-white matter interface" : "in voxels with FA values over ${params.pft_fa_threshold}"} with a density of ${params.pft_seeding_type == "npv" ? "${params.pft_nbr_seeds} seeds per voxel." : "${params.pft_nbr_seeds} seeds total."}"
+                parts << "Streamlines were propagated using a ${params.pft_algo == "prob" ? "probabilistic" : "deterministic"} algorithm with a step size of ${params.pft_step} mm, a maximum angle between steps of ${params.pft_theta}°, a minimum length of ${params.pft_min_len} mm, and a maximum length of ${params.pft_max_len} mm."
+            }
+            if ( enabled('run_local_tracking') ) {
+                parts << "Local tracking was performed using a ${params.local_algo == "prob" ? "probabilistic" : "deterministic"} algorithm using ${params.local_seeding_type == "npv" ? "${params.local_nbr_seeds} seeds per voxel" : "${params.local_nbr_seeds} seeds total."}."
+                parts << "The seeding mask was defined as ${params.local_seeding_mask_type == "wm" ? "the white matter mask" : "voxels with FA values over ${params.local_fa_threshold}"}."
+                parts << "Similarly, the tracking mask, in which tracking is allowed, was defined as ${params.local_tracking_mask_type == "wm" ? "the white matter mask" : "voxels with FA values over ${params.local_fa_threshold}"}."
+                parts << "Streamlines were propagated with a step size of ${params.local_step} mm, a maximum angle between steps of ${params.local_theta}°, a minimum length of ${params.local_min_len} mm, and a maximum length of ${params.local_max_len} mm."
+            }
+            if ( enabled('run_pft_tracking') && enabled('run_local_tracking') ) {
+                parts << "The resulting two tractograms from both methods were then concatenated to form the final whole-brain tractogram."
+            }
+
+            return parts.findAll{ it }.join(' ')
+        },
+        noddi: { ->
+            if ( !enabled("run_noddi") ) return ""
+            def parts = []
+            parts << """<h5>Neurite Orientation Dispersion and Density Imaging (NODDI)</h5>"""
+            parts << "Neurite Orientation Dispersion and Density Imaging (NODDI) models were fitted on the processed DWI volume using the AMICO implementation (Daducci et al., 2015; Zhang et al., 2012); intra-cellular volume fraction (ICVF), orientation dispersion index (ODI), extra-cellular volume fraction (ECVF), and isotropic volume fraction (ISOVF) maps were generated."
+            parts << "The regularization parameters for the NODDI model fitting were: &lambda;<sub>1</sub> of ${params.noddi_lambda1} and &lambda;<sub>2</sub> of ${params.noddi_lambda2}."
+            if ( enabled('para_diff') ) {
+                parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff} and an isotropic diffusivity of ${params.iso_diff}."
+            } else {
+                parts << "Diffusivity priors were automatically derived based on the participant's age using normative growth curves (Gagnon et al., 2026)."
+            }
+
+            return parts.findAll{ it }.join(' ')
+        },
+        freewater: { ->
+            if ( !enabled("run_freewater") ) return ""
+            def parts = []
+            parts << """<h5>Freewater-corrected DTI</h5>"""
+            parts << "Freewater compartment was removed from diffusion tensor imaging (DTI) maps using the freewater model implemented in the AMICO toolbox (Daducci et al., 2015; Pasternak et al., 2009); freewater-corrected diffusion volume, fibervolume, freewater, freewater-corrected fractional anisotropy (FA), axial diffusivity (AD), radial diffusivity (RD), mean diffusivity (MD), mode of anisotropy, and color-coded FA maps were generated."
+            parts << "Regularization parameters for model fitting were set as: &lambda;<sub>1</sub> of ${params.freewater_lambda1} and &lambda;<sub>2</sub> of ${params.freewater_lambda2}."
+            if ( enabled('para_diff') ) {
+                parts << "Diffusivity priors used for model fitting were manually set to a parallel diffusivity of ${params.para_diff}, an isotropic diffusivity of ${params.iso_diff}, a minimum perpendicular diffusivity of ${params.perp_diff_min}, and a maximum perpendicular diffusivity of ${params.perp_diff_max}."
+            } else {
+                parts << "Diffusivity priors were automatically derived based on the participant's age using normative growth curves (Gagnon et al., 2026)."
+            }
+
+            return parts.findAll{ it }.join(' ')
+        },
+        bundling: { ->
+            if ( !enabled('bundling') ) return ""
+            def parts = []
+            parts << """<h5>Bundle segmentation</h5>"""
+            if ( !enabled('atlas_directory') ) {
+                parts << "The closest age-matched white matter atlas (neonates, 3 months, 6 months, 12 months, 24 months or children) was registered into subject-space using an affine transformation. Whole-brain tractograms were segmented using BundleSeg from the scilpy toolbox (St-Onge et al., 2023; Renauld et al., 2026) with a minimal vote ratio of ${params.minimal_vote_ratio}, an outlier threshold of ${params.outlier_alpha}, and the ${params.use_hyperplane ? "hyperplane method" : params.use_manhattan ? "manhattan distance" : "euclidean distance"}."
+            } else {
+                parts << "The provided atlas located at ${params.atlas_directory} was registered in subject-space using an affine transformation. Whole-brain tractograms were segmented using BundleSeg from the scilpy toolbox (St-Onge et al., 2023; Renauld et al., 2026) with a minimal vote ratio of ${params.minimal_vote_ratio}, an outlier threshold of ${params.outlier_alpha}, and the ${params.use_hyperplane ? "hyperplane method" : params.use_manhattan ? "manhattan distance" : "euclidean distance"}."
+            }
+            parts << "Extracted bundles were then filtered to remove invalid streamlines, single point streamlines, and overlapping points."
+            parts << "Then, fixel-based apparent fiber density was computed for each bundle (Raffelt et al., 2017)."
+
+            return parts.findAll{ it }.join(' ')
+        },
+        tractometry: { ->
+            if ( !enabled('bundling') ) return ""
+            def parts = []
+            parts << """<h5>Tractometry</h5>"""
+            if ( !enabled('atlas_directory') ) {
+                parts << "Atlas' centroids were registered into subject-space using an affine transformation."
+            } else {
+                parts << "For each extracted bundle, the centroid was extracted using the scilpy toolbox (Renauld et al., 2026)."
+            }
+            parts << "The centroids were then resampled to ${params.nb_points} points, enabling the derivation of per point metrics."
+            if ( enabled('density_weighting') ) {
+                parts << "Metric derived per bundle or per point were weighted based on the number of streamline passing through the voxel. This reduces the impact of spurious streamlines on final metric value."
+            }
+            parts << "For each bundle, multiple metrics were extracted:"
+            if ( enabled('length_stats') ) {
+                parts << "length,"
+            }
+            if ( enabled('endpoints_stats') ) {
+                parts << "statistic for each endpoint,"
+            }
+            if ( enabled('means_std') ) {
+                parts << "mean (standard deviation),"
+            }
+            if ( enabled('volume') ) {
+                parts << "volume,"
+            }
+            if ( enabled('streamline_count') ) {
+                parts << "and streamline count."
+            }
+            parts << "For each point per bundle (${params.nb_points} points), the following metric were extracted:"
+            if ( enabled('volume_per_labels') ) {
+                parts << "volume,"
+            }
+            if ( enabled('mean_std_per_point') ) {
+                parts << "and mean (standard deviation)."
+            }
+            parts << "Final segmented bundles were colored per point using the ${params.colormap} colormap (affects only the visualisation)."
+
+            return parts.findAll{ it }.join(' ')
+        },
+        segmentation: { ->
+            if ( !enabled('segmentation') ) return ""
+            def parts = []
+            parts << """<h5>Cortical and subcortical segmentation</h5>"""
+            parts << "Cortical/subcortical segmentation and surface reconstruction was performed using ${params.method == "fastsurfer" ? "FastSurfer (Henschel et al., 2020)" : params.method == "recon-all" ? " recon-all from FreeSurfer (Fischl, 2012)" : "recon-all-clinical from FreeSurfer (Fischl, 2012; Billot et al., 2023; Iglesias et al., 2023)"} on the T1-weighted anatomical images."
+            parts << "For younger participants (< 1 year old), cortical and subcortical segmentation was initially performed using BIBSnet (Hendrickson et al., 2026). The BIBSnet segmentation was then provided as input to infant-recon-all to generate the final cortical surfaces and segmentation (Zollei et al., 2020)."
+            parts << "Following segmentation, the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : "${params.atlas_name} atlas"} was mapped from fsLR-32k space to subject space using surface-based registration methods from FreeSurfer (Fischl, 2012) and the connectome workbench (Marcus et al., 2011)."
+            parts << "Resulting labels were subsequently converted to voxel-wise labels. Volume, surface area, and cortical thickness were measured for each parcel and reported in tab-separated value (TSV) files."
+
+            return parts.findAll{ it }.join(' ')
+        },
+        connectomics: { ->
+            if ( !enabled('connectomics') ) return ""
+            def parts = []
+            parts << """<h5>Connectomics</h5>"""
+            parts << "Structural connectivity matrices were generated using the scilpy toolbox (Renauld et al., 2026) based on the ${params.atlas_name == "BrainnetomeChild" ? "Brainnetome atlas for preadolescents (Li et al., 2023)" : "${params.atlas_name} atlas"}."
+            parts << "For each participant, labels in anatomical space were first registered in diffusion space using the already computed transformations with a ${params.labels_interpolation == "NearestNeighbor" ? "nearest neighbor interpolation method" : "${params.labels_interpolation}"}."
+            parts << "Then, the final tractogram was decomposed into individual connections by extracting each streamline connecting a pair of parcels."
+            if ( !enabled('decompose_no_pruning') ) {
+                parts << "Streamlines shorter than ${params.decompose_min_len} mm or longer than ${params.decompose_max_len} mm were discarded."
+            }
+            if ( !enabled('decompose_no_remove_loops') ) {
+                parts << "Loops were removed."
+            }
+            if ( !enabled('decompose_no_remove_outliers') ) {
+                parts << "Hierarchical QuickBundles was used to remove outliers using a threshold of ${params.decompose_outlier_threshold}."
+            }
+            if ( !enabled('decompose_no_remove_curv') ) {
+                parts << "Curvature-based filtering was applied to remove streamlines with sharp curves using a maximum angle of ${params.decompose_max_angle}° over ${params.decompose_max_curv} mm."
+            }
+            parts << "To mitigate the risk of false-positive connections, COMMIT (Daducci et al., 2015) was applied to the tractogram using the ${params.commit_ball_stick ? "ball and stick" : "stick, zeppelin, and ball"} model to optimize the fit between the tractogram and the diffusion data."
+            parts << "Diffusivity parameters for COMMIT were set based on age-specific normative values (Gagnon et al., 2026)."
+            if ( enabled('run_commit2') ) {
+                parts << "Using COMMIT2 (Schiavi et al., 2020) with a clustering prior strength of ${params.commit2_lambda}, the contribution of each streamline to the diffusion signal was evaluated and streamlines with zero contribution were removed from the tractogram to further reduce false-positive connections."
+            } else {
+                parts << "The contribution of each streamline to the diffusion signal was evaluated and streamlines with zero contribution were removed from the tractogram to further reduce false-positive connections."
+            }
+            parts << "To obtain the fODF amplitude specific to each connection, fixel-based apparent fiber density was computed for each extracted connection (Raffelt et al., 2017)."
+            parts << "Finally, structural connectivity matrices were generated by computing, for each pair of parcels, the number of streamlines, the mean streamline length, and the mean FA, AD, RD, MD, total apparent fiber density, number of fiber orientation, and fixel-based apparent fiber density."
+
+            return parts.findAll{ it }.join(' ')
+        }
+    ]
+
+    def pieces = fragments.collect { _f, c -> try { c.call() } catch(Exception _e) { "" } }.findAll { it -> it && it.trim() }
+
+    def html = """<div class="sf-pediatric-methods">
+${pieces.join('\n\n')}
+</div>"""
+
+    return html
+}
+
+//
+// Generate bibliography based on citations found in the methods description.
+//
+def toolBibliographyText() {
+    // Build the methods HTML so we can inspect which citations were actually used
+    def raw_methods = buildMethodsDescription()
+
+    if (!raw_methods) return ""
+
+    // Regex to capture common author-year citation tokens as they appear in the methods text.
+    // Matches patterns like "Tournier et al., 2019", "Andersson & Sotiropoulos, 2016", "Fischl, 2012"
+    def citationPattern = ~/(?m)\b([A-Z][A-Za-z'’\.\-]+(?:\s+(?:et al\.|&\s*[A-Z][A-Za-z'’\.\-]+|and\s+[A-Z][A-Za-z'’\.\-]+|[A-Z][A-Za-z'’\.\-]+)?)?,\s*\d{4})\b/
+
+    def found = []
+    def m = raw_methods =~ citationPattern
+    m.each { match ->
+        // match[1] contains the captured author-year token
+        def token = match[1].trim()
+        // normalize certain whitespace/characters
+        token = token.replaceAll("\\s+", " ")
+        found << token
+    }
+    found = found.findAll{ it -> it }.unique()
+
+    // Map of known tokens -> full bibliographic <li> entries.
+    // Add or update entries here as you need (these are the common citations used across the methods).
+    def bibMap = [
+        // Tools & big toolboxes (some from your original list)
+        "Tournier et al., 2019"       : "<li>Tournier, J.-D., Smith, R., Raffelt, D., Tabbara, R., Dhollander, T., Pietsch, M., Christiaens, D., Jeurissen, B., Yeh, C.-H., & Connelly, A. (2019). MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation. <i>NeuroImage</i>, 202, 116137. <a href=https://doi.org/10.1016/j.neuroimage.2019.116137>https://doi.org/10.1016/j.neuroimage.2019.116137</a></li>",
+        "Jenkinson et al., 2012"      : "<li>Jenkinson, M., Beckmann, C. F., Behrens, T. E. J., Woolrich, M. W., & Smith, S. M. (2012). FSL. <i>NeuroImage</i>, 62(2), 782–790. <a href=https://doi.org/10.1016/j.neuroimage.2011.09.015>https://doi.org/10.1016/j.neuroimage.2011.09.015</a></li>",
+        "Tustison et al., 2010"       : "<li>Tustison, N. J., Avants, B. B., Cook, P. A., Zheng, Y., Egan, A., Yushkevich, P. A., & Gee, J. C. (2010). N4ITK: Improved N3 bias correction. <i>IEEE Transactions on Medical Imaging</i>, 29(6), 1310–1320. <a href=https://doi.org/10.1109/TMI.2010.2046908>https://doi.org/10.1109/TMI.2010.2046908</a></li>",
+        "Tustison et al., 2021"       : "<li>Tustison, N. J., Cook, P. A., Holbrook, A. J., Johnson, H. J., Muschelli, J., Devenyi, G. A., Duda, J. T., Das, S. R., Cullen, N. C., Gillen, D. L., Yassa, M. A., Stone, J. R., Gee, J. C., & Avants, B. B. (2021). The ANTsX ecosystem for quantitative biological and medical imaging. <i>Scientific Reports</i>, 11, 9068. <a href=https://doi.org/10.1038/s41598-021-87564-6>https://doi.org/10.1038/s41598-021-87564-6</a></li>",
+        "Veraart et al., 2016"        : "<li>Veraart J, Novikov DS, Christiaens D, Ades-Aron B, Sijbers J, Fieremans E. (2016). Denoising of diffusion MRI using random matrix theory. <i>NeuroImage</i>, 142, 394–406. <a href=https://doi.org/10.1016/j.neuroimage.2016.08.016>https://doi.org/10.1016/j.neuroimage.2016.08.016</a></li>",
+        "Kellner et al., 2016"        : "<li>Kellner, E., Dhital, B., Kiselev, V. G., & Reisert, M. (2016). Gibbs-ringing artifact removal based on local subvoxel-shifts. <i>Magnetic Resonance in Medicine</i>, 76(5), 1574–1581. <a href=https://doi.org/10.1002/mrm.26054>https://doi.org/10.1002/mrm.26054</a></li>",
+        "Andersson et al., 2003"     : "<li>Andersson, J. L. R., Skare, S., & Ashburner, J. (2003). How to correct susceptibility distortions in spin-echo echo-planar images: application to diffusion tensor imaging. <i>NeuroImage</i>, 20(2), 870–888. <a href=https://doi.org/10.1016/S1053-8119(03)00336-7>https://doi.org/10.1016/S1053-8119(03)00336-7</a></li>",
+        "Andersson & Sotiropoulos, 2016": "<li>Andersson, J. L. R., & Sotiropoulos, S. N. (2016). An integrated approach to correction for off-resonance effects and subject movement in diffusion MR imaging. <i>NeuroImage</i>, 125, 1063–1078. <a href=https://doi.org/10.1016/j.neuroimage.2015.10.019>https://doi.org/10.1016/j.neuroimage.2015.10.019</a></li>",
+        "Hoopes et al., 2022"        : "<li>Hoopes A, Mora JS, Dalca AV, Fischl B, & Hoffmann M. (2022). SynthStrip: Skull-stripping for any brain image. <i>NeuroImage</i>, 260, 119474, <a href=https://doi.org/10.1016/j.neuroimage.2022.119474>https://doi.org/10.1016/j.neuroimage.2022.119474</a></li>",
+        "Kelley et al., 2024"        : "<li>Kelley, W., Ngo, N., Dalca., A. V., Fischl, B., Zöllei, L., & Hoffmann, M. (2024). Boosting Skull-Stripping Performance for Pediatric Brain Images. [Preprint] <i>arXiv</i>, <a href=https://doi.org/10.48550/arXiv.2402.16634>https://doi.org/10.48550/arXiv.2402.16634</a></li>",
+        "Coupe et al., 2008"         : "<li>Coupe, P., Yger, P., Prima, S., Hellier, P., Kervrann, C., & Barillot, C. (2008). An optimized blockwise nonlocal means denoising filter for 3-D magnetic resonance images. <i>IEEE Transactions on Medical Imaging</i>, 27(4), 425–441. <a href=https://doi.org/10.1109/TMI.2007.906087>https://doi.org/10.1109/TMI.2007.906087</a></li>",
+        "Garyfallidis et al., 2014"   : "<li>Garyfallidis, E., Brett, M., Amirbekian, B., Rokem, A., van der Walt, S., Descoteaux, M., & Nimmo-Smith, I.; Dipy Contributors. (2014). Dipy, a library for the analysis of diffusion MRI data. <i>Frontiers in Neuroinformatics</i>, 8, 8. <a href=https://doi.org/10.3389/fninf.2014.00008>https://doi.org/10.3389/fninf.2014.00008</a></li>",
+        "Girard et al., 2014"        : "<li>Girard, G., Whittingstall, K., Deriche, R., & Descoteaux, M. (2014). Towards quantitative connectivity analysis: reducing tractography biases. <i>NeuroImage</i>, 98, 266–278. <a href=https://doi.org/10.1016/j.neuroimage.2014.04.074>https://doi.org/10.1016/j.neuroimage.2014.04.074</a></li>",
+        "St-Onge et al., 2023"      : "<li>St-Onge, E., Schilling, K. G., Rheault, F. (2023). BundleSeg: A versatile, reliable and reproducible approach to white matter bundle segmentation. [Preprint] <i>arXiv</i>, <a href=https://doi.org/10.48550/arXiv.2308.10958>https://doi.org/10.48550/arXiv.2308.10958</a></li>",
+        "Raffelt et al., 2017"       : "<li>Raffelt, D. A., Tournier, J.-D., Smith, R. E., Vaughan, D.N., Jackson, G., Ridgway, G.R., Connelly, A. (2017). Investigating white matter fibre density and morphology using fixel-based analysis. <i>NeuroImage</i>, 144, 58–73. <a href=https://doi.org/10.1016/j.neuroimage.2016.09.029>https://doi.org/10.1016/j.neuroimage.2016.09.029</a></li>",
+        "Daducci et al., 2015"       : "<li>Daducci, A., Dal Palu, A., Lemkaddem, A., Thiran, J.P. (2015). COMMIT: Convex optimization modelling for microstructure informed tractography. <i>IEEE Transactions on Medical Imaging</i>, 34, 246–257. <a href=https://doi.org/10.1109/TMI.2014.2352414>https://doi.org/10.1109/TMI.2014.2352414</a></li>",
+        "Schiavi et al., 2020"      : "<li>Schiavi, S., Ocampo-Pineda, M., Barakovic, M., Petit, L., Descoteaux, M., Thiran, J.P., Daducci, A. (2020). A new method for accurate in vivo mapping of human brain connections using microstructural and anatomical information. <i>Science Advances</i>, 6(31). <a href=https://doi.org/10.1126/sciadv.aba8245>https://doi.org/10.1126/sciadv.aba8245</a></li>",
+        "Li et al., 2023"           : "<li>Li, W., Fan, L., Shi, W., Lu, Y., Li, J., Luo, N., Wang, H., Chu, C., Ma, L., Song, M., Li, K., Cheng, L., Cao, L., Jiang, T. (2023). Brainnetome atlas of preadolescent children based on anatomical connectivity profiles. <i>Cerebral Cortex</i>, 33(9), 5264-5275. <a href=https://doi.org/10.1093/cercor/bhac415>https://doi.org/10.1093/cercor/bhac415</a></li>",
+        "Desikan et al., 2006"      : "<li>Desikan, R.S., Ségonne, F., Fischl, B., Quinn, B.T., Dickerson, B.C., Blacker, D., Buckner, R.L., Dale, A.M., Maguire, R.P., Hyman, B.T., Albert, M.S., Killiany, R.J. (2006). An automated labeling system for subdividing the human cerebral cortex on MRI scans into gyral based regions of interest. <i>NeuroImage</i>, 31(3), 968–980. <a href=https://doi.org/10.1016/j.neuroimage.2006.01.021>https://doi.org/10.1016/j.neuroimage.2006.01.021</a></li>",
+        "Zhang et al., 2001"        : "<li>Zhang, Y., Brady, M., & Smith, S. (2001). Segmentation of brain MR images through a hidden Markov random field model and the expectation-maximization algorithm. <i>IEEE Transactions on Medical Imaging</i>, 20(1), 45–57. <a href=https://doi.org/10.1109/42.906424>https://doi.org/10.1109/42.906424</a></li>",
+        "Billot et al., 2023"       : "<li>Billot, B., Magdamo, C., Cheng, Y., Arnold, S.E., Das, S., Iglesias, J.E. (2023). Robust machine learning segmentation for large-scale analysis of heterogeneous clinical brain MRI datasets. <i>Proc Natl Acad Sci</i>, 120(9). <a href=https://doi.org/10.1073/pnas.2216399120>https://doi.org/10.1073/pnas.2216399120</a></li>",
+        "Iglesias et al., 2023"     : "<li>Iglesias, J.E., Billot, B., Balbastre, Y., Magdamo, C., Arnold, S.E., Das, S., Edlow, B.L., Alexander, D.C., Golland, P., Fischl, B. (2023). SynthSR: A public AI tool to turn heterogeneous clinical brain scans into high-resolution T1-weighted images for 3D morphometry. <i>Science Advances</i>, 9(5). <a href=https://doi.org/10.1126/sciadv.add3607>https://doi.org/10.1126/sciadv.add3607</a></li>",
+        "Adamson et al., 2020"      : "<li>Adamson, C.L., Alexander, B., Ball, G., Beare, R., Cheong, J.L.Y., Spittle, A.J., Doyle, L.W., Anderson, P.J., Seal, M.L., Thompson, D.K. (2020). Parcellation of the neonatal cortex using Surface-based Melbourne Children's Regional Infant Brain atlases (M-CRIB-S). <i>Scientific Reports</i>, 10(1). <a href=https://doi.org/10.1038/s41598-020-61326-2>https://doi.org/10.1038/s41598-020-61326-2</a></li>",
+        "Fischl, 2012"              : "<li>Fischl, B. (2012). FreeSurfer. <i>NeuroImage</i>, 62(2), 774–781. <a href=https://doi.org/10.1016/j.neuroimage.2012.01.021>https://doi.org/10.1016/j.neuroimage.2012.01.021</a></li>",
+        "Henschel et al., 2020"    : "<li>Henschel, L., Conjeti, S., Estrada, S., Diers, K., Fischl, B., & Reuter, M. (2020). FastSurfer — A fast and accurate deep learning based neuroimaging pipeline. <i>NeuroImage</i>, 219, 117012. <a href=https://doi.org/10.1016/j.neuroimage.2020.117012>https://doi.org/10.1016/j.neuroimage.2020.117012</a></li>",
+        "Ewels et al., 2016"        : "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. <i>Bioinformatics</i>, 32(19), 3047–3048. <a href=https://doi.org/10.1093/bioinformatics/btw354>https://doi.org/10.1093/bioinformatics/btw354</a></li>",
+        "Klein et al., 2012"        : "<li>Klein. A., & Tourville, J. (2012). 101 labeled brain images and a consistent human cortical labeling protocol. <i>Frontiers in Neuroscience</i>, 6(171). <a href=https://doi.org/10.3389/fnins.2012.00171>https://doi.org/10.3389/fnins.2012.00171</a></li>",
+        "Chen et al., 2022"         : "<li>Chen, L., Wu, Z., Hu, D., Wang, Y., Zhao, F., Zhong, T., Lin, W., Wang, L., & Li, G. (2022). A 4D infant brain volumetric atlas based on the UNC/UMN baby connectome project (BCP) cohort. <i>NeuroImage</i>, 253, 119097. <a href=https://doi.org/10.1016/j.neuroimage.2022.119097>https://doi.org/10.1016/j.neuroimage.2022.119097</a></li>",
+        "Daducci et al., 2015"      : "<li>Daducci, A., Canales-Rodríguez, E. J., Zhang, H., Dyrby, T. B., Alexander, D. C., & Thiran, J.-P. (2015). Accelerated Microstructure Imaging via Convex Optimization (AMICO) from diffusion MRI data. <i>NeuroImage</i>, 105, 32–44. <a href=https://doi.org/10.1016/j.neuroimage.2014.10.026>https://doi.org/10.1016/j.neuroimage.2014.10.026</a></li>",
+        "Zhang et al., 2012"         : "<li>Zhang, H., Schneider, T., Wheeler-Kingshott, C. A., & Alexander, D. C. (2012). NODDI: Practical in vivo neurite orientation dispersion and density imaging of the human brain. <i>NeuroImage</i>, 61(4), 1000–1016. <a href=https://doi.org/10.1016/j.neuroimage.2012.03.072>https://doi.org/10.1016/j.neuroimage.2012.03.072</a></li>",
+        "Pasternak et al., 2009"     : "<li>Pasternak, O., Sochen, N., Gur, Y., Intrator, N., & Assaf, Y. (2009). Free water elimination and mapping from diffusion MRI. <i>Magnetic Resonance in Medicine</i>, 62(3), 717–730. <a href=https://doi.org/10.1002/mrm.22055>https://doi.org/10.1002/mrm.22055</a></li>",
+        "Renauld et al., 2026"       : "<li>Renauld, E., Boré, A., Poirier, C., Valcourt-Caron, A., Karan, P., Théberge, A., Théaud, G., Edde, M., Poulin, P., Girard, G., Houde, J.-C., Gagnon, A., St-Onge, E., Little, G., Legarreta, J. H., Thoumyre, S., Grenier, G., El Yamani, Z., Ocampo Pineda, M., … Descoteaux, M. (2026). Tractography analysis with the scilpy toolbox. <i>Aperture Neuro</i>, 6. <a href=https://doi.org/10.52294/001c.154022>https://doi.org/10.52294/001c.154022</a></li>",
+        "Hendrickson et al., 2026"   : "<li>Hendrickson, T. J., Reiners, P., Moore, L. A., Lundquist, J. T., Fayzullobekova, B., Perrone, A. J., Lee, E. G., Moser, J., Day, T. K. M., Alexopoulos, D., Styner, M., Kardan, O., Chamberlain, T. A., Mummaneni, A., Caldas, H. A., Bower, B., Stoyell, S., Martin, T., Sung, S., … Feczko, E. (2026). BIBSNet: A deep learning baby image brain segmentation network for MRI scans. <i>Developmental Cognitive Neuroscience</i>, 79, 101706. <a href=https://doi.org/10.1016/j.dcn.2026.101706>https://doi.org/10.1016/j.dcn.2026.101706</a></li>",
+        "Zollei et al., 2020"        : "<li>Zöllei, L., Iglesias, J. E., Ou, Y., Grant, P. E., & Fischl, B. (2020). Infant FreeSurfer: An automated segmentation and surface extraction pipeline for T1-weighted neuroimaging data of infants 0–2 years. <i>NeuroImage</i>, 218, 116946. <a href=https://doi.org/10.1016/j.neuroimage.2020.116946>https://doi.org/10.1016/j.neuroimage.2020.116946</a></li>",
+        "Marcus et al., 2011"        : "<li>Marcus, D. S., Harwell, J., Olsen, T., Hodge, M., Glasser, M. F., Prior, F., Jenkinson, M., Laumann, T., Curtiss, S. W., & Van Essen, D. C. (2011). Informatics and data mining tools and strategies for the human connectome project. <i>Frontiers in Neuroinformatics</i>, 5, 4. <a href=https://doi.org/10.3389/fninf.2011.00004>https://doi.org/10.3389/fninf.2011.00004</a></li>",
+        // Preprints and in-preparation works
+        "Gagnon et al., 2026"       : "<li>Gagnon, A., Boré, A., Valcourt Caron, A., Edde, M., Thoumyre, S., Lepage, J.-F., Talati, A., Posner, J., Ouellet, A., Brunet, M. A., Takser, L., Rheault, F., & Descoteaux, M. (2026). sf-pediatric: A robust and age-adaptable end-to-end pipeline for pediatric diffusion MRI. <i>bioRxiv</i>. <a href=https://doi.org/10.64898/2026.01.19.700454>https://doi.org/10.64898/2026.01.19.700454</a></li>",
+    ]
+
+    // Build the bibliography in the order tokens were found.
+    def bibliographyEntries = found.collect { token ->
+        if (bibMap.containsKey(token)) {
+            return bibMap[token]
+        } else {
+            // If not recognized, include a placeholder <li> with the raw token so user can refine later
+            return "<li>${token} (full reference not found; please add)</li>"
+        }
+    }
+
+    // If nothing was found, optionally include standard tool citations (fallback)
+    if (!bibliographyEntries || bibliographyEntries.size() == 0) {
+        // fallback: include a few baseline entries
+        bibliographyEntries = [
+            bibMap["Tournier et al., 2019"],
+            bibMap["Jenkinson et al., 2012"],
+            bibMap["Tustison et al., 2010"],
+            bibMap["Ewels et al., 2016"]
+        ].findAll{ it -> it }
+    }
+
+    // Return joined HTML fragment (no wrapping <ul> here so caller can place it)
+    return "<ul>" + bibliographyEntries.sort{ it -> it.toLowerCase() }.join("") + "</ul>"
+}
+
+//
+// Function combining the methods description text with tool citations and bibliography.
+// Will convert the resulting text into HTML for inclusion in MultiQC report.
+//
+def methodsDescriptionText(mqc_methods_yaml) {
+    // Convert  to a named map so can be used as with familiar NXF ${workflow} variable syntax in the MultiQC YML file
+    def meta = [:]
+    meta.workflow = workflow.toMap()
+    meta["manifest_map"] = workflow.manifest.toMap()
+
+    // Pipeline DOI
+    if (meta.manifest_map.doi) {
+        // Using a loop to handle multiple DOIs
+        // Removing `https://doi.org/` to handle pipelines using DOIs vs DOI resolvers
+        // Removing ` ` since the manifest.doi is a string and not a proper list
+        def temp_doi_ref = ""
+        def manifest_doi = meta.manifest_map.doi.tokenize(",")
+        manifest_doi.each { doi_ref ->
+            temp_doi_ref += "(doi: <a href=\'https://doi.org/${doi_ref.replace("https://doi.org/", "").replace(" ", "")}\'>${doi_ref.replace("https://doi.org/", "").replace(" ", "")}</a>), "
+        }
+        meta["doi_text"] = temp_doi_ref.substring(0, temp_doi_ref.length() - 2)
+    } else meta["doi_text"] = ""
+    meta["nodoi_text"] = meta.manifest_map.doi ? "" : "<li>If available, make sure to update the text to include the Zenodo DOI of version of the pipeline used. </li>"
+
+    // Tool references
+    meta["tool_citations"] = ""
+    meta["tool_bibliography"] = ""
+
+    //meta["tool_citations"] = toolCitationText().replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
+    def tool_biblio = toolBibliographyText()
+    meta["tool_bibliography"] = indentForYaml(tool_biblio, 4)
+
+    def methods_text = mqc_methods_yaml.text
+
+    // Add the to the methods text the generated HTML from the function buildMethodsDescription
+    def raw_methods = buildMethodsDescription()
+    meta["methods_html"] = indentForYaml(raw_methods, 2)
+
+    def engine =  new groovy.text.SimpleTemplateEngine()
+    def description_html = engine.createTemplate(methods_text).make(meta)
+
+    return description_html.toString()
+}

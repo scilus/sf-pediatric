@@ -6,8 +6,8 @@
 [![Deploy documentation](https://github.com/scilus/sf-pediatric/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/scilus/sf-pediatric/actions/workflows/deploy.yml)
 [![Static Badge](https://img.shields.io/badge/bioarXiv-10?style=flat&logo=arxiv&logoColor=%23B31B1B&label=10.64898%2F2026.01.19.700454&color=%23B31B1B&link=https%3A%2F%2Fdoi.org%2F10.64898%2F2026.01.19.700454)](https://doi.org/10.64898/2026.01.19.700454)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.10.5-23aa62.svg)](https://www.nextflow.io/)
-[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.4.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.4.1)
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A526.04.0-23aa62.svg)](https://www.nextflow.io/)
+[![nf-core template version](https://img.shields.io/badge/nf--core_template-4.1.0-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/4.1.0)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 

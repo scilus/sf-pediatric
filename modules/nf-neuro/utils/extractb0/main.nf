@@ -2,17 +2,16 @@ process UTILS_EXTRACTB0 {
     tag "$meta.id"
     label 'process_single'
 
-    container 'scilus/scilus:2.0.2'
+    container "scilus/scilpy:2.2.2_cpu"
 
     input:
     tuple val(meta), path(dwi), path(bval), path(bvec)
 
     output:
-    tuple val(meta), path("*_b0.nii.gz")        , emit: b0
-    tuple val(meta), path("*_b0_mask.nii.gz")   , emit: b0_mask
-    tuple val(meta), path("final.bval")         , emit: bval
-    tuple val(meta), path("final.bvec")         , emit: bvec
-    path "versions.yml"                         , emit: versions
+    tuple val(meta), path("*_b0.nii.gz"), emit: b0
+    tuple val(meta), path("*_copy_dwi.bval"), emit: bval, optional: true
+    tuple val(meta), path("*_copy_dwi.bvec"), emit: bvec, optional: true
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -22,44 +21,43 @@ process UTILS_EXTRACTB0 {
     def extraction_strategy = task.ext.b0_extraction_strategy ? "--$task.ext.b0_extraction_strategy" : "--mean"
     def b0_threshold = task.ext.b0_threshold ? "--b0_threshold $task.ext.b0_threshold" : ""
     def output_series = task.ext.output_series ? "" : "--single-image"
+    def extract_bval_bvec = task.ext.extract_bval_bvec ?: ""
     """
-    export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=1
-    export OMP_NUM_THREADS=1
-    export OPENBLAS_NUM_THREADS=1
+    export OMP_NUM_THREADS=${task.ext.single_thread ? 1 : task.cpus}
 
-    scil_dwi_extract_b0.py $dwi $bval $bvec ${prefix}_b0.nii.gz \
+    scil_dwi_extract_b0 $dwi $bval $bvec ${prefix}_b0.nii.gz \
         $output_series $extraction_strategy $b0_threshold --skip_b0_check
 
-    mrthreshold ${prefix}_b0.nii.gz ${prefix}_b0_mask.nii.gz -abs 0.0001 \
-        -nthreads $task.cpus
-
-    # Simple copy to ensure filename is catched by Nextflow.
-    cp $bval final.bval
-    cp $bvec final.bvec
+    if [[ "$extract_bval_bvec" ]];
+    then
+        cp $bval ${prefix}_copy_dwi.bval
+        cp $bvec ${prefix}_copy_dwi.bvec
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
-        mrtrix: \$(mrthreshold -version 2>&1 | sed -n 's/== mrthreshold \\([0-9.]\\+\\).*/\\1/p')
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def extract_bval_bvec = task.ext.extract_bval_bvec ?: ""
 
     """
-    scil_dwi_extract_b0.py -h
-    mrthreshold -h
+    scil_dwi_extract_b0 -h
 
     touch ${prefix}_b0.nii.gz
-    touch ${prefix}_b0_mask.nii.gz
-    touch final.bval
-    touch final.bvec
+
+    if [[ "$extract_bval_bvec" ]];
+    then
+        touch ${prefix}_copy_dwi.bval
+        touch ${prefix}_copy_dwi.bvec
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
-        mrtrix: \$(mrthreshold -version 2>&1 | sed -n 's/== mrthreshold \\([0-9.]\\+\\).*/\\1/p')
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }

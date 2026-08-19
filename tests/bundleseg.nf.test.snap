@@ -1,76 +1,79 @@
 {
     "BundleSeg - should run successfully": {
         "content": [
-            64,
+            68,
             {
                 "BET_T1W": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4",
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7",
                     "fsl": 6.0
                 },
                 "BET_T2W": {
-                    "scilpy": "2.0.2",
-                    "mrtrix": "3.0.4",
+                    "scilpy": "2.2.2",
+                    "mrtrix": "3.0.7",
                     "fsl": 6.0
                 },
                 "BUNDLE_FIXELAFD": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "BUNDLE_LABELMAP": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "BUNDLE_RECOGNIZE": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "BUNDLE_STATS": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "BUNDLE_UNIFORMIZE": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "FW_CORRECTED_DTIMETRICS": {
-                    "scilpy": "2.2.0",
+                    "scilpy": "2.2.2",
                     "mrtrix": "3.0.7",
                     "imagemagick": "6.9.12"
                 },
                 "RECONST_FREEWATER": {
-                    "scilpy": "2.2.0"
+                    "scilpy": "2.3.0"
                 },
                 "REGISTRATION_ANTS": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "REGISTRATION_TRACTOGRAM": {
-                    "ants": null,
-                    "scilpy": "2.2.1"
+                    "ants": "2.6.2",
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_REMOVEINVALID": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "TRACTOGRAM_RESAMPLE": {
-                    "scilpy": "2.2.1"
+                    "scilpy": "2.2.2"
                 },
                 "TRANSFORM_CENTROIDS": {
-                    "ants": null,
-                    "scilpy": "2.2.1"
+                    "ants": "2.6.2",
+                    "scilpy": "2.2.2"
                 },
                 "UTILS_TEMPLATEFLOW": {
                     "templateflow": "24.2.2",
                     "python": "3.13.2"
                 },
                 "WARPIMAGES": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "WARPRGB": {
-                    "ants": "2.4.3",
-                    "mrtrix": "3.0.4",
-                    "imagemagick": null
+                    "ants": "2.6.2",
+                    "imagemagick": "6.9.12-98",
+                    "mrtrix": "3.0.7",
+                    "scilpy": "2.2.2"
                 },
                 "Workflow": {
-                    "scilus/sf-pediatric": "v0.2.2"
+                    "scilus/sf_pediatric": "v0.3.0"
                 }
             },
             [
@@ -82,12 +85,12 @@
                 "multiqc/global_multiqc_plots",
                 "multiqc/global_multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/sf-pediatric_software_mqc_versions.yml",
+                "pipeline_info/sf_pediatric_software_mqc_versions.yml",
                 "sub-test1",
                 "sub-test1/ses-baseline",
                 "sub-test1/ses-baseline/anat",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T1w.json",
-                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T1w.nii.gz",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T2w.json",
+                "sub-test1/ses-baseline/anat/sub-test1_ses-baseline_space-MNIInfant_desc-preproc_T2w.nii.gz",
                 "sub-test1/ses-baseline/dwi",
                 "sub-test1/ses-baseline/dwi/bundles",
                 "sub-test1/ses-baseline/dwi/bundles/sub-test1_ses-baseline_space-MNIInfant_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
@@ -104,6 +107,10 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fwf_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-fwf_dwimap.nii.gz",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-nrmse_dwimap.json",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-nrmse_dwimap.nii.gz",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-rmse_dwimap.json",
+                "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-fw_param-rmse_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_model-tensor_param-diffusivity_desc-fwc_dwimap.json",
@@ -130,6 +137,10 @@
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_space-MNIInfant_model-tensor_param-rd_dwimap.nii.gz",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_space-MNIInfant_model-tensor_param-rgb_dwimap.json",
                 "sub-test1/ses-baseline/dwi/sub-test1_ses-baseline_space-MNIInfant_model-tensor_param-rgb_dwimap.nii.gz",
+                "sub-test1/ses-baseline/multiqc",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_data",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/ses-baseline/multiqc/sub-test1_multiqc_report.html",
                 "sub-test1/ses-baseline/xfm",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-MNIInfant_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
@@ -137,8 +148,8 @@
                 "sub-test1/ses-baseline/xfm/sub-test1_ses-baseline_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test1/ses-time1",
                 "sub-test1/ses-time1/anat",
-                "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-MNIInfant_desc-preproc_T1w.json",
-                "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-MNIInfant_desc-preproc_T1w.nii.gz",
+                "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-MNIInfant_desc-preproc_T2w.json",
+                "sub-test1/ses-time1/anat/sub-test1_ses-time1_space-MNIInfant_desc-preproc_T2w.nii.gz",
                 "sub-test1/ses-time1/dwi",
                 "sub-test1/ses-time1/dwi/bundles",
                 "sub-test1/ses-time1/dwi/bundles/sub-test1_ses-time1_space-MNIInfant_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
@@ -155,6 +166,10 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fwf_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-fwf_dwimap.nii.gz",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-nrmse_dwimap.json",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-nrmse_dwimap.nii.gz",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-rmse_dwimap.json",
+                "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-fw_param-rmse_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_model-tensor_param-diffusivity_desc-fwc_dwimap.json",
@@ -181,6 +196,10 @@
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_space-MNIInfant_model-tensor_param-rd_dwimap.nii.gz",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_space-MNIInfant_model-tensor_param-rgb_dwimap.json",
                 "sub-test1/ses-time1/dwi/sub-test1_ses-time1_space-MNIInfant_model-tensor_param-rgb_dwimap.nii.gz",
+                "sub-test1/ses-time1/multiqc",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_data",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_plots",
+                "sub-test1/ses-time1/multiqc/sub-test1_multiqc_report.html",
                 "sub-test1/ses-time1/xfm",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-MNIInfant_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
@@ -188,8 +207,8 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test3",
                 "sub-test3/anat",
-                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T1w.json",
-                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T1w.nii.gz",
+                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T2w.json",
+                "sub-test3/anat/sub-test3_space-MNIInfant_desc-preproc_T2w.nii.gz",
                 "sub-test3/dwi",
                 "sub-test3/dwi/bundles",
                 "sub-test3/dwi/bundles/sub-test3_space-MNIInfant_tract-ArcuateFasciculus_hemi-left_track-sdstream_tractogram.trk",
@@ -206,6 +225,10 @@
                 "sub-test3/dwi/sub-test3_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-fw_param-fwf_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-fw_param-fwf_dwimap.nii.gz",
+                "sub-test3/dwi/sub-test3_model-fw_param-nrmse_dwimap.json",
+                "sub-test3/dwi/sub-test3_model-fw_param-nrmse_dwimap.nii.gz",
+                "sub-test3/dwi/sub-test3_model-fw_param-rmse_dwimap.json",
+                "sub-test3/dwi/sub-test3_model-fw_param-rmse_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test3/dwi/sub-test3_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_model-tensor_param-diffusivity_desc-fwc_dwimap.json",
@@ -232,6 +255,10 @@
                 "sub-test3/dwi/sub-test3_space-MNIInfant_model-tensor_param-rd_dwimap.nii.gz",
                 "sub-test3/dwi/sub-test3_space-MNIInfant_model-tensor_param-rgb_dwimap.json",
                 "sub-test3/dwi/sub-test3_space-MNIInfant_model-tensor_param-rgb_dwimap.nii.gz",
+                "sub-test3/multiqc",
+                "sub-test3/multiqc/sub-test3_multiqc_data",
+                "sub-test3/multiqc/sub-test3_multiqc_plots",
+                "sub-test3/multiqc/sub-test3_multiqc_report.html",
                 "sub-test3/xfm",
                 "sub-test3/xfm/sub-test3_from-MNIInfant_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test3/xfm/sub-test3_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
@@ -257,6 +284,10 @@
                 "sub-test4/dwi/sub-test4_model-fw_param-fibervolume_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-fw_param-fwf_dwimap.json",
                 "sub-test4/dwi/sub-test4_model-fw_param-fwf_dwimap.nii.gz",
+                "sub-test4/dwi/sub-test4_model-fw_param-nrmse_dwimap.json",
+                "sub-test4/dwi/sub-test4_model-fw_param-nrmse_dwimap.nii.gz",
+                "sub-test4/dwi/sub-test4_model-fw_param-rmse_dwimap.json",
+                "sub-test4/dwi/sub-test4_model-fw_param-rmse_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-tensor_param-ad_desc-fwc_dwimap.json",
                 "sub-test4/dwi/sub-test4_model-tensor_param-ad_desc-fwc_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_model-tensor_param-diffusivity_desc-fwc_dwimap.json",
@@ -283,17 +314,27 @@
                 "sub-test4/dwi/sub-test4_space-MNIInfant_model-tensor_param-rd_dwimap.nii.gz",
                 "sub-test4/dwi/sub-test4_space-MNIInfant_model-tensor_param-rgb_dwimap.json",
                 "sub-test4/dwi/sub-test4_space-MNIInfant_model-tensor_param-rgb_dwimap.nii.gz",
+                "sub-test4/multiqc",
+                "sub-test4/multiqc/sub-test4_multiqc_data",
+                "sub-test4/multiqc/sub-test4_multiqc_plots",
+                "sub-test4/multiqc/sub-test4_multiqc_report.html",
                 "sub-test4/xfm",
                 "sub-test4/xfm/sub-test4_from-MNIInfant_to-dwi_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-MNIInfant_to-dwi_mode-image_desc-warp_xfm.nii.gz",
                 "sub-test4/xfm/sub-test4_from-dwi_to-MNIInfant_mode-image_desc-affine_xfm.mat",
                 "sub-test4/xfm/sub-test4_from-dwi_to-MNIInfant_mode-image_desc-warp_xfm.nii.gz"
+            ],
+            [
+                "",
+                "tpl-MNIInfant",
+                "tpl-MNIInfant_citations.bib",
+                "tpl-MNIInfant_metadata.json"
             ]
         ],
+        "timestamp": "2026-05-29T14:18:14.109004",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.8"
-        },
-        "timestamp": "2026-02-05T17:24:42.186942"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }

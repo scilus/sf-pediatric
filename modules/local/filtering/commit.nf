@@ -2,7 +2,7 @@ process FILTERING_COMMIT {
     tag "$meta.id"
     label 'process_medium'
 
-    container "${ 'scilus/scilpy:1.6.0' }"
+    container 'scilus/scilpy@sha256:2626bb7cec11a9acf421ba5c5d9c333f065e2434134c6cfdcaa850122727a1c3'
 
     input:
     tuple val(meta), path(hdf5), path(dwi), path(bval), path(bvec), path(peaks)
@@ -26,6 +26,7 @@ process FILTERING_COMMIT {
     def para_diff = task.ext.para_diff ? "--para_diff " + task.ext.para_diff : "--para_diff ${para}"
     def iso_diff = task.ext.iso_diff ? "--iso_diff " + task.ext.iso_diff : "--iso_diff ${iso}"
     def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : "--perp_diff ${perp}"
+    def replace_bad_voxels = task.ext.replace_bad_voxels != null ? "--replace_bad_voxels " + task.ext.replace_bad_voxels : ""
     def ball_stick = task.ext.ball_stick ? "--ball_stick" : ""
     def commit2 = task.ext.commit2 ? "--commit2" : ""
     def commit2_lambda = task.ext.commit2_lambda ? "--lambda_commit_2 " + task.ext.commit2_lambda : ""
@@ -37,12 +38,13 @@ process FILTERING_COMMIT {
 
     """
     export DIPY_HOME="./"
+    export MPLCONFIGDIR="./"
 
     echo "Parameters used: ${args_priors}"
 
-    scil_run_commit.py $hdf5 $dwi $bval $bvec "${prefix}__results_bzs/" \
+    scil_tractogram_commit $hdf5 $dwi $bval $bvec "${prefix}__results_bzs/" \
         --processes $task.cpus $args_priors $ball_stick \
-        $commit2 $commit2_lambda $nbr_dir $peaks_arg
+        $commit2 $commit2_lambda $nbr_dir $peaks_arg $replace_bad_voxels
 
     if [ -f "${prefix}__results_bzs/commit_2/decompose_commit.h5" ]; then
         mv "${prefix}__results_bzs/commit_2/decompose_commit.h5" "./${prefix}__decompose_commit.h5"
@@ -58,7 +60,7 @@ process FILTERING_COMMIT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 
@@ -73,17 +75,19 @@ process FILTERING_COMMIT {
     def perp_diff = task.ext.perp_diff ? "--perp_diff " + task.ext.perp_diff : "--perp_diff ${perp}"
 
     """
+    export MPLCONFIGDIR="./"
+
     touch ${prefix}__commit.h5
     touch ${prefix}__essential.trk
     mkdir ${prefix}__results_bzs
 
     echo "Parameters used: para_diff: ${para_diff}, iso_diff: ${iso_diff}, perp_diff: ${perp_diff}"
 
-    scil_run_commit.py -h
+    scil_tractogram_commit -h
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        scilpy: \$(pip list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
+        scilpy: \$(uv pip -q -n list | grep scilpy | tr -s ' ' | cut -d' ' -f2)
     END_VERSIONS
     """
 }
