@@ -1,6 +1,6 @@
 process SEGMENTATION_BIBSNET {
     tag "$meta.id"
-    label 'process_high'
+    label 'process_bibsnet'
 
     conda "${moduleDir}/environment.yml"
     container "gagnonanthony/sf-pediatric-bibsnet:3.7.0"
