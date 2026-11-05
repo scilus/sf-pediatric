@@ -20,6 +20,11 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Set up Java
+      uses: actions/setup-java@v5
+      with:
+        distribution: temurin
+        java-version: "21"
     - name: Install nf-test
       uses: nf-core/setup-nf-test@v1
       with:
