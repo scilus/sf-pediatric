@@ -20,7 +20,9 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("ERROR: The 'gpu' profile is used but no GPU type is provided. Please provide a GPU type using --gpu_type.")
+            // Small fix since nextflow 26.10.5 no longer prints to stdout but to stderr
+            assert workflow.stdout.contains("ERROR: The 'gpu' profile is used but no GPU type is provided. Please provide a GPU type using --gpu_type.") ||
+                   workflow.stderr.contains("ERROR: The 'gpu' profile is used but no GPU type is provided. Please provide a GPU type using --gpu_type.")
         }
     }
 }

@@ -56,7 +56,9 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("No license file path provided. Please specify the path using --fs_license parameter.")
+            // Small fix since nextflow 26.10.5 no longer prints to stdout but to stderr
+            assert workflow.stdout.contains("No license file path provided. Please specify the path using --fs_license parameter.") ||
+                   workflow.stderr.contains("No license file path provided. Please specify the path using --fs_license parameter.")
         }
     }
 
@@ -77,7 +79,9 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stderr.contains("* --fs_license (./not/a/valid/path/license.txt): the file or directory './not/a/valid/path/license.txt' does not exist")
+            // Small fix since nextflow 26.10.5 no longer prints to stdout but to stderr
+            assert workflow.stdout.contains("* --fs_license (./not/a/valid/path/license.txt): the file or directory './not/a/valid/path/license.txt' does not exist") ||
+                   workflow.stderr.contains("* --fs_license (./not/a/valid/path/license.txt): the file or directory './not/a/valid/path/license.txt' does not exist")
         }
     }
 }
