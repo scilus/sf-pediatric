@@ -55,7 +55,7 @@ Visit our documentation at https://scilus.github.io/sf-pediatric/ for detailed i
 
 ## Contributions and Support
 
-Contributions welcome! See our [contributing guidelines](.github/CONTRIBUTING.md).
+Contributions welcome! See our [contributing guidelines](docs/CONTRIBUTING.md).
 
 **sf-pediatric** was originally written by Anthony Gagnon.
 

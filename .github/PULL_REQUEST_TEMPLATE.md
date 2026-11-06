@@ -8,7 +8,7 @@ These are the most common things requested on pull requests (PRs).
 
 Remember that PRs should be made against the dev branch, unless you're preparing a pipeline release.
 
-Learn more about contributing: [CONTRIBUTING.md](https://github.com/scilus/sf-pediatric/tree/master/.github/CONTRIBUTING.md)
+Learn more about contributing: [CONTRIBUTING.md](https://github.com/scilus/sf-pediatric/blob/master/docs/CONTRIBUTING.md)
 
 -->
 
@@ -16,9 +16,9 @@ Learn more about contributing: [CONTRIBUTING.md](https://github.com/scilus/sf-pe
 
 - [ ] This comment contains a description of changes (with reason).
 - [ ] If you've fixed a bug or added code that should be tested, add tests!
-- [ ] If you've added a new tool - have you followed the pipeline conventions in the [contribution docs](https://github.com/scilus/sf-pediatric/tree/master/.github/CONTRIBUTING.md)
+- [ ] If you've added a new tool - have you followed the pipeline conventions in the [contribution docs](https://github.com/scilus/sf-pediatric/blob/master/docs/CONTRIBUTING.md)
 - [ ] Make sure your code lints (`nf-core pipelines lint`).
-- [ ] Ensure the test suite passes (`nextflow run . -profile test,docker --outdir <OUTDIR>`).
+- [ ] Ensure the test suite passes (`nf-test test tests/<profile>.nf.test --profile=+docker`).
 - [ ] Check for unexpected warnings in debug mode (`nextflow run . -profile debug,test,docker --outdir <OUTDIR>`).
 - [ ] [Documentation](https://github.com/scilus/sf-pediatric-documentation) has been updated according to your changes
 - [ ] `CHANGELOG.md` is updated.
