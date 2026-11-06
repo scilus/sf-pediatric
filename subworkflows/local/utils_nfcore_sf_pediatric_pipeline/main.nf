@@ -114,6 +114,9 @@ workflow PIPELINE_INITIALISATION {
     // Create channel from input file provided through params.input using nf-bids plugin
     //
     if ( input_bids ) {
+        // Copy to preserve the value of input_bids for the sessions.tsv file.
+        def bids_path = input_bids
+
         // ** To support comma separated participant labels and list ** //
         def participant_ids = params.participant_label ?
             params.participant_label instanceof String ?
@@ -121,7 +124,7 @@ workflow PIPELINE_INITIALISATION {
             params.participant_label : []
 
         ch_inputs = channel.fromBIDS(
-            input_bids,
+            bids_path,
             "$projectDir/assets/nf-bids_config.yml",
             [flatten_output: true,
             unpack_json_sidecar: true]
@@ -131,19 +134,59 @@ workflow PIPELINE_INITIALISATION {
             def id = item.meta.subject
             def ses = item.meta.session == "NA" ? null : item.meta.session
 
+            // ** Instantiate a variable that will collect prints related to BIDS file matching ** //
+            // ** to be printed in a log file later                                             ** //
+            def logs = []
+
+            // Look for a *sessions.tsv file to get the age per session if available.
+            def sessions_files = files("${bids_path}/${id}/*sessions.tsv")
+            def age = null
+
+            if ( sessions_files && ses ) {
+                def log = null
+                def lines = sessions_files[0].readLines().findAll { line -> line.trim() }
+                def header = lines[0].split("\t") as List
+                def ses_idx = header.indexOf("session_id")
+                def age_idx = header.indexOf("age")
+
+                // Find the age for the current session.
+                if ( ses_idx < 0 || age_idx < 0 ) {
+                    log = "[${id}${ses ? "/" + ses : ""}] Missing 'session_id' or 'age' column in sessions.tsv file. Please validate."
+                } else {
+                    def row = lines.drop(1)
+                        .collect { line -> line.split("\t", -1) }
+                        .find { cols -> cols[ses_idx] == ses.toString() || cols[ses_idx] == ses.toString().replaceAll("ses-", "") }
+                    def value = row ? row[age_idx]?.trim() : null
+
+                    if ( !row ) {
+                        log = "[${id}${ses ? "/" + ses : ""}] No row found for session ${ses} in sessions.tsv file. Please validate."
+                    } else if ( value && value.isNumber() ) {
+                        age = value.toFloat()
+                    } else {
+                        log = "[${id}${ses ? "/" + ses : ""}] Invalid age value '${value}' for session ${ses} in sessions.tsv file. Please validate."
+                    }
+
+                    if ( log ) {
+                        logs << log
+                    }
+                }
+
+                // Copy the sessions.tsv file to the output directory.
+                sessions_files[0].copyTo(file("$outdir/${id}/${id}_sessions.tsv"))
+            }
+
             // Age is already fetched from the participants.tsv file, flag subjects with missing age and exit.
-            def age = item.meta.age ? item.meta.age.toFloat() : 0.0
-            if ( age == 0.0 ) {
+            if ( age == null ) {
+                age = item.meta.age ? item.meta.age.toFloat() : null
+            }
+            if ( age == null ) {
                 error "ERROR: Age not found for participant ${id}${ses ? " and session " + ses : ""} in participants.tsv file. Please validate."
             }
+
             // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
             // ** Setting to a minimum of 0.04 (~ 2 weeks) to avoid negative values for the priors prediction ** //
             age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
             def priors = fetchPriors(age)
-
-            // ** Instantiate a variable that will collect prints related to BIDS file matching ** //
-            // ** to be printed in a log file later                                             ** //
-            def logs = []
 
             // DWI and associated files
             def dwi = item.dwi?.nii ?: []
