@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - [Unreleased]
+
+### `Fixed`
+
+- Publish directory for DWI space registered anatomical image when subject has no session ([#130](https://github.com/scilus/sf-pediatric/pull/130))
+
 ## [0.3.0] - [2026-08-19]
 
 ### `Added`
