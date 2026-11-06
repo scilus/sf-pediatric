@@ -376,6 +376,7 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test1/sub-test1_sessions.tsv",
                 "sub-test2",
                 "sub-test2/anat",
                 "sub-test2/anat/sub-test2_run-01_space-DWI_desc-preproc_T2w.json",
@@ -833,10 +834,10 @@
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
-        "timestamp": "2026-07-13T16:17:52.707781",
+        "timestamp": "2026-11-06T09:32:37.994202",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     },
     "Tracking profile no dwi preprocessing - should run successfully": {
@@ -1135,6 +1136,7 @@
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-T2w_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-affine_xfm.mat",
                 "sub-test1/ses-time1/xfm/sub-test1_ses-time1_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz",
+                "sub-test1/sub-test1_sessions.tsv",
                 "sub-test2",
                 "sub-test2/anat",
                 "sub-test2/anat/sub-test2_run-01_space-DWI_desc-preproc_T2w.json",
@@ -1480,10 +1482,10 @@
                 "sub-test4/xfm/sub-test4_from-dwi_to-T1w_mode-image_desc-warp_xfm.nii.gz"
             ]
         ],
-        "timestamp": "2026-07-13T16:28:24.606351",
+        "timestamp": "2026-11-06T09:47:05.660257",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.4"
+            "nextflow": "26.04.6"
         }
     }
 }

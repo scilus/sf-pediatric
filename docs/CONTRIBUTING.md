@@ -1,142 +1,93 @@
 ---
 title: Contributing
-markdownPlugin: checklist
 ---
 
-# `scilus/sf_pediatric`: Contributing guidelines
+# Contributing to scilus/sf-pediatric
 
-Hi there!
-Thanks for taking an interest in improving scilus/sf_pediatric.
+Thanks for helping improve **sf-pediatric**, an [nf-neuro](https://nf-neuro.github.io/welcome) pipeline for pediatric diffusion MRI (0–18 years).
 
-This page describes the recommended nf-core way to contribute to both scilus/sf_pediatric and nf-core pipelines in general, including:
+Link to the documentation: [scilus.github.io/sf-pediatric](https://scilus.github.io/sf-pediatric/).
+Questions and discussion: GitHub [issues](https://github.com/scilus/sf-pediatric/issues).
 
-- [General contribution guidelines](#general-contribution-guidelines): common procedures or guides across all nf-core pipelines.
-- [Pipeline-specific contribution guidelines](#pipeline-specific-contribution-guidelines): procedures or guides specific to the development conventions of scilus/sf_pediatric.
+## Where to contribute
 
-## General contribution guidelines
+All type of contributions are accepted! However, their destination might change depending of what they are targeting. Here is a table to help guide towards the most appropriate destination:
 
-### Contribution quick start
+| Kind of change                                                 | Where it belongs                                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Workflow wiring, parameters, profiles, tests, QC reports, docs | This repository                                                                                                                                                                                                                                                                   |
+| Reusable neuroimaging process or subworkflow                   | [nf-neuro/modules](https://github.com/nf-neuro/modules) — follow [create a module](https://nf-neuro.github.io/contribute/create-your-module/1-template) or [create a subworkflow](https://nf-neuro.github.io/contribute/create-your-subworkflow/1-template), then install it here |
+| Pediatric-only or not ready upstream                           | `modules/local/` or `subworkflows/local/`                                                                                                                                                                                                                                         |
 
-To contribute code to any nf-core pipeline:
+Reusable-component tutorials can be seen on the [nf-neuro website](https://nf-neuro.github.io/contribute/setup). The current guidelines will cover how to modify the current pipeline.
 
-- [ ] Ensure you have Nextflow, nf-core tools, and nf-test installed. See the [nf-core/tools repository](https://github.com/nf-core/tools) for instructions.
-- [ ] Check whether a GitHub [issue](https://github.com/scilus/sf_pediatric/issues) about your idea already exists. If an issue does not exist, create one so that others are aware you are working on it.
-- [ ] [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the [scilus/sf_pediatric repository](https://github.com/scilus/sf_pediatric) to your GitHub account.
-- [ ] Create a branch on your forked repository and make your changes following [pipeline conventions](#pipeline-contribution-conventions) (if applicable).
-- [ ] To fix major bugs, name your branch `patch` and follow the [patch release](#patch-release) process.
-- [ ] Update relevant documentation within the `docs/` folder, use nf-core/tools to update `nextflow_schema.json`, and update `CITATIONS.md`.
-- [ ] Run and/or update tests. See [Testing](#testing) for more information.
-- [ ] [Lint](#lint-tests) your code with nf-core/tools.
-- [ ] Submit a pull request (PR) against the `dev` branch and request a review.
+## Quick start
 
-If you are not used to this workflow with Git, see the [GitHub documentation](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests) or [Git resources](https://try.github.io/) for more information.
+- [ ] Open or comment on a GitHub [issue](https://github.com/scilus/sf-pediatric/issues) so others know you are working on it.
+- [ ] [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) [`scilus/sf-pediatric`](https://github.com/scilus/sf-pediatric) and branch from `dev`.
+- [ ] Use [GitHub Codespaces](https://github.com/codespaces/new/scilus/sf-pediatric) or the repo [devcontainer](../.devcontainer/devcontainer.json). For nf-neuro module work, use the [nf-neuro contribution setup](https://nf-neuro.github.io/contribute/setup).
+- [ ] Make the change, then update `CHANGELOG.md` (Keep a Changelog; add the entry under the current unreleased version).
+- [ ] Update `nextflow_schema.json` when necessary
+- [ ] Update the [documentation](https://scilus.github.io/sf-pediatric/) when necessary and tag associated PRs.
+- [ ] [Lint](#testing-and-linting) and run the relevant [nf-test](#testing-and-linting) profile(s).
+- [ ] Open a pull request against **`dev`** and request a review.
 
-### GitHub Codespaces
+PRs to `main` or `master` are not accepted, they should be directed towards the **`dev`** branch.
 
-You can contribute to scilus/sf_pediatric without installing a local development environment on your machine by using [GitHub Codespaces](https://github.com/codespaces).
+New to GitHub PRs? See [GitHub’s collaboration docs](https://docs.github.com/en/pull-requests).
 
-[GitHub Codespaces](https://github.com/codespaces) is an online developer environment that runs in your browser, complete with VS Code and a terminal.
-Most nf-core repositories include a devcontainer configuration, which creates a GitHub Codespaces environment specifically for Nextflow development.
-The environment includes pre-installed nf-core tools, Nextflow, and a few other helpful utilities via a Docker container.
+## Repository map
 
-To get started, open the repository in [Codespaces](https://github.com/scilus/sf_pediatric/codespaces).
+| Path                                                                                                                                    | What to edit there                                                                               |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [`workflows/sf_pediatric.nf`](../workflows/sf_pediatric.nf)                                                                             | Main workflow file                                                                               |
+| [`conf/*.config`](../conf)                                                                                                              | Modules' `ext.*` options (`dwi_preprocessing`, `tracking`, `bundleseg`, `connectomics`, `qc`, …) |
+| [`nextflow.config`](../nextflow.config)                                                                                                 | Default parameters and Nextflow profiles                                                         |
+| [`nextflow_schema.json`](../nextflow_schema.json)                                                                                       | Parameter documentation and validation                                                           |
+| [`modules.json`](../modules.json)                                                                                                       | Pinned nf-neuro / nf-core modules and optional `.diff` patches                                   |
+| [`tests/*.nf.test`](../tests)                                                                                                           | Test suites                                                                                      |
+| [`assets/multiqc_config.yml`](../assets/multiqc_config.yml) / [`assets/multiqc_config_global.yml`](../assets/multiqc_config_global.yml) | Subject-level and global MultiQC sections                                                        |
 
-### Testing
+## Install or update nf-neuro components
 
-When you create a pull request with changes, GitHub Actions will run automatic tests.
-Pull requests are typically reviewed when these tests are passing.
-
-#### Lint tests
-
-nf-core has a [set of guidelines](https://nf-co.re/docs/specifications/overview) which all pipelines must follow.
-To enforce these, run linting with nf-core/tools:
-
-```bash
-nf-core pipelines lint <pipeline_directory>
-```
-
-If you encounter failures or warnings, follow the linked documentation printed to screen.
-For more information about linting tests, see [nf-core/tools API documentation](https://nf-co.re/docs/nf-core-tools/api_reference/latest/pipeline_lint_tests/actions_awsfulltest).
-
-### Patch release
-
-> [!WARNING]
-> Only in the unlikely event of a release that contains a critical bug.
-
-- [ ] Create a new branch `patch` on your fork based on `upstream/main` or `upstream/master`.
-- [ ] Fix the bug and use nf-core/tools to bump the version to the next semantic version, for example, `1.2.3` → `1.2.4`.
-- [ ] Open a Pull Request from `patch` directly to `main`/`master` with the changes.
-
-### Pipeline contribution conventions
-
-nf-core semi-standardises how you write code and other contributions to make the scilus/sf_pediatric code and processing logic more understandable for new contributors and to ensure quality.
-
-#### Add a new pipeline step
-
-To contribute a new step to the pipeline, follow the general nf-core coding procedure.
-Please also refer to the [pipeline-specific contribution guidelines](#pipeline-specific-contribution-guidelines):
-
-- [ ] Define the corresponding [input channel](#channel-naming-schemes) into your new process from the expected previous process channel.
-- [ ] Install a module with nf-core/tools, or write a local module (see [default processes resource requirements](#default-processes-resource-requirements)), and add it to the target `<workflow>.nf`.
-- [ ] Define the output channel if needed. Mix the version output channel into `ch_versions` and relevant files into `ch_multiqc`.
-- [ ] Add new or updated parameters to `nextflow.config` with a [default value](#default-parameter-values).
-- [ ] Add new or updated parameters and relevant help text to `nextflow_schema.json` with [nf-core/tools](#default-parameter-values).
-- [ ] Add validation for relevant parameters to the pipeline utilisation section of `utils_nfcore_\_pipeline/main.nf` subworkflow.
-- [ ] Perform local tests to validate that the new code works as expected.
-  - [ ] If applicable, add a new test in the `tests` directory.
-- [ ] Update `usage.md`, `output.md`, and `citation.md` as appropriate.
-- [ ] [Lint](#lint-tests) the code with nf-core/tools.
-- [ ] Update any diagrams or pipeline images as necessary.
-- [ ] Update MultiQC config `assets/multiqc_config.yml` so relevant suffixes, file name cleanup, and module plots are in the appropriate order.
-- [ ] If applicable, create a [MultiQC](https://seqera.io/multiqc/) module.
-- [ ] Add a description of the output files and, if relevant, images from the MultiQC report to `docs/output.md`.
-
-To update the minimum required Nextflow version, see the [Nextflow version bumping](#nextflow-version-bumping) section below. For more information about pipeline contributions, see [pipeline-specific contribution guidelines](#pipeline-specific-contribution-guidelines).
-
-#### Channel naming schemes
-
-Use the following naming schemes for channels to make the channel flow easier to understand:
-
-- Initial process channel: `ch_output_from_<process>`
-- Intermediate and terminal channels: `ch_<previousprocess>_for_<nextprocess>`
-
-#### Default parameter values
-
-Parameters should be initialised and defined with default values within the `params` scope in `nextflow.config`.
-They should also be documented in the pipeline JSON schema.
-
-To update `nextflow_schema.json`, run:
+This pipeline’s default module remote is [`nf-neuro/modules`](https://github.com/nf-neuro/modules) (`main`). List, install, and update with nf-core/tools — same commands as in the [nf-neuro pipeline tutorial](https://nf-neuro.github.io/pipeline/5-tutorial_step_4):
 
 ```bash
-nf-core pipelines schema build
+nf-core modules list remote
+nf-core modules install <category/tool>
+nf-core modules update <category/tool>
+nf-core subworkflows install <name>
 ```
 
-The schema builder interface that loads in your browser should automatically update the defaults in the parameter documentation.
+Inputs, outputs, and `ext.*` options are documented in the [nf-neuro API](https://nf-neuro.github.io/api).
 
-#### Default processes resource requirements
+`modules.json` may record a `patch` (for example `bundle/recognize`, `preproc/eddy`). Prefer fixing the component upstream. Keep a `.diff` only when the change must stay pipeline-specific.
 
-If you write a local module, specify a default set of resource requirements for the process.
+## Add a pipeline step
 
-Sensible defaults for process resource requirements (CPUs, memory, time) should be defined in `conf/base.config`.
-Specify these with generic `withLabel:` selectors, so they can be shared across multiple processes and steps of the pipeline.
+- [ ] Reuse an existing nf-neuro module or subworkflow when one exists.
+- [ ] Include and call it from `workflows/sf_pediatric.nf` or appropriate local subworkflow.
+- [ ] Set `ext.*` in the matching file under `conf/`.
+- [ ] Add new parameters in `nextflow.config` with a default, then edit the schema to reflect those changes.
+- [ ] Mix software versions into `ch_versions`. Mix QC outputs (`mqc` / PNG / TSV) into the local [`QC` subworkflow](../subworkflows/local/QC/qc.nf).
+- [ ] Extend the matching test in `tests/` (`tracking.nf.test`, `segmentation.nf.test`, `bundleseg.nf.test`, `connectomics.nf.test`, `chained.nf.test`, or `gpu.nf.test`).
+- [ ] Update the [sf-pediatric-documentation](https://github.com/scilus/sf-pediatric-documentation) if needed.
+- [ ] If you add `*_mqc.png` (or similar) files, update section order in `assets/multiqc_config.yml`.
 
-nf-core provides a set of standard labels that you should follow where possible, as seen in the [nf-core pipeline template](https://github.com/nf-core/tools/blob/main/nf_core/pipeline-template/conf/base.config).
-These labels define resource defaults for single-core processes, modules that require a GPU, and different levels of multi-core configurations with increasing memory requirements.
+## Testing and linting
 
-Values assigned within these labels can be dynamically passed to a tool using the `${task.cpus}` and `${task.memory}` Nextflow variables in the `script:` block of a module (see an example in the [modules repository](https://github.com/nf-core/modules/blob/bd1b6a40f55933d94b8c9ca94ec8c1ea0eaf4b82/modules/nf-core/samtools/bam2fq/main.nf#L30)).
+GitHub Actions run nf-test, prek (Prettier, nextflow-lint, and a hook that blocks committing pipeline `outdir`), and `nf-core pipelines lint`. PRs are usually reviewed once those checks pass.
 
-#### Nextflow version bumping
-
-If you use a new feature from core Nextflow, bump the minimum required Nextflow version in the pipeline with:
+This repo’s nf-test config **ignores** tests under `modules/**` and `subworkflows/**`. To run the pipeline tests use:
 
 ```bash
-nf-core pipelines bump-version --nextflow . <min_nf_version>
+nf-test test tests/tracking.nf.test --profile=+docker
+# Or when you want to update the snapshots
+nf-test test tests/tracking.nf.test --updateSnapshot --cleanSnapshot --profile=+docker
 ```
 
-#### Images and figures guidelines
+Lint:
 
-If you update images or graphics, follow the nf-core [style guidelines](https://nf-co.re/docs/community/brand/workflow-schematics).
-
-## Pipeline specific contribution guidelines
-
-<!-- TODO nf-core: Add any pipeline specific contribution guidelines here, such as coding styles, procedures, checklists etc. -->
+```bash
+nf-core pipelines lint
+```
