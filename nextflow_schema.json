@@ -55,6 +55,13 @@
                     "fa_icon": "fas fa-folder-open",
                     "hidden": true
                 },
+                "fetal_templates_folder": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "Path to the directory where fetal templates will be downloaded and cached.",
+                    "fa_icon": "fas fa-folder-open",
+                    "hidden": true
+                },
                 "gpu_type": {
                     "type": "string",
                     "description": "Type of GPU models (or MIG) to use when submitting GPU jobs to HPC clusters using `-profile slurm,gpu`. This should not be needed outside of HPC environments.",
@@ -546,7 +553,7 @@
                     "hidden": false
                 },
                 "dwi_resample_voxel_size": {
-                    "type": "integer",
+                    "type": "number",
                     "description": "Voxel size used in the DWI resampling step.",
                     "fa_icon": "fas fa-brain",
                     "default": 1,
@@ -560,7 +567,7 @@
                     "hidden": true
                 },
                 "dwi_resample_mask_voxel_size": {
-                    "type": "integer",
+                    "type": "number",
                     "description": "Voxel size used in the DWI mask resampling step.",
                     "fa_icon": "fas fa-brain",
                     "default": 1,

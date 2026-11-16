@@ -141,33 +141,43 @@ workflow PIPELINE_INITIALISATION {
             // Look for a *sessions.tsv file to get the age per session if available.
             def sessions_files = files("${bids_path}/${id}/*sessions.tsv")
             def age = null
+            def fetal = null // Default to null, as we assume non-fetal data by default.
 
             if ( sessions_files && ses ) {
-                def log = null
+                def prefix = "[${id}${ses ? "/" + ses : ""}]"
                 def lines = sessions_files[0].readLines().findAll { line -> line.trim() }
                 def header = lines[0].split("\t") as List
                 def ses_idx = header.indexOf("session_id")
                 def age_idx = header.indexOf("age")
+                def fetal_idx = header.indexOf("fetal")
 
                 // Find the age for the current session.
-                if ( ses_idx < 0 || age_idx < 0 ) {
-                    log = "[${id}${ses ? "/" + ses : ""}] Missing 'session_id' or 'age' column in sessions.tsv file. Please validate."
+                if ( ses_idx < 0 ) {
+                    logs << "${prefix} Missing 'session_id' column in sessions.tsv file. Please validate.".toString()
                 } else {
                     def row = lines.drop(1)
                         .collect { line -> line.split("\t", -1) }
                         .find { cols -> cols[ses_idx] == ses.toString() || cols[ses_idx] == ses.toString().replaceAll("ses-", "") }
-                    def value = row ? row[age_idx]?.trim() : null
 
                     if ( !row ) {
-                        log = "[${id}${ses ? "/" + ses : ""}] No row found for session ${ses} in sessions.tsv file. Please validate."
-                    } else if ( value && value.isNumber() ) {
-                        age = value.toFloat()
+                        logs << "${prefix} No row found for session ${ses} in sessions.tsv file. Please validate.".toString()
                     } else {
-                        log = "[${id}${ses ? "/" + ses : ""}] Invalid age value '${value}' for session ${ses} in sessions.tsv file. Please validate."
+                        def age_value = row.size() > age_idx ? row[age_idx]?.trim() : null
+                        if ( age_value && age_value.isNumber() ) {
+                            age = age_value.toFloat()
+                        } else {
+                            logs << "${prefix} Invalid age value '${age_value}' for session ${ses} in sessions.tsv file. Please validate.".toString()
+                        }
                     }
 
-                    if ( log ) {
-                        logs << log
+                    // Fetal section
+                    if ( fetal_idx >= 0 ) {
+                        def fetal_value = row.size() > fetal_idx ? row[fetal_idx]?.trim().toLowerCase() : null
+                        if ( fetal_value in ["yes", "true", "y", "1"] ) {
+                            fetal = true
+                        } else if ( !(fetal_value in ["no", "false", "n", "0", "N/A", "NA", "n/a"]) ) {
+                            logs << "${prefix} Invalid fetal value '${fetal_value}' for session ${ses} in sessions.tsv file. Please validate.".toString()
+                        }
                     }
                 }
 
@@ -183,10 +193,20 @@ workflow PIPELINE_INITIALISATION {
                 error "ERROR: Age not found for participant ${id}${ses ? " and session " + ses : ""} in participants.tsv file. Please validate."
             }
 
-            // Temp age in years for priors prediction (only if data is over 25, as we assume it is gestational age).
+            // If fetal not found in sessions.tsv, check the main participants.tsv file. Set to false if not found.
+            if ( fetal == null ) {
+                fetal = item.meta.fetal.toString().toLowerCase() in ["yes", "true", "y", "1"] ? true : false
+            }
+
+            // Temp age in years for priors prediction.
             // ** Setting to a minimum of 0.04 (~ 2 weeks) to avoid negative values for the priors prediction ** //
-            age = age.toFloat() > 25 ? Math.max(Math.abs((age.toFloat() - 40) / 52), 0.04) : age.toFloat()
-            def priors = fetchPriors(age)
+            def priors = null
+            if ( fetal ) {
+                priors = fetchPriors(0.04) // 2 weeks
+            } else {
+                age = Math.max(Math.abs(age.toFloat()), 0.04).toFloat()
+                priors = fetchPriors(age)
+            }
 
             // DWI and associated files
             def dwi = item.dwi?.nii ?: []
@@ -370,6 +390,7 @@ workflow PIPELINE_INITIALISATION {
                             id: id, session: ses ?: "", run: run_id,
                             readout: readout, pe: pe_check.pe,
                             age: age,
+                            fetal: fetal,
                             fa: priors.fa, ad: priors.ad,
                             rd: priors.rd, md: priors.md,
                             rd_min: priors.rd_min, rd_max: priors.rd_max
@@ -474,6 +495,7 @@ workflow PIPELINE_INITIALISATION {
                             id: id, session: ses ?: "", run: run_id,
                             readout: readout, pe: pe,
                             age: age,
+                            fetal: fetal,
                             fa: priors.fa, ad: priors.ad,
                             rd: priors.rd, md: priors.md,
                             rd_min: priors.rd_min, rd_max: priors.rd_max
@@ -498,6 +520,7 @@ workflow PIPELINE_INITIALISATION {
                         id: id, session: ses ?: "", run: "",
                         readout: "", pe: "",
                         age: age,
+                        fetal: fetal,
                         fa: priors.fa, ad: priors.ad,
                         rd: priors.rd, md: priors.md,
                         rd_min: priors.rd_min, rd_max: priors.rd_max

@@ -66,6 +66,9 @@ params {
     // Path to the directory where templates will be downloaded and cached.
     templates_download_path: String = "${env('HOME')}/.cache/sf-pediatric"
 
+    // Path to the directory where fetal templates will be downloaded and cached.
+    fetal_templates_folder: String?
+
     // Method to use to perform surface reconstruction and cortical/subcortical segmentation. Will only affect subjects > 3 months of age. Recon-all-clinical is highly recommended for subjects between 3 months and 5 years old. Options include recon-all, recon-all-clinical, or FastSurfer.
     method: String = 'recon-all-clinical'
 

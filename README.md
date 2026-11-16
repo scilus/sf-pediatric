@@ -11,6 +11,11 @@
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
+> [!IMPORTANT]
+> The `fetal` branch displayed here is under development and should not be used for active research project, unless specifically
+> approved. Once support for fetal data has been tested and validated, the features found here will be merged in the `dev` branch
+> and included in a future release.
+
 ## Introduction
 
 **sf-pediatric** is an end-to-end age-adaptable pipeline for pediatric (0-18 years old) diffusion MRI. It leverages normative models of the brain diffusivities to perform connectomics analysis, WM bundles extraction and tractometry. Each pipeline run is wrapped in an interactive quality control reports for easy quality control of the processed data.

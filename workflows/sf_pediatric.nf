@@ -48,6 +48,7 @@ include { REGISTRATION_ANTSAPPLYTRANSFORMS as WARPPROBSEG     } from '../modules
 // ** Anatomical Segmentation ** //
 include { SEGMENTATION_FASTSEG as FASTSEG   } from '../modules/nf-neuro/segmentation/fastseg/main'
 include { SEGMENTATION_TRACKINGMASKS as TRACKINGMASKS } from '../modules/local/segmentation/trackingmasks/main'
+include { FETAL } from '../subworkflows/local/segmentation/fetal.nf'
 
 // ** Tracking ** //
 include { TRACKING_PFTTRACKING              } from '../modules/nf-neuro/tracking/pfttracking/main'
@@ -138,7 +139,7 @@ workflow SF_PEDIATRIC {
             def tuple = (item instanceof List) ? item : [item]
             def meta = (tuple[0] instanceof List) ? tuple[0][0] : tuple[0]
             def weight = tuple[-1]
-            [meta, (meta.age < 2.5 || meta.age > 18) ? weight : []]
+            [meta, meta.age < 2.5 ? weight : []]
         }
 
     ch_t2_sample_weights = ch_t2
@@ -147,7 +148,7 @@ workflow SF_PEDIATRIC {
             def tuple = (item instanceof List) ? item : [item]
             def meta = (tuple[0] instanceof List) ? tuple[0][0] : tuple[0]
             def weight = tuple[-1]
-            [meta, (meta.age < 2.5 || meta.age > 18) ? weight : []]
+            [meta, meta.age < 2.5 ? weight : []]
         }
 
     ch_dwi_sample_weights = ch_inputs.dwi_bval_bvec
@@ -156,7 +157,7 @@ workflow SF_PEDIATRIC {
             def tuple = (item instanceof List) ? item : [item]
             def meta = (tuple[0] instanceof List) ? tuple[0][0] : tuple[0]
             def weight = tuple[-1]
-            [meta, (meta.age < 2.5 || meta.age > 18) ? weight : []]
+            [meta, (meta.age < 2.5 || meta.fetal == true) ? weight : []]
         }
 
     //
@@ -165,14 +166,14 @@ workflow SF_PEDIATRIC {
     if ( params.tracking ) {
         // ** Run T1 preprocessing ** //
         PREPROC_T1W (
-            ch_t1,
+            ch_t1.filter { tuple -> tuple[0].fetal != true },
             channel.empty(),
             channel.empty(),
             channel.empty(),
             channel.empty(),
             channel.empty(),
             channel.empty(),
-            ch_t1_sample_weights,
+            ch_t1_sample_weights.filter { tuple -> tuple[0].fetal != true },
             [
                 "preproc_t1_run_denoising": params.run_t1_denoising,
                 "preproc_t1_run_N4": params.run_t1_n4,
@@ -187,14 +188,14 @@ workflow SF_PEDIATRIC {
 
         // ** T2 Preprocessing ** //
         PREPROC_T2W (
-            ch_t2,
+            ch_t2.filter { tuple -> tuple[0].fetal != true },
             channel.empty(),
             channel.empty(),
             channel.empty(),
             channel.empty(),
             channel.empty(),
             channel.empty(),
-            ch_t2_sample_weights,
+            ch_t2_sample_weights.filter { tuple -> tuple[0].fetal != true },
             [
                 "preproc_t1_run_denoising": params.run_t2_denoising,
                 "preproc_t1_run_N4": params.run_t2_n4,
@@ -257,6 +258,9 @@ workflow SF_PEDIATRIC {
             .combine(ch_tpl12)
             .combine(ch_tpl24)
             .branch { tuple ->
+                // ** Fetal data skips this step for now ** //
+                fetal: tuple[0].fetal == true
+                    return []
                 infant0: tuple[0].age < 0.125 || tuple[0].age > 18
                     // Assess wether a t1 or a t2 is available, and select the appropriate template accordingly
                     if ( tuple[2] != null && tuple[2] != [] ) {
@@ -300,8 +304,8 @@ workflow SF_PEDIATRIC {
 
 
         SEGMENTATION (
-            ch_t1,
-            ch_t2,
+            ch_t1.filter { tuple -> tuple[0].fetal != true },
+            ch_t2.filter { tuple -> tuple[0].fetal != true },
             channel.fromPath("${params.atlas_folder}/${params.atlas_name}", checkIfExists: true),
             ch_fs_license,
             channel.fromPath("$params.templates_download_path/templates/tpl-fsLR/tpl-MNI152NLin6Asym_res-01_desc-brain_T1w.nii.gz", checkIfExists: true),
@@ -479,6 +483,9 @@ workflow SF_PEDIATRIC {
             .join(PREPROC_T2W.out.t1_final, remainder: true)
             .join(PREPROC_T1W.out.t1_final, remainder: true)
             .branch{ tuple ->
+                // ** Fetal data skips this step for now ** //
+                fetal: tuple[0].fetal == true
+                    return []
                 infant_t2: (tuple[0].age < 0.5 || tuple[0].age > 18) && tuple[4] != null
                     return [tuple[0], tuple[1], tuple[4], tuple[3]]
                 infant_t1: (tuple[0].age < 0.5 || tuple[0].age > 18) && tuple[5] != null
@@ -620,6 +627,16 @@ workflow SF_PEDIATRIC {
                 child: tuple[0].age >= 2.5 && tuple[0].age <= 18
             }
 
+        // ** Fetal template segmentation ** //
+        ch_fetal = RECONST_DTIMETRICS.out.md
+            .filter { tuple -> tuple[0].fetal == true }
+
+        FETAL ( ch_fetal )
+        ch_versions = ch_versions.mix(FETAL.out.versions)
+        ch_nifti_files_to_transform = ch_nifti_files_to_transform
+            .mix(FETAL.out.wm_maps)
+        ch_multiqc_files_sub = ch_multiqc_files_sub.mix(FETAL.out.qc_files)
+
         FASTSEG ( ch_fastseg.child )
         ch_versions = ch_versions.mix(FASTSEG.out.versions)
         // ch_multiqc_files = ch_multiqc_files.mix(ANATOMICAL_SEGMENTATION.out.zip.collect{it[1]})
@@ -640,6 +657,9 @@ workflow SF_PEDIATRIC {
             .join(FASTSEG.out.csf_map, remainder: true)
             .join(WARPPROBSEG.out.warped_image, remainder: true)
             .branch{ tuple ->
+                // ** Fetal not supported for PFT tracking yet ** //
+                fetal: tuple[0].fetal == true
+                    return []
                 infant: tuple[0].age < 2.5 || tuple[0].age > 18
                     return [tuple[0], tuple[6][2], tuple[6][1], tuple[6][0], tuple[1], tuple[2]]
                 child: tuple[0].age >= 2.5 && tuple[0].age <= 18
@@ -651,13 +671,18 @@ workflow SF_PEDIATRIC {
             .join(RECONST_DTIMETRICS.out.fa)
             .join(FASTSEG.out.wm_mask, remainder: true)
             .join(TRACKINGMASKS.out.wm, remainder: true)
+            .join(FETAL.out.wm_maps, remainder: true)
             .branch{ tuple ->
+                fetal: tuple[0].fetal == true
+                    return [tuple[0], tuple[5], tuple[1], tuple[2]]
                 infant: tuple[0].age < 2.5 || tuple[0].age > 18
                     return [tuple[0], tuple[4], tuple[1], tuple[2]]
                 child: tuple[0].age >= 2.5 && tuple[0].age <= 18
                     return [tuple[0], tuple[3], tuple[1], tuple[2]]
             }
-        ch_local_tracking = ch_local_tracking.infant.mix(ch_local_tracking.child)
+        ch_local_tracking = ch_local_tracking.infant
+            .mix(ch_local_tracking.child)
+            .mix(ch_local_tracking.fetal)
 
         //
         // MODULE: Run PFT_TRACKING
@@ -879,7 +904,7 @@ workflow SF_PEDIATRIC {
         // SUBWORKFLOW: Run BUNDLE_SEG
         //
         BUNDLE_SEG(
-            ch_fa,
+            ch_fa_ad_rd_md.map{ meta, _fa, _ad, _rd, md -> [meta, md] },
             ch_trk
         )
         ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
@@ -1168,6 +1193,7 @@ workflow SF_PEDIATRIC {
     qc_files = ch_multiqc_files_sub
         .mix(params.bundling ? TRACTOMETRY.out.bundles : channel.empty())
         .mix(ch_anat_qc)
+        .mix(PREPROC_DWI.out.b0)
         .mix(QC.out.tissueseg_png)
         .mix(QC.out.tracking_png)
         .mix(QC.out.shell_png)

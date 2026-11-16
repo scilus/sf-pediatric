@@ -30,7 +30,7 @@ workflow BUNDLE_SEG {
         // ** Setting up Atlas reference channels. ** //
         if ( params.atlas_directory ) {
             atlas_anat = channel.fromPath("$params.atlas_directory/atlas/mni_masked.nii.gz", checkIfExists: true, relative: true)
-            atlas_config = channel.fromPath("$params.atlas_directory/config/config_fss_1.json", checkIfExists: true, relative: true)
+            atlas_config = channel.fromPath("$params.atlas_directory/config/config.json", checkIfExists: true, relative: true)
             atlas_average = channel.fromPath("$params.atlas_directory/atlas/atlas/", checkIfExists: true, relative: true)
 
             ch_register = ch_fa
@@ -210,7 +210,7 @@ workflow BUNDLE_SEG {
         }
 
         // ** Apply the transform to the centroids ** //
-        TRANSFORM_CENTROIDS ( ch_transform_centroids )
+        TRANSFORM_CENTROIDS ( ch_transform_centroids.filter{ it -> it[3] } )
         ch_versions = ch_versions.mix(TRANSFORM_CENTROIDS.out.versions)
 
     emit:
