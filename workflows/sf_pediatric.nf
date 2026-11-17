@@ -628,10 +628,10 @@ workflow SF_PEDIATRIC {
             }
 
         // ** Fetal template segmentation ** //
-        ch_fetal = RECONST_DTIMETRICS.out.md
-            .filter { tuple -> tuple[0].fetal == true }
-
-        FETAL ( ch_fetal )
+        FETAL (
+            RECONST_DTIMETRICS.out.md.filter { tuple -> tuple[0].fetal == true },
+            RECONST_DTIMETRICS.out.fa.filter { tuple -> tuple[0].fetal == true },
+        )
         ch_versions = ch_versions.mix(FETAL.out.versions)
         ch_nifti_files_to_transform = ch_nifti_files_to_transform
             .mix(FETAL.out.wm_maps)
@@ -904,7 +904,7 @@ workflow SF_PEDIATRIC {
         // SUBWORKFLOW: Run BUNDLE_SEG
         //
         BUNDLE_SEG(
-            ch_fa_ad_rd_md.map{ meta, _fa, _ad, _rd, md -> [meta, md] },
+            ch_fa,
             ch_trk
         )
         ch_versions = ch_versions.mix(BUNDLE_SEG.out.versions)
@@ -1193,7 +1193,7 @@ workflow SF_PEDIATRIC {
     qc_files = ch_multiqc_files_sub
         .mix(params.bundling ? TRACTOMETRY.out.bundles : channel.empty())
         .mix(ch_anat_qc)
-        .mix(PREPROC_DWI.out.b0)
+        .mix(params.tracking ? PREPROC_DWI.out.b0 : channel.empty())
         .mix(QC.out.tissueseg_png)
         .mix(QC.out.tracking_png)
         .mix(QC.out.shell_png)

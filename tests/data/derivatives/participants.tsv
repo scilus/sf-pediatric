@@ -1,5 +1,5 @@
 participant_id	session_id	age
-sub-test1	ses-baseline	43
+sub-test1	ses-baseline	0.06
 sub-test1	ses-time1	4
 sub-test2		1
 sub-test3		2

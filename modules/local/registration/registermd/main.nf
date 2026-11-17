@@ -6,7 +6,7 @@ process REGISTER_MD {
     container 'scilus/scilus:2.2.2'
 
     input:
-    tuple val(meta), path(fixed), path(moving)
+    tuple val(meta), path(fixed_md), path(fixed_fa), path(moving_md), path(moving_fa)
 
     output:
     tuple val(meta), path("*warped.nii.gz")                            , emit: image_warped
@@ -40,17 +40,18 @@ process REGISTER_MD {
         --output [output,outputWarped.nii.gz,outputInverseWarped.nii.gz]\
         --interpolation Linear --use-histogram-matching 0\
         --winsorize-image-intensities [0.005,0.995]\
-        --initial-moving-transform [$fixed,$moving,1]\
+        --initial-moving-transform [$fixed_fa,$moving_fa,1]\
         --transform Rigid['0.2']\
-        --metric mattes[$fixed,$moving,1,32,Regular,0.25]\
+        --metric mattes[$fixed_fa,$moving_fa,1,32,Regular,0.25]\
         --convergence [10000x10000x10000x10000,1e-7,20] --shrink-factors 8x4x2x1\
         --smoothing-sigmas 3x2x1x0\
         --transform Affine['0.2']\
-        --metric mattes[$fixed,$moving,1,32,Regular,0.25]\
+        --metric mattes[$fixed_fa,$moving_fa,1,32,Regular,0.25]\
         --convergence [10000x10000x10000x10000,1e-7,20] --shrink-factors 8x4x2x1\
         --smoothing-sigmas 3x2x1x0\
         --transform SyN[0.2,3,0]\
-        --metric mattes[$fixed,$moving,1,32,Regular,0.25]\
+        --metric mattes[$fixed_md,$moving_md,1,32,Regular,0.25]\
+        --metric mattes[$fixed_fa,$moving_fa,1,32,Regular,0.25]\
         --convergence [10000x10000x10000x10000,1e-7,20] --shrink-factors 8x4x2x1\
         --smoothing-sigmas 3x2x1x0
 
@@ -62,12 +63,12 @@ process REGISTER_MD {
     antsApplyTransforms -d 3 -t [${prefix}__${suffix}_forward1_affine.mat,1] \
         -o Linear[${prefix}__${suffix}_backward0_affine.mat]
 
-    moving_id=\$(basename $moving .nii.gz)
+    moving_id=\$(basename $moving_md .nii.gz)
     moving_id=\${moving_id#${meta.id}_*}
 
     ### ** QC ** ###
     if $run_qc; then
-        mv $fixed fixed_image.nii.gz
+        mv $fixed_md fixed_image.nii.gz
         extract_dim=\$(mrinfo fixed_image.nii.gz -size)
         read sagittal_dim coronal_dim axial_dim <<< "\${extract_dim}"
 
@@ -77,7 +78,7 @@ process REGISTER_MD {
         sagittal_dim=\$((\$sagittal_dim / 2))
 
         # Get fixed ID, moving ID already computed
-        fixed_id=\$(basename $fixed .nii.gz)
+        fixed_id=\$(basename $fixed_md .nii.gz)
         fixed_id=\${fixed_id#${meta.id}_*}
 
         # Set viz params.

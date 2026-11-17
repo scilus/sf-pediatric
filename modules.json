@@ -109,6 +109,11 @@
                         "git_sha": "2c6b000e9e4e1d882a6c2d3739c440596ca039dd",
                         "installed_by": ["preproc_t1"]
                     },
+                    "image/antsmath": {
+                        "branch": "main",
+                        "git_sha": "aa44ad5f6745260c7b91b210237cf418369af05b",
+                        "installed_by": ["modules"]
+                    },
                     "image/applymask": {
                         "branch": "main",
                         "git_sha": "ca21922a7affe217f7391a98b5af1e50a79f094c",
@@ -123,6 +128,11 @@
                         "branch": "main",
                         "git_sha": "c3a5dc48a6f49376557fecdd212d077946cf0c2e",
                         "installed_by": ["preproc_dwi", "preproc_t1"]
+                    },
+                    "image/math": {
+                        "branch": "main",
+                        "git_sha": "f2d66a70673d3002965ab9fbd648db7b5b9d4a34",
+                        "installed_by": ["modules"]
                     },
                     "image/powderaverage": {
                         "branch": "main",

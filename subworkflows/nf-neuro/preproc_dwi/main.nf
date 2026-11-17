@@ -4,6 +4,8 @@ include { PREPROC_GIBBS as PREPROC_GIBBS_DWI } from '../../../modules/nf-neuro/p
 include { PREPROC_GIBBS as PREPROC_GIBBS_REVDWI } from '../../../modules/nf-neuro/preproc/gibbs/main'
 include { IMAGE_POWDERAVERAGE } from '../../../modules/nf-neuro/image/powderaverage/main'
 include { BETCROP_SYNTHSTRIP } from '../../../modules/nf-neuro/betcrop/synthstrip/main'
+include { IMAGE_MATH } from '../../../modules/nf-neuro/image/math/main'
+include { IMAGE_ANTSMATH } from '../../../modules/nf-neuro/image/antsmath/main' 
 include { IMAGE_APPLYMASK as BET_DWI } from '../../../modules/nf-neuro/image/applymask/main'
 include { IMAGE_CROPVOLUME as CROPDWI } from '../../../modules/nf-neuro/image/cropvolume/main'
 include { IMAGE_CROPVOLUME as CROPMASK } from '../../../modules/nf-neuro/image/cropvolume/main'
@@ -169,9 +171,19 @@ workflow PREPROC_DWI {
             BETCROP_SYNTHSTRIP ( ch_synthstrip )
             ch_versions = ch_versions.mix(BETCROP_SYNTHSTRIP.out.versions.first())
 
+            // Apply an intensity threshold to the pre-bet pwd average image.
+            ch_image_math = BETCROP_SYNTHSTRIP.out.bet_image
+                .map{ meta, img -> [ meta, img, 2500 ]}
+            IMAGE_MATH ( ch_image_math )
+            ch_versions = ch_versions.mix(IMAGE_MATH.out.versions.first())
+
+            // Fill the holes in the thresholded brain mask.
+            IMAGE_ANTSMATH ( IMAGE_MATH.out.image )
+            ch_versions = ch_versions.mix(IMAGE_ANTSMATH.out.versions.first())
+
             // Use the SynthStrip mask to BET the DWI
             ch_apply_mask = ch_dwi
-                .join(BETCROP_SYNTHSTRIP.out.brain_mask)
+                .join(IMAGE_ANTSMATH.out.image)
                 .map{ meta, dwi, _bval, _bvec, mask -> [ meta, dwi, mask ] }
 
             BET_DWI ( ch_apply_mask )

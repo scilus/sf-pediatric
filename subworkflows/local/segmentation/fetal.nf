@@ -6,6 +6,7 @@ def createFetalChannel(channel, cohort) {
         def meta = [id: "Fetal", cohort: cohort]
         def files = [
             file("${folder}/${cohort}/dwi_${cohort}_md_atlas.nii.gz"),
+            file("${folder}/${cohort}/dwi_${cohort}_fa_atlas.nii.gz"),
             file("${folder}/${cohort}/dwi_${cohort}_wm.nii.gz")
         ]
         def flattenedFiles = files.flatten().findAll { it -> it.exists() }
@@ -17,6 +18,7 @@ workflow FETAL {
 
     take:
     ch_md_map
+    ch_fa_map
 
     main:
     ch_versions = channel.empty()
@@ -43,6 +45,7 @@ workflow FETAL {
 
     // Register the template MD to the subject MD
     ch_register_md = ch_md_map
+        .join(ch_fa_map)
         .combine(ch_ga23.map { tuple -> tuple[1..2] })
         .combine(ch_ga24.map { tuple -> tuple[1..2] })
         .combine(ch_ga25.map { tuple -> tuple[1..2] })
@@ -61,37 +64,37 @@ workflow FETAL {
         .combine(ch_ga38.map { tuple -> tuple[1..2] })
         .branch { tuple ->
             ga23: tuple[0].age <= 23.5
-                return [tuple[0], tuple[1], tuple[2]]
+                return [tuple[0], tuple[1], tuple[2], tuple[3], tuple[4]]
             ga24: tuple[0].age > 23.5 && tuple[0].age <= 24.5
-                return [tuple[0], tuple[1], tuple[4]]
+                return [tuple[0], tuple[1], tuple[2], tuple[5], tuple[6]]
             ga25: tuple[0].age > 24.5 && tuple[0].age <= 25.5
-                return [tuple[0], tuple[1], tuple[6]]
+                return [tuple[0], tuple[1], tuple[2], tuple[7], tuple[8]]
             ga26: tuple[0].age > 25.5 && tuple[0].age <= 26.5
-                return [tuple[0], tuple[1], tuple[8]]
+                return [tuple[0], tuple[1], tuple[2], tuple[9], tuple[10]]
             ga27: tuple[0].age > 26.5 && tuple[0].age <= 27.5
-                return [tuple[0], tuple[1], tuple[10]]
+                return [tuple[0], tuple[1], tuple[2], tuple[11], tuple[12]]
             ga28: tuple[0].age > 27.5 && tuple[0].age <= 28.5
-                return [tuple[0], tuple[1], tuple[12]]
+                return [tuple[0], tuple[1], tuple[2], tuple[13], tuple[14]]
             ga29: tuple[0].age > 28.5 && tuple[0].age <= 29.5
-                return [tuple[0], tuple[1], tuple[14]]
+                return [tuple[0], tuple[1], tuple[2], tuple[15], tuple[16]]
             ga30: tuple[0].age > 29.5 && tuple[0].age <= 30.5
-                return [tuple[0], tuple[1], tuple[16]]
+                return [tuple[0], tuple[1], tuple[2], tuple[17], tuple[18]]
             ga31: tuple[0].age > 30.5 && tuple[0].age <= 31.5
-                return [tuple[0], tuple[1], tuple[18]]
+                return [tuple[0], tuple[1], tuple[2], tuple[19], tuple[20]]
             ga32: tuple[0].age > 31.5 && tuple[0].age <= 32.5
-                return [tuple[0], tuple[1], tuple[20]]
+                return [tuple[0], tuple[1], tuple[2], tuple[21], tuple[22]]
             ga33: tuple[0].age > 32.5 && tuple[0].age <= 33.5
-                return [tuple[0], tuple[1], tuple[22]]
+                return [tuple[0], tuple[1], tuple[2], tuple[23], tuple[24]]
             ga34: tuple[0].age > 33.5 && tuple[0].age <= 34.5
-                return [tuple[0], tuple[1], tuple[24]]
+                return [tuple[0], tuple[1], tuple[2], tuple[25], tuple[26]]
             ga35: tuple[0].age > 34.5 && tuple[0].age <= 35.5
-                return [tuple[0], tuple[1], tuple[26]]
+                return [tuple[0], tuple[1], tuple[2], tuple[27], tuple[28]]
             ga36: tuple[0].age > 35.5 && tuple[0].age <= 36.5
-                return [tuple[0], tuple[1], tuple[28]]
+                return [tuple[0], tuple[1], tuple[2], tuple[29], tuple[30]]
             ga37: tuple[0].age > 36.5 && tuple[0].age <= 37.5
-                return [tuple[0], tuple[1], tuple[30]]
+                return [tuple[0], tuple[1], tuple[2], tuple[31], tuple[32]]
             ga38: tuple[0].age > 37.5 && tuple[0].age <= 38.5
-                return [tuple[0], tuple[1], tuple[32]]
+                return [tuple[0], tuple[1], tuple[2], tuple[33], tuple[34]]
         }
 
     ch_md_for_registration = channel.empty()
@@ -120,55 +123,55 @@ workflow FETAL {
     // Apply the transformation to the template WM segmentation
     ch_apply_transformation = ch_md_map
         .join(REGISTER_MD.out.forward_image_transform)
-        .combine(ch_ga23.map { tuple -> tuple[1..2] })
-        .combine(ch_ga24.map { tuple -> tuple[1..2] })
-        .combine(ch_ga25.map { tuple -> tuple[1..2] })
-        .combine(ch_ga26.map { tuple -> tuple[1..2] })
-        .combine(ch_ga27.map { tuple -> tuple[1..2] })
-        .combine(ch_ga28.map { tuple -> tuple[1..2] })
-        .combine(ch_ga29.map { tuple -> tuple[1..2] })
-        .combine(ch_ga30.map { tuple -> tuple[1..2] })
-        .combine(ch_ga31.map { tuple -> tuple[1..2] })
-        .combine(ch_ga32.map { tuple -> tuple[1..2] })
-        .combine(ch_ga33.map { tuple -> tuple[1..2] })
-        .combine(ch_ga34.map { tuple -> tuple[1..2] })
-        .combine(ch_ga35.map { tuple -> tuple[1..2] })
-        .combine(ch_ga36.map { tuple -> tuple[1..2] })
-        .combine(ch_ga37.map { tuple -> tuple[1..2] })
-        .combine(ch_ga38.map { tuple -> tuple[1..2] })
+        .combine(ch_ga23.map { tuple -> tuple[3] })
+        .combine(ch_ga24.map { tuple -> tuple[3] })
+        .combine(ch_ga25.map { tuple -> tuple[3] })
+        .combine(ch_ga26.map { tuple -> tuple[3] })
+        .combine(ch_ga27.map { tuple -> tuple[3] })
+        .combine(ch_ga28.map { tuple -> tuple[3] })
+        .combine(ch_ga29.map { tuple -> tuple[3] })
+        .combine(ch_ga30.map { tuple -> tuple[3] })
+        .combine(ch_ga31.map { tuple -> tuple[3] })
+        .combine(ch_ga32.map { tuple -> tuple[3] })
+        .combine(ch_ga33.map { tuple -> tuple[3] })
+        .combine(ch_ga34.map { tuple -> tuple[3] })
+        .combine(ch_ga35.map { tuple -> tuple[3] })
+        .combine(ch_ga36.map { tuple -> tuple[3] })
+        .combine(ch_ga37.map { tuple -> tuple[3] })
+        .combine(ch_ga38.map { tuple -> tuple[3] })
         .branch { tuple ->
             ga23: tuple[0].age <= 23.5
-                return [tuple[0], tuple[4], tuple[1], tuple[2]]
+                return [tuple[0], tuple[3], tuple[1], tuple[2]]
             ga24: tuple[0].age > 23.5 && tuple[0].age <= 24.5
-                return [tuple[0], tuple[6], tuple[1], tuple[2]]
+                return [tuple[0], tuple[4], tuple[1], tuple[2]]
             ga25: tuple[0].age > 24.5 && tuple[0].age <= 25.5
-                return [tuple[0], tuple[8], tuple[1], tuple[2]]
+                return [tuple[0], tuple[5], tuple[1], tuple[2]]
             ga26: tuple[0].age > 25.5 && tuple[0].age <= 26.5
-                return [tuple[0], tuple[10], tuple[1], tuple[2]]
+                return [tuple[0], tuple[6], tuple[1], tuple[2]]
             ga27: tuple[0].age > 26.5 && tuple[0].age <= 27.5
-                return [tuple[0], tuple[12], tuple[1], tuple[2]]
+                return [tuple[0], tuple[7], tuple[1], tuple[2]]
             ga28: tuple[0].age > 27.5 && tuple[0].age <= 28.5
-                return [tuple[0], tuple[14], tuple[1], tuple[2]]
+                return [tuple[0], tuple[8], tuple[1], tuple[2]]
             ga29: tuple[0].age > 28.5 && tuple[0].age <= 29.5
-                return [tuple[0], tuple[16], tuple[1], tuple[2]]
+                return [tuple[0], tuple[9], tuple[1], tuple[2]]
             ga30: tuple[0].age > 29.5 && tuple[0].age <= 30.5
-                return [tuple[0], tuple[18], tuple[1], tuple[2]]
+                return [tuple[0], tuple[10], tuple[1], tuple[2]]
             ga31: tuple[0].age > 30.5 && tuple[0].age <= 31.5
-                return [tuple[0], tuple[20], tuple[1], tuple[2]]
+                return [tuple[0], tuple[11], tuple[1], tuple[2]]
             ga32: tuple[0].age > 31.5 && tuple[0].age <= 32.5
-                return [tuple[0], tuple[22], tuple[1], tuple[2]]
+                return [tuple[0], tuple[12], tuple[1], tuple[2]]
             ga33: tuple[0].age > 32.5 && tuple[0].age <= 33.5
-                return [tuple[0], tuple[24], tuple[1], tuple[2]]
+                return [tuple[0], tuple[13], tuple[1], tuple[2]]
             ga34: tuple[0].age > 33.5 && tuple[0].age <= 34.5
-                return [tuple[0], tuple[26], tuple[1], tuple[2]]
+                return [tuple[0], tuple[14], tuple[1], tuple[2]]
             ga35: tuple[0].age > 34.5 && tuple[0].age <= 35.5
-                return [tuple[0], tuple[28], tuple[1], tuple[2]]
+                return [tuple[0], tuple[15], tuple[1], tuple[2]]
             ga36: tuple[0].age > 35.5 && tuple[0].age <= 36.5
-                return [tuple[0], tuple[30], tuple[1], tuple[2]]
+                return [tuple[0], tuple[16], tuple[1], tuple[2]]
             ga37: tuple[0].age > 36.5 && tuple[0].age <= 37.5
-                return [tuple[0], tuple[32], tuple[1], tuple[2]]
+                return [tuple[0], tuple[17], tuple[1], tuple[2]]
             ga38: tuple[0].age > 37.5 && tuple[0].age <= 38.5
-                return [tuple[0], tuple[34], tuple[1], tuple[2]]
+                return [tuple[0], tuple[18], tuple[1], tuple[2]]
         }
     ch_for_transformation = channel.empty()
         .mix(ch_apply_transformation.ga23)
