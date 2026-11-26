@@ -1,5 +1,6 @@
 include { REGISTER_MD } from '../../../modules/local/registration/registermd/main'
 include { REGISTRATION_ANTSAPPLYTRANSFORMS as APPLYTRANSFORMS } from '../../../modules/nf-neuro/registration/antsapplytransforms/main'
+include { IMAGE_MATH } from '../../../modules/nf-neuro/image/math/main'
 
 def createFetalChannel(channel, cohort) {
     channel.map { folder ->
@@ -195,8 +196,14 @@ workflow FETAL {
     APPLYTRANSFORMS (ch_for_transformation)
     ch_versions = ch_versions.mix(APPLYTRANSFORMS.out.versions)
 
+    // Dilate the WM mask by a few voxels
+    ch_dilate_wm = APPLYTRANSFORMS.out.warped_image
+        .map { meta, img -> [meta, img, 1] }
+    IMAGE_MATH ( ch_dilate_wm )
+    ch_versions = ch_versions.mix(IMAGE_MATH.out.versions)
+
     emit:
-    wm_maps = APPLYTRANSFORMS.out.warped_image
+    wm_maps = IMAGE_MATH.out.image
     qc_files = ch_multiqc_files_subject
     versions = ch_versions
 
