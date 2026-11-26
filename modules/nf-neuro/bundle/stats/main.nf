@@ -66,6 +66,7 @@ process BUNDLE_STATS {
         bname=\${bname/${prefix}__/}
         bname=\${bname##tract-*}
         bname=\${bname%%-labels_*}
+        bname=\${bname//-/_}
 
         echo "Bundle name: \${bname}"
 
