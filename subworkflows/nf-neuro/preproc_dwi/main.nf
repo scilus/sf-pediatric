@@ -173,7 +173,7 @@ workflow PREPROC_DWI {
 
             // Apply an intensity threshold to the pre-bet pwd average image.
             ch_image_math = BETCROP_SYNTHSTRIP.out.bet_image
-                .map{ meta, img -> [ meta, img, 2500 ]}
+                .map{ meta, img -> [ meta, img, 1500 ]}
             IMAGE_MATH ( ch_image_math )
             ch_versions = ch_versions.mix(IMAGE_MATH.out.versions.first())
 
@@ -193,7 +193,7 @@ workflow PREPROC_DWI {
             CROPDWI ( BET_DWI.out.image.map { meta, img -> [ meta, img, [] ] } )
             ch_versions = ch_versions.mix(CROPDWI.out.versions.first())
 
-            ch_cropmask = BETCROP_SYNTHSTRIP.out.brain_mask
+            ch_cropmask = IMAGE_ANTSMATH.out.image
                 .join(CROPDWI.out.bounding_box)
 
             CROPMASK ( ch_cropmask )
