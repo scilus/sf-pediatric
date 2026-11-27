@@ -1,0 +1,26 @@
+Changes in component 'nf-neuro/bundle/stats'
+'modules/nf-neuro/bundle/stats/environment.yml' is unchanged
+'modules/nf-neuro/bundle/stats/meta.yml' is unchanged
+Changes in 'bundle/stats/main.nf':
+--- modules/nf-neuro/bundle/stats/main.nf
++++ modules/nf-neuro/bundle/stats/main.nf
+@@ -64,7 +64,9 @@
+     do\
+         bname=\$(basename \${bundles[index]} .trk);
+         bname=\${bname/${prefix}__/}
+-        bname=\${bname%%_labels_*}
++        bname=\${bname#tract-*}
++        bname=\${bname%%-labels_*}
++        bname=\${bname//-/_}
+ 
+         echo "Bundle name: \${bname}"
+ 
+
+'modules/nf-neuro/bundle/stats/tests/main.nf.test.snap' is unchanged
+'modules/nf-neuro/bundle/stats/tests/nextflow_light.config' is unchanged
+'modules/nf-neuro/bundle/stats/tests/tags.yml' is unchanged
+'modules/nf-neuro/bundle/stats/tests/nextflow_lesions.config' is unchanged
+'modules/nf-neuro/bundle/stats/tests/nextflow.config' is unchanged
+'modules/nf-neuro/bundle/stats/tests/main.nf.test' is unchanged
+'modules/nf-neuro/bundle/stats/tests/nextflow_covariates.config' is unchanged
+************************************************************
