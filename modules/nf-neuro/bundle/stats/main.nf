@@ -64,7 +64,7 @@ process BUNDLE_STATS {
     do\
         bname=\$(basename \${bundles[index]} .trk);
         bname=\${bname/${prefix}__/}
-        bname=\${bname##tract-*}
+        bname=\${bname#tract-*}
         bname=\${bname%%-labels_*}
         bname=\${bname//-/_}
 
